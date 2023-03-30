@@ -3,8 +3,9 @@
 ### Resumo do que é feito.
 
 * Preparação da VM principal para receber o Rancher;
-* Preparação das VMs secundarias para recebers os agentes do Rancher;
+* Preparação das VMs secundárias para receber os agentes do Rancher;
 * Configuração das maquinas para acessar o servidor NFS;
+* Configuração de DNS nas máquinas (resolução de nomes interno);
 
 ### Acesse
 ```
