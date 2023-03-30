@@ -17,8 +17,7 @@ search pve.datacenter.tsc
 nameserver 192.168.2.200
 nameserver 192.168.2.201
 nameserver 192.168.2.254
-nameserver 8.8.8.8
-EOT
+nameserver 8.8.8.8 EOT
 
 EOT
 ---------------------------------------------------------------------------------------------------------------------------
@@ -66,7 +65,7 @@ sudo apt autoremove -y
 sudo apt clean
 
 # Exibe uma mensagem informando que a atualização foi concluída com sucesso
-echo "Atualização concluída com sucesso em $(date +"%d/%m/%Y às %H:%M:%S")"
+# echo "Atualização concluída com sucesso em $(date +"%d/%m/%Y às %H:%M:%S")"
 
 exit 0
 EOT
