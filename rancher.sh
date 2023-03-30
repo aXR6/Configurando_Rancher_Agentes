@@ -10,12 +10,16 @@ echo -e "\033[1;31m:=> Criando o arquivo de configuração: RESOLVER \033[0m"
 touch /bin/resolver
 chmod 777 /bin/resolver
 
+cat >'/bin/resolver' <<EOT
+
 cat >'/etc/resolv.conf' <<EOT
 search pve.datacenter.tsc
 nameserver 192.168.2.200
 nameserver 192.168.2.201
 nameserver 192.168.2.254
 nameserver 8.8.8.8
+EOT
+
 EOT
 ---------------------------------------------------------------------------------------------------------------------------
 
@@ -27,15 +31,11 @@ chmod 777 /lib/systemd/system/dns.service
 cat >'/lib/systemd/system/dns.service' <<EOT
 [Unit]
 Description=Padronizacao das configuracoes de DNS do Datacenter.
-#After=network-online.target
-#Wants=network-online.target
 
 [Service]
 Type=simple
 User=root
 ExecStart=/bin/bash /bin/resolver
-Restart=always
-RestartSec=10
 
 [Install]
 WantedBy=multi-user.target
@@ -83,7 +83,7 @@ Description=Atualiza a distribuição Linux
 
 [Service]
 Type=simple
-ExecStart=/lib/systemd/system/autoupdate.service
+ExecStart=/bin/bash /bin/autoupdate
 
 [Install]
 WantedBy=multi-user.target
