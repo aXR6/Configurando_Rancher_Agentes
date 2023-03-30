@@ -98,15 +98,6 @@ echo -e "\033[1;31m:=> Preparando o ambiente e instalando o Docker \033[0m"
 clear && apt update && apt dist-upgrade -y && apt autoremove -y && apt autoclean && curl https://releases.rancher.com/install-docker/20.10.sh | sh && usermod -aG docker root
 ---------------------------------------------------------------------------------------------------------------------------
 
-echo -e "\033[1;31m:=> Preparando o ambiente e instalando o helm \033[0m"
----------------------------------------------------------------------------------------------------------------------------
-curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/keyrings/helm.gpg > /dev/null && 
-apt-get install apt-transport-https --yes && 
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list && 
-apt-get update && 
-apt-get install helm
----------------------------------------------------------------------------------------------------------------------------
-
 echo -e "\033[1;31m:=> Preparando o ambiente e instalando o rancher \033[0m"
 ---------------------------------------------------------------------------------------------------------------------------
 docker run --privileged -d --restart=unless-stopped -v dbrancher:/var/lib/rancher -p 80:80 -p 443:443 rancher/rancher
@@ -121,6 +112,15 @@ curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cl
 echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list && 
 apt-get update && 
 apt-get install -y kubectl
+---------------------------------------------------------------------------------------------------------------------------
+
+echo -e "\033[1;31m:=> Preparando o ambiente e instalando o helm \033[0m"
+---------------------------------------------------------------------------------------------------------------------------
+curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/keyrings/helm.gpg > /dev/null && 
+apt-get install apt-transport-https --yes && 
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list && 
+apt-get update && 
+apt-get install helm
 ---------------------------------------------------------------------------------------------------------------------------
 
 echo -e "\033[1;31m:=> Preparando o ambiente e configurando o mapeamento no NFS \033[0m"
