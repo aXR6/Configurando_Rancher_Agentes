@@ -52,16 +52,16 @@ cat >'/bin/autoupdate' <<EOT
 #!/bin/bash
 
 # Atualiza a lista de pacotes disponíveis
-sudo apt update
+apt update
 
 # Atualiza os pacotes instalados para a versão mais recente
-sudo apt upgrade -y
+apt upgrade -y
 
 # Remove pacotes que não são mais necessários
-sudo apt autoremove -y
+apt autoremove -y
 
 # Limpa o cache dos pacotes baixados anteriormente
-sudo apt clean
+apt clean
 
 # Exibe uma mensagem informando que a atualização foi concluída com sucesso
 # echo "Atualização concluída com sucesso em $(date +"%d/%m/%Y às %H:%M:%S")"
