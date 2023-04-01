@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo -e "\033[1;31m:=> Instalando complementos necessários para o longhorn \033[0m"
-apt install -y bash curl grep mawk open-iscsi util-linux
+apt update && apt install -y bash curl grep mawk open-iscsi util-linux
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
 echo -e "\033[1;31m:=> Criando o arquivo de configuração: RESOLVER \033[0m"
@@ -151,4 +151,8 @@ docker volume ls -f dangling=true &&
 docker volume prune &&
 docker image prune --filter="label=deprecated"
 EOT
+<<<<<<< HEAD
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
+=======
+echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
+>>>>>>> 2034cb212db37630913435b12084299f6fe7def0
