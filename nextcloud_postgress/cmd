@@ -1,3 +1,3 @@
 kubectl create namespace nextcloud
 
-kubectl create secret generic nextcloud-db-secret --from-literal=POSTGRES_USER=nextcloud --from-literal=POSTGRES_PASSWORD=902grego1989
+kubectl create secret generic nextcloud-db-secret --from-literal=POSTGRES_USER=nextcloud --from-literal=POSTGRES_PASSWORD=SENHA_SENHA
