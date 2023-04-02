@@ -40,9 +40,6 @@ ExecStart=/bin/bash /bin/resolver
 WantedBy=multi-user.target
 EOT
 
-systemctl daemon-reload
-systemctl enable dns.service
-systemctl start dns.service
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
 echo -e "\033[1;31m:=> Criando o arquivo: AUTOUPDATE \033[0m"
@@ -101,14 +98,11 @@ ExecStart=/bin/bash /bin/autoupdate --without-docker
 WantedBy=multi-user.target
 EOT
 
-systemctl daemon-reload
-systemctl enable updateserv.service
-systemctl start updateserv.service
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
 echo -e "\033[1;31m:=> Preparando o ambiente e instalando o Docker \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-clear && apt update && apt autoclean && curl https://releases.rancher.com/install-docker/20.10.sh | sh && usermod -aG docker root
+curl https://releases.rancher.com/install-docker/20.10.sh | sh && usermod -aG docker root
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
 echo -e "\033[1;31m:=> Preparando o ambiente e instalando o rancher \033[0m"
@@ -165,5 +159,16 @@ docker volume ls -f dangling=true &&
 docker volume prune &&
 docker image prune --filter="label=deprecated"
 EOT
+
+echo -e "\033[1;31m:=> Startando serviços recem criados \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
+systemctl daemon-reload
+
+systemctl enable updateserv.service
+systemctl enable dns.service
+
+systemctl start updateserv.service
+systemctl start dns.service
+echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
+
 docker --version
