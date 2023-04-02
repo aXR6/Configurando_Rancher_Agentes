@@ -28,7 +28,7 @@ for resource in jackett/jackett-ingress.yml jackett/deployment.yml radarr/radarr
 done
 
 apply_resource hpa.yml
-apply_resource components.yaml
+#apply_resource components.yaml
 
 # Instalar o cert-manager
 # kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.11.0/cert-manager.yaml
