@@ -107,7 +107,7 @@ echo -e "\033[1;31m:=>----------------------------------------------------------
 
 echo -e "\033[1;31m:=> Preparando o ambiente e instalando o rancher \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-docker --name rancher run --privileged -d --restart=unless-stopped -v dbrancher:/var/lib/rancher -p 80:80 -p 443:443 rancher/rancher
+docker run --name rancher --privileged -d --restart=unless-stopped -v dbrancher:/var/lib/rancher -p 80:80 -p 443:443 rancher/rancher
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
 echo -e "\033[1;31m:=> Preparando o ambiente e instalando o kubectl \033[0m"
@@ -164,10 +164,10 @@ echo -e "\033[1;31m:=> Startando serviços recem criados \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 systemctl daemon-reload
 
-systemctl enable updateserv.service
-systemctl enable dns.service
+systemctl enable updateserv.service &&
+systemctl enable dns.service &&
 
-systemctl start updateserv.service
+systemctl start updateserv.service &&
 systemctl start dns.service
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
@@ -195,4 +195,4 @@ fi
 # Imprime o hash do container encontrado
 echo "Encontre o ID do contêiner '$nome_container' com a seguinte hash $hash_container"
 
-docker logs  "$hash_container"  2>&1 | grep "Bootstrap Password:"
+docker logs $hash_container 2>&1 | grep "Bootstrap Password:"
