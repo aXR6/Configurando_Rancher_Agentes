@@ -51,22 +51,26 @@ chmod 777 /bin/autoupdate
 cat >'/bin/autoupdate' <<EOT
 #!/bin/bash
 
-# Atualiza a lista de pacotes disponíveis
-apt update
+# Função que atualiza a distribuição Debian
+update_debian() {
+  apt-get update
+  apt-get upgrade -y
+}
 
-# Atualiza os pacotes instalados para a versão mais recente
-apt upgrade -y
+# Função que atualiza a distribuição Debian sem atualizar o Docker
+update_debian_without_docker() {
+  apt-mark hold docker-ce docker-ce-cli containerd.io
+  apt-get update
+  apt-get upgrade -y
+  apt-mark unhold docker-ce docker-ce-cli containerd.io
+}
 
-# Remove pacotes que não são mais necessários
-apt autoremove -y
-
-# Limpa o cache dos pacotes baixados anteriormente
-apt clean
-
-# Exibe uma mensagem informando que a atualização foi concluída com sucesso
-# echo "Atualização concluída com sucesso em $(date +"%d/%m/%Y às %H:%M:%S")"
-
-exit 0
+# Verifica se o usuário deseja atualizar a distribuição sem atualizar o Docker
+if [ "$1" == "--without-docker" ]; then
+  update_debian_without_docker
+else
+  update_debian
+fi
 EOT
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
@@ -81,7 +85,10 @@ Description=Atualiza a distribuição Linux
 
 [Service]
 Type=simple
-ExecStart=/bin/bash /bin/autoupdate
+ExecStart=/bin/bash /bin/autoupdate --without-docker
+
+#./autoupdate                  # atualiza a distribuição normalmente
+#./autoupdate --without-docker # atualiza a distribuição sem atualizar o Docker
 
 [Install]
 WantedBy=multi-user.target
