@@ -1,10 +1,5 @@
 #!/bin/bash
 
-echo -e "\033[1;31m:=> Instalando complementos necessários para o longhorn \033[0m"
-echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-apt update && apt install -y bash curl grep mawk open-iscsi util-linux
-echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-
 echo -e "\033[1;31m:=> Criando o arquivo de configuração: RESOLVER \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 touch /bin/resolver
@@ -102,7 +97,7 @@ echo -e "\033[1;31m:=>----------------------------------------------------------
 
 echo -e "\033[1;31m:=> Preparando o ambiente e instalando o Docker \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-clear && apt update && apt dist-upgrade -y && apt autoremove -y && apt autoclean && curl https://releases.rancher.com/install-docker/20.10.sh | sh && usermod -aG docker root
+clear && autoupdate --without-docker && apt autoremove -y && apt autoclean && curl https://releases.rancher.com/install-docker/20.10.sh | sh && usermod -aG docker root
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
 echo -e "\033[1;31m:=> Preparando o ambiente e instalando o rancher \033[0m"
@@ -145,6 +140,11 @@ EOT
 
 mount 192.168.2.202:/home/nextcloud /home/nextcloud
 mount 192.168.2.203:/home/torrent /home/torrent
+echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
+
+echo -e "\033[1;31m:=> Instalando complementos necessários para o longhorn \033[0m"
+echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
+apt update && apt install -y bash curl grep mawk open-iscsi util-linux
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
 echo -e "\033[1;31m:=> Script para limpar containers, imagens e volumes não utilizados \033[0m"
