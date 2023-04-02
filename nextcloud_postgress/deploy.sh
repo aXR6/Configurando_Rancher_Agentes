@@ -37,7 +37,7 @@ function apply_nextcloud_resources() {
 
 # Criar secret para banco de dados do Nextcloud
 function create_nextcloud_db_secret() {
-    kubectl create secret generic nextcloud-db-secret --from-literal=POSTGRES_USER=nextcloud --from-literal=POSTGRES_PASSWORD=902grego1989
+    kubectl create secret generic nextcloud-db-secret --from-literal=POSTGRES_USER=nextcloud --from-literal=POSTGRES_PASSWORD=SENHA_SENHA
 }
 
 # Aplicar recursos do banco de dados do Nextcloud
@@ -56,10 +56,10 @@ function delete_limit_range() {
 
 # Chamar funções de acordo com a necessidade
 apply_global_patterns
-#install_cert_manager
+install_cert_manager
 #install_metrics_server
-#install_high_availability
+install_high_availability
 apply_nextcloud_resources
-#create_nextcloud_db_secret
+create_nextcloud_db_secret
 #apply_nextcloud_db_resources
 #delete_limit_range
