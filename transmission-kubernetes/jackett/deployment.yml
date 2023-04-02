@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: jackett
+  name: jackett
+  namespace: home-media
+spec:
+  selector:
+    matchLabels:
+      app: jackett
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: jackett
+    spec:
+      containers:
+        - name: jackett-container
+          image: linuxserver/jackett
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: jackett-port
+              containerPort: 9117
+          readinessProbe:
+            tcpSocket:
+              port: 9117
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 9117
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          env:
+            - name: PGID
+              value: "1000"
+            - name: PUID
+              value: "1000"
+          volumeMounts:
+            - name: media-pv
+              mountPath: /config
+              subPath: jackett-config
+            - name: media-pv
+              mountPath: /downloads
+              subPath: jackett-downloads
+      volumes:
+        - name: media-pv
+          persistentVolumeClaim:
+            claimName: media-pv-claim

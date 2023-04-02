@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: transmission-ingress
+  namespace: home-media
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    cert-manager.io/issuer: "selfsigned"
+spec:
+  tls:
+    - hosts:
+        - transmission.rancher-ks8.pve.datacenter.tsc
+      secretName: tls-secret-transmission
+  rules:
+    - host: transmission.rancher-ks8.pve.datacenter.tsc
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: transmission-service
+                port:
+                  number: 80

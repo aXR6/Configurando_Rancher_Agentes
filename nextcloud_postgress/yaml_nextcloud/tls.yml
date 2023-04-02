@@ -1,0 +1,23 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: selfsigned-issuer
+  namespace: nextcloud
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: selfsigned-crt
+spec:
+  secretName: tls-secret
+  duration: 170000h
+  renewBefore: 72h
+  commonName: nc.rancher-ks8.pve.datacenter.tsc
+  isCA: true
+  dnsNames:
+    - nc.rancher-ks8.pve.datacenter.tsc
+  issuerRef:
+    name: selfsigned-issuer
+    kind: Issuer

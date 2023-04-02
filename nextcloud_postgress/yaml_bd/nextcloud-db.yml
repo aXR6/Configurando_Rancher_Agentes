@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nextcloud
+  name: nextcloud-db
+  namespace: nextcloud
+spec:
+  selector:
+    matchLabels:
+      pod-label: nextcloud-db-pod
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        pod-label: nextcloud-db-pod
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:14.2-alpine
+
+#          readinessProbe:
+#            tcpSocket:
+#              port: 5432
+#            initialDelaySeconds: 5
+#            periodSeconds: 10
+#          livenessProbe:
+#            tcpSocket:
+#              port: 5432
+#            initialDelaySeconds: 15
+#            periodSeconds: 20
+
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DATABASE
+              value: nextcloud
+          envFrom:
+            - secretRef:
+                name: nextcloud-db-secret
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-db
+      volumes:
+        - name: postgres-db
+          persistentVolumeClaim:
+            claimName: nextcloud-db-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nextcloud-db
+  namespace: nextcloud
+  labels:
+    app: nextcloud
+spec:
+  selector:
+    pod-label: nextcloud-db-pod
+  ports:
+    - protocol: TCP
+      port: 5432

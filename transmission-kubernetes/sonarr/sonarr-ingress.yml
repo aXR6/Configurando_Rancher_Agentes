@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sonarr-ingress
+  namespace: home-media
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    cert-manager.io/issuer: "selfsigned"
+spec:
+  tls:
+    - hosts:
+        - sonarr.rancher-ks8.pve.datacenter.tsc
+      secretName: tls-secret-sonarr
+  rules:
+    - host: sonarr.rancher-ks8.pve.datacenter.tsc
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: sonarr-service
+                port:
+                  number: 80

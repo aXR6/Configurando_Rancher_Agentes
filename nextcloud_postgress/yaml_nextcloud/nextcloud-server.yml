@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextcloud-server
+  namespace: nextcloud
+  labels:
+    app: nextcloud
+spec:
+  selector:
+    matchLabels:
+      app: nextcloud
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: nextcloud
+    spec:
+      containers:
+        - name: nextcloud
+          image: nextcloud:25.0.4-apache
+          readinessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          volumeMounts:
+            - name: server-storage
+              mountPath: /var/www/html/server-data
+          env:
+            - name: NEXTCLOUD_TRUSTED_DOMAINS
+              value: nc.rancher-ks8.pve.datacenter.tsc
+      volumes:
+        - name: server-storage
+          persistentVolumeClaim:
+            claimName: nextcloud-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nextcloud-server
+  namespace: nextcloud
+  labels:
+    app: nextcloud
+spec:
+  selector:
+    app: nextcloud
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP

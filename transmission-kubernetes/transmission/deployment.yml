@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: transmission
+  name: transmission
+  namespace: home-media
+spec:
+  selector:
+    matchLabels:
+      app: transmission
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: transmission
+    spec:
+      containers:
+        - name: transmission-container
+          image: linuxserver/transmission
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: web-port
+              containerPort: 9091
+              protocol: TCP
+            - name: torrent-port
+              containerPort: 51413
+              protocol: TCP
+              hostPort: 51413
+            - name: torrent-portudp
+              containerPort: 51413
+              protocol: UDP
+              hostPort: 51413
+          livenessProbe:
+            httpGet:
+              path: /
+              port: web-port
+            failureThreshold: 1
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /
+              port: web-port
+            failureThreshold: 30
+            periodSeconds: 10
+          env:
+            - name: PGID
+              value: "1000"
+            - name: PUID
+              value: "1000"
+            - name: TRANSMISSION_DOWNLOAD_DIR
+              value: "/downloads/transmission"
+          volumeMounts:
+            - name: media-pv
+              mountPath: /config
+              subPath: configs/transmission-data
+            - name: media-pv
+              mountPath: /downloads/transmission
+              subPath: downloads/transmission
+            - name: media-pv
+              mountPath: /downloads/complete
+              subPath: downloads/complete
+      volumes:
+        - name: media-pv
+          persistentVolumeClaim:
+            claimName: media-pv-claim

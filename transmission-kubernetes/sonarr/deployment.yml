@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: sonarr
+  name: sonarr
+  namespace: home-media
+spec:
+  selector:
+    matchLabels:
+      app: sonarr
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: sonarr
+    spec:
+      containers:
+        - name: sonarr-container
+          image: linuxserver/sonarr
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: sonarr-port
+              containerPort: 8989
+          livenessProbe:
+            httpGet:
+              path: /
+              port: sonarr-port
+            failureThreshold: 1
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /
+              port: sonarr-port
+            failureThreshold: 30
+            periodSeconds: 10
+          env:
+            - name: PGID
+              value: "1000"
+            - name: PUID
+              value: "1000"
+          volumeMounts:
+            - name: media-pv
+              mountPath: /config
+              subPath: configs/sonarr
+            - name: media-pv
+              mountPath: /downloads/complete
+              subPath: downloads/complete
+            - name: media-pv
+              mountPath: /library
+              subPath: library/tv
+            - name: mounted-network-share
+              mountPath: /home/torrent/pandoraserver/video
+      volumes:
+        - name: media-pv
+          persistentVolumeClaim:
+            claimName: media-pv-claim
+        - name: mounted-network-share
+          hostPath:
+            path: /home/torrent/pandoraserver/video

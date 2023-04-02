@@ -1,0 +1,72 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: selfsigned-issuer
+  namespace: home-media
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: selfsigned-crt
+spec:
+  secretName: tls-secret-transmission
+  duration: 170000h
+  renewBefore: 72h
+  commonName: transmission.rancher-ks8.pve.datacenter.tsc
+  isCA: true
+  dnsNames:
+    - transmission.rancher-ks8.pve.datacenter.tsc
+  issuerRef:
+    name: selfsigned-issuer
+    kind: Issuer
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: selfsigned-crt
+spec:
+  secretName: tls-secret-jackett
+  duration: 170000h
+  renewBefore: 72h
+  isCA: true
+  commonName: jackett.rancher-ks8.pve.datacenter.tsc
+  dnsNames:
+    - jackett.rancher-ks8.pve.datacenter.tsc
+  issuerRef:
+    kind: Issuer
+    name: selfsigned
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: selfsigned-crt
+spec:
+  secretName: tls-secret-radarr
+  duration: 170000h
+  renewBefore: 72h
+  commonName: radarr.rancher-ks8.pve.datacenter.tsc
+  isCA: true
+  dnsNames:
+    - radarr.rancher-ks8.pve.datacenter.tsc
+  issuerRef:
+    kind: Issuer
+    name: selfsigned
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: selfsigned-crt
+spec:
+  secretName: tls-secret-sonarr
+  duration: 170000h
+  renewBefore: 72h
+  isCA: true
+  commonName: sonarr.rancher-ks8.pve.datacenter.tsc
+  dnsNames:
+    - sonarr.rancher-ks8.pve.datacenter.tsc
+  issuerRef:
+    name: selfsigned
+    kind: Issuer

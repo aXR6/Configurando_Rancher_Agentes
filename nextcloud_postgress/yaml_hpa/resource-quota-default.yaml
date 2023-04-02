@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: resource-quota-default
+  namespace: nextcloud
+spec:
+  hard:
+    pods: "2"
+    requests.cpu: "500m"
+    requests.memory: 2Gi
+    limits.cpu: "3000m"
+    limits.memory: 2Gi
+    configmaps: "5"
+    persistentvolumeclaims: "2"
+    replicationcontrollers: "10"
+    secrets: "3"
+    services: "4"
+    services.loadbalancers: "2"

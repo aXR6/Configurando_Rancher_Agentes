@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: transmission-service
+  namespace: home-media
+spec:
+  selector:
+    app: transmission
+  type: NodePort
+  ports:
+    - name: web-ui
+      protocol: TCP
+      port: 80
+      targetPort: 9091
+    - name: torrent
+      protocol: TCP
+      port: 51413
+      targetPort: 51413
+    - name: torrent-udp
+      protocol: UDP
+      port: 51413
+      targetPort: 51413
