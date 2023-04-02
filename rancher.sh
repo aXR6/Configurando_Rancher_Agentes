@@ -107,7 +107,7 @@ echo -e "\033[1;31m:=>----------------------------------------------------------
 
 echo -e "\033[1;31m:=> Preparando o ambiente e instalando o rancher \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-docker run --privileged -d --restart=unless-stopped -v dbrancher:/var/lib/rancher -p 80:80 -p 443:443 rancher/rancher
+docker --name rancher run --privileged -d --restart=unless-stopped -v dbrancher:/var/lib/rancher -p 80:80 -p 443:443 rancher/rancher
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
 echo -e "\033[1;31m:=> Preparando o ambiente e instalando o kubectl \033[0m"
@@ -171,4 +171,28 @@ systemctl start updateserv.service
 systemctl start dns.service
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
-docker --version
+echo -e "\033[1;31m:=> Capturando a chave do Rancher \033[0m"
+echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
+# Lista os containers em execução
+containers=$(docker ps --format "{{.ID}}\t{{.Names}}")
+
+# Imprime a lista de containers
+echo "Containers em execução:"
+echo "$containers"
+
+# Pede ao usuário para digitar o nome do container
+nome_container="rancher"
+
+# Obtém o hash do container com o nome especificado
+hash_container=$(echo "$containers" | grep "$nome_container" | cut -f1)
+
+# Verifica se o container foi encontrado
+if [ -z "$hash_container" ]; then
+  echo "O container '$nome_container' não foi encontrado."
+  exit 1
+fi
+
+# Imprime o hash do container encontrado
+echo "Encontre o ID do contêiner '$nome_container' com a seguinte hash $hash_container"
+
+docker logs  "$hash_container"  2>&1 | grep "Bootstrap Password:"
