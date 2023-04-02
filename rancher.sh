@@ -194,5 +194,3 @@ fi
 
 # Imprime o hash do container encontrado
 echo "Encontre o ID do contêiner '$nome_container' com a seguinte hash $hash_container"
-
-docker logs $hash_container 2>&1 | grep "Bootstrap Password:"
