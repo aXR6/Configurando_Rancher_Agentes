@@ -56,6 +56,9 @@ cat >'/bin/autoupdate' <<EOT
 update_debian() {
   apt-get update
   apt-get upgrade -y
+  apt-get autoremove -y
+  apt-get autoclean
+  apt-get clean
 }
 
 # Função que atualiza a distribuição Debian sem atualizar o Docker
@@ -63,6 +66,9 @@ update_debian_without_docker() {
   apt-mark hold docker-ce docker-ce-cli containerd.io docker-buildx-plugin
   apt-get update
   apt-get upgrade -y
+  apt-get autoremove -y
+  apt-get autoclean
+  apt-get clean
   apt-mark unhold docker-ce docker-ce-cli containerd.io docker-buildx-plugin
 }
 
@@ -103,7 +109,7 @@ echo -e "\033[1;31m:=>----------------------------------------------------------
 
 echo -e "\033[1;31m:=> Preparando o ambiente e instalando o Docker \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-clear && apt update && apt autoremove -y && apt autoclean && curl https://releases.rancher.com/install-docker/20.10.sh | sh && usermod -aG docker root
+clear && apt update && apt autoclean && curl https://releases.rancher.com/install-docker/20.10.sh | sh && usermod -aG docker root
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
 echo -e "\033[1;31m:=> Preparando o ambiente e configurando o mapeamento no NFS \033[0m"
