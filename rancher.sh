@@ -1,6 +1,7 @@
 #!/bin/bash
 
 echo -e "\033[1;31m:=> Instalando complementos necessários para o longhorn \033[0m"
+echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 apt update && apt install -y bash curl grep mawk open-iscsi util-linux
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
@@ -59,10 +60,10 @@ update_debian() {
 
 # Função que atualiza a distribuição Debian sem atualizar o Docker
 update_debian_without_docker() {
-  apt-mark hold docker-ce docker-ce-cli containerd.io
+  apt-mark hold docker-ce docker-ce-cli containerd.io docker-buildx-plugin
   apt-get update
   apt-get upgrade -y
-  apt-mark unhold docker-ce docker-ce-cli containerd.io
+  apt-mark unhold docker-ce docker-ce-cli containerd.io docker-buildx-plugin
 }
 
 # Verifica se o usuário deseja atualizar a distribuição sem atualizar o Docker
