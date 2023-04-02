@@ -5,6 +5,8 @@ metadata:
   namespace: nextcloud
   labels:
     app: nextcloud
+    version: "1.0"
+  description: Deployment for Nextcloud server application
 spec:
   selector:
     matchLabels:
@@ -19,6 +21,7 @@ spec:
       containers:
         - name: nextcloud
           image: nextcloud:25.0.4-apache
+          imagePullPolicy: IfNotPresent
           readinessProbe:
             tcpSocket:
               port: 80
@@ -31,7 +34,7 @@ spec:
             periodSeconds: 20
           volumeMounts:
             - name: server-storage
-              mountPath: /var/www/html/server-data
+              mountPath: /var/www/html/
           env:
             - name: NEXTCLOUD_TRUSTED_DOMAINS
               value: nc.rancher-ks8.pve.datacenter.tsc
@@ -47,6 +50,7 @@ metadata:
   namespace: nextcloud
   labels:
     app: nextcloud
+  description: Service for Nextcloud server application
 spec:
   selector:
     app: nextcloud
