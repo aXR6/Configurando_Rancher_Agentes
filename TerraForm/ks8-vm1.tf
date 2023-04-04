@@ -15,31 +15,21 @@ provider "proxmox" {
   pm_tls_insecure = true
 }
 
-# Resource de configuração da máquina virtual
-resource "proxmox_vm_qemu" "ks8-vm1" {
-  name = "vm-debian-11"
-  target_node = "pvedell5437"
-
-  # Configurações de memória RAM e SWAP
-  memory = "3584"
-  swap   = 2048
-
-  # Configurações de disco
-  disk_size = "40G"
-  storage   = "nfs"
-
-  # Configurações do sistema operacional
-  os_type = "debian"
-  os_variant = debian11
-  
-  # Configuração de rede
-  network {
-    model = "virtio"
-  }
-}
-
-# Recurso para a rede virtual
-resource "proxmox_network" "example" {
-  id   = "vmbr0"
-  vlan = "0"
+resource "proxmox_vm_qemu" "vm" {
+  name = "my-vm"
+  memory = 4096
+  cores = 2
+  sockets = 1
+  disk_size = 40
+  storage = "nfs"
+  scsihw = "virtio-scsi-pci"
+  bios = "seabios"
+  ide2 = "/usr/share/qemu-server/ovmf-x86_64-ms-code.bin,media=cdrom"
+  bootdisk = "scsi0"
+  os_type = "l26"
+  net0_model = "virtio"
+  net0_bridge = "vmbr0"
+  net0_firewall = 1
+  ssh_forward_port = 22
+  cloudinit = 1
 }
