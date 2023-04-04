@@ -20,7 +20,7 @@
 
 
 ### Resolver o problema
-* https://github.com/Telmate/terraform-ubuntu-proxmox-iso
+* https://github.com/vivami/proxmox-automation
 
 ```
 Thalles Canela - TSC
