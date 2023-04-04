@@ -25,8 +25,8 @@ resource "proxmox_vm_qemu" "ks8-vm1" {
   swap   = 2048
 
   # Configurações de disco
-  disk_size = 40G
-  storage   = "Dell5437"
+  disk_size = "40G"
+  storage   = "nfs"
 
   # Configurações do sistema operacional
   os_type = "debian"
