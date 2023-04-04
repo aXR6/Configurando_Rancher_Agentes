@@ -1,4 +1,13 @@
 # Provider Proxmox
+terraform {
+  required_providers {
+    proxmox = {
+      source  = "telmate/proxmox"
+      version = "1"
+    }
+  }
+}
+
 provider "proxmox" {
   pm_api_url   = "https://proxmox-ks8.ddns.net:8006/api2/json"
   pm_user_name = "root"
