@@ -1,13 +1,3 @@
-# Provider Proxmox
-terraform {
-  required_providers {
-    proxmox = {
-      source  = "telmate/proxmox"
-      version = "2.9.14"
-    }
-  }
-}
-
 resource "proxmox_vm_qemu" "vm" {
   name = "my-vm"
   memory = 4096
