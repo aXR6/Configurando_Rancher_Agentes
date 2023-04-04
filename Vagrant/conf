@@ -1,0 +1,27 @@
+Vagrant.configure("2") do |config|
+  config.vm.provider "proxmox" do |proxmox|
+    proxmox.endpoint = 'https://192.168.2.50:8006/api2/json'
+    proxmox.user = 'root'
+    proxmox.password = '902grego1989'
+    proxmox.vm_id_range = '900..1000'
+  end
+
+  config.vm.define "debian11" do |node|
+    node.vm.hostname = "debian11"
+    node.vm.box = "proxmox"
+    node.vm.provision "shell", inline: "echo 'Hello, World!'"
+    node.vm.provider "proxmox" do |proxmox|
+      proxmox.vm_type = "qemu"
+      proxmox.memory = 3584
+      proxmox.cpus = 2
+      proxmox.storage = "local-zfs"
+      proxmox.disk_size = "40G"
+      proxmox.pool = "pve"
+      proxmox.vm_name = "debian11"
+      proxmox.os_type = "debian11"
+      proxmox.agent = "1"
+      proxmox.bootdisk_size = "1G"
+      proxmox.swap_size = "2G"
+    end
+  end
+end
