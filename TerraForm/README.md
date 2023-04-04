@@ -18,6 +18,10 @@
 ### Documentação:
 * https://registry.terraform.io/providers/krtnio/proxmox/latest/docs
 
+
+### Resolver o problema
+* https://github.com/Telmate/terraform-ubuntu-proxmox-iso
+
 ```
 Thalles Canela - TSC
 Canal no YouTube: https://www.youtube.com/c/aXR6CyberSecurity
