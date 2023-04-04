@@ -31,4 +31,6 @@ spec:
     requests:
       storage: 490Gi
   storageClassName: longhorn
-  volumeName: nextcloud-pv
+  volumeName: nextcloud-pvexit
+  exit
+  

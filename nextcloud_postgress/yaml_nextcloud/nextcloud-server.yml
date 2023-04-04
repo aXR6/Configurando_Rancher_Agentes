@@ -22,7 +22,16 @@ spec:
         - name: nextcloud
           image: nextcloud:25.0.4-apache
           imagePullPolicy: IfNotPresent
-
+          readinessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 20
           volumeMounts:
             - name: server-storage
               mountPath: /var/www/html/
