@@ -8,13 +8,6 @@ terraform {
   }
 }
 
-provider "proxmox" {
-  pm_api_url   = "https://proxmox-ks8.ddns.net:8006/api2/json"
-  pm_user = "root"
-  pm_password  = "902grego1989"
-  pm_tls_insecure = true
-}
-
 resource "proxmox_vm_qemu" "vm" {
   name = "my-vm"
   memory = 4096
