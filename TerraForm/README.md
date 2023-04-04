@@ -15,8 +15,8 @@
 ### Copie o plugin compilado para o diretório de plugins do Terraform:
 * cp terraform-provider-proxmox ~/.terraform.d/plugins/
 
-### Copie o plugin compilado para o diretório de plugins do Terraform:
-* cp terraform-provider-proxmox ~/.terraform.d/plugins/
+### Documentação:
+* https://registry.terraform.io/providers/krtnio/proxmox/latest/docs
 
 ```
 Thalles Canela - TSC
