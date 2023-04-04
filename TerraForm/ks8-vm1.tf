@@ -3,7 +3,7 @@ terraform {
   required_providers {
     proxmox = {
       source  = "telmate/proxmox"
-#      version = "1"
+      version = "2.9.14"
     }
   }
 }
@@ -22,15 +22,15 @@ resource "proxmox_vm_qemu" "ks8-vm1" {
 
   # Configurações de memória RAM e SWAP
   memory = "3584"
-  swap   = "2048"
+  swap   = 2048
 
   # Configurações de disco
-  disk_size = "40G"
+  disk_size = 40G
   storage   = "Dell5437"
 
   # Configurações do sistema operacional
   os_type = "debian"
-  os_variant = "debian11"
+  os_variant = debian11
   
   # Configuração de rede
   network {
