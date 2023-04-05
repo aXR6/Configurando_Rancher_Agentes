@@ -3,7 +3,7 @@ locals {
     machines = {
       m1 = {
         name                = "talos-dns"
-        target_node         = "thor" # Name of the Proxmox Server
+        target_node         = "pvedell5437" # Name of the Proxmox Server
         qemu_os             = "other" # Type of Operating System
         os_type             = "cloud-init" # Set to cloud-init to utilize templates
         agent               = 1           # Set to 1 to enable the QEMU Guest Agent. Note, you must run the qemu-guest-agent daemon in the guest for this to have any effect.
@@ -12,7 +12,7 @@ locals {
         cores               = 4
         socket              = 1
         memory              = 6144
-        storage             = "150G" # Size of Secondary hard drive assiged as bootable
+        storage             = "40G" # Size of Secondary hard drive assiged as bootable
         ip_address          = "10.0.125.110"
         gateway             = "10.0.125.1"
         description         = "Load Balancer"
@@ -22,7 +22,7 @@ locals {
         storage_dev         = "groot"
         network_bridge_type = "vmbr0"
         network_model       = "virtio"
-        cloud_init_pass     = "<your password>"
+        cloud_init_pass     = "902grego1989"
         automatic_reboot    = true
         network_firewall    = false #defaults to false
         dns_servers         = "10.0.125.1 8.8.8.8 10.0.125.1 127.0.0.1"
