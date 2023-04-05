@@ -10,7 +10,7 @@ provider "proxmox" {
 # criação da máquina virtual
 resource "proxmox_vm_qemu" "vm_debian" {
   name                 = "vm_debian"
-  target_node          = "<seu nó>"
+  target_node          = "pvedell5437"
   memory               = 3584 # 3.5GB de RAM
   cores                = 2
   sockets              = 1
