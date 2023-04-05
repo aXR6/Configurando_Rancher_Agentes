@@ -1,9 +1,9 @@
 variable "proxmox_host" {
 	type = map
      default = {
-       pm_api_url = "https://10.0.42.50:8006/api2/json"
-       pm_user = "root@pam"
-       target_node = "pve"
+       pm_api_url = "https://192.168.2.50:8006/api2/json"
+       pm_user = "root"
+       target_node = "pvedell5437"
      }
 }
 
@@ -32,8 +32,8 @@ variable "ips" {
 variable "ssh_keys" {
 	type = map
      default = {
-       pub  = "~/.ssh/id_ed25519-pwless.pub"
-       priv = "~/.ssh/id_ed25519-pwless"
+       pub  = "~/.ssh/id_rsa.pub"
+       priv = "~/.ssh/id_rsa"
      }
 }
 
