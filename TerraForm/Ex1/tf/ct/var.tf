@@ -39,7 +39,7 @@ variable "user" {
 variable "ssh_keys" {
 	type = map
      default = {
-       pub = "~/.ssh/id_rsa.pub"
+       pub  = "~/.ssh/id_rsa.pub"
        priv = "~/.ssh/id_rsa"
      }
 }
