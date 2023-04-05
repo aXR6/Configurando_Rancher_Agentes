@@ -14,16 +14,8 @@ terraform {
 
 provider "proxmox" {
   pm_api_url          = "https://192.168.2.50:8006/api2/json"
-
-  pm_user             = "terraform-prov@pve"
-  pm_password         = "902grego1989"
+  pm_api_token_id     = "terraform-prov@pve!ORugzo3o1MoU59aQZ2364K8us"
+  pm_api_token_secret = "aa90365c-8c5f-4e5c-b1be-e22b769f7d32"
   pm_tls_insecure     = true
   pm_debug            = true
-
-/*
-  pm_api_token_id     = "root@pam!902grego1989"
-  pm_api_token_secret = "902grego1989"
-  pm_tls_insecure     = true
-  pm_debug            = true
-*/
 }
