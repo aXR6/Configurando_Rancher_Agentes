@@ -4,7 +4,6 @@ variable "proxmox_host" {
        pm_api_url = "https://192.168.2.50:8006/api2/json"
        pm_user = "root"
        target_node = "pvedell5437"
-       pm_tls_insecure = true
      }
 }
 
