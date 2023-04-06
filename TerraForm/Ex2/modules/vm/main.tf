@@ -14,7 +14,7 @@ resource "proxmox_vm_qemu" "virtual_machines" {
   target_node      = each.value.target_node
   os_type          = each.value.os_type
   full_clone       = each.value.full_clone
-  clone            = each.value.template_vm_id
+  clone            = each.value.template
   memory           = each.value.memory
   sockets          = each.value.socket
   cores            = each.value.cores
