@@ -2,7 +2,7 @@
 
 echo -e "\033[1;31m:=> Instalando complementos necessários para o longhorn \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-apt update && apt install -y bash curl grep mawk open-iscsi util-linux
+apt update && apt install -y bash curl grep mawk open-iscsi util-linux cloud-init
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
 echo -e "\033[1;31m:=> Criando o arquivo de configuração: RESOLVER \033[0m"
@@ -143,8 +143,8 @@ cat >'/etc/fstab' <<EOT
 192.168.2.203:/home/torrent /home/torrent nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0
 EOT
 
-mount 192.168.2.202:/home/nextcloud /home/nextcloud
-mount 192.168.2.203:/home/torrent /home/torrent
+# mount 192.168.2.202:/home/nextcloud /home/nextcloud
+# mount 192.168.2.203:/home/torrent /home/torrent
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
 echo -e "\033[1;31m:=> Script para limpar containers, imagens e volumes não utilizados \033[0m"
