@@ -2,8 +2,8 @@
 
 # exibe o menu
 echo "Selecione uma opção:"
-echo "1 - Baixar Debian"
-echo "2 - Baixar Ubuntu"
+echo "1 - Criar imagem Debian"
+echo "2 - Criar imagem Ubuntu"
 read opcao
 
 # verifica a opção selecionada
@@ -33,9 +33,9 @@ case $opcao in
 esac
 
 # Baixando a imagem
-rm *.img
-wget -O $imageName $imageURL
-qm destroy $virtualMachineId
+rm *.img                        # Apagando todas as imagens *.img
+wget -O $imageName $imageURL    # Baixnado a imagem escolhida
+qm destroy $virtualMachineId    # Garantindo que não irá existir uma máquina com o mesmo ID (Apagando)
 
 virt-customize -a $imageName --install qemu-guest-agent
 
