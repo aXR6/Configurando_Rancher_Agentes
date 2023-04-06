@@ -8,7 +8,7 @@ locals {
         os_type             = "cloud-init"  # Set to cloud-init to utilize templates
         agent               = 1             # Set to 1 to enable the QEMU Guest Agent. Note, you must run the qemu-guest-agent daemon in the guest for this to have any effect.
         full_clone          = true          # Set to true to create a full clone, or false to create a linked clone. See the docs about cloning for more info. Only applies when clone is set.
-        template            = "lunar-tpl"   # Name of Template Used to Clone
+        template            = "modelo"      # Name of Template Used to Clone
         cores               = 2
         socket              = 1
         memory              = 3530
