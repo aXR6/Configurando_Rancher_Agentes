@@ -2,7 +2,7 @@ Vagrant.configure("2") do |config|
   config.vm.provider "proxmox" do |proxmox|
     proxmox.endpoint = 'https://192.168.2.50:8006/api2/json'
     proxmox.user = 'root'
-    proxmox.password = '902grego1989'
+    proxmox.password = 'SENHA_SENHA'
     proxmox.vm_id_range = '900..1000'
   end
 
