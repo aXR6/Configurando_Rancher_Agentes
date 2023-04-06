@@ -3,16 +3,16 @@ locals {
     machines = {
       m1 = {
         name                = "ks8-vm1"
-        target_node         = "pvedell5437" # Name of the Proxmox Server
-        qemu_os             = "Linux"       # Type of Operating System
-        os_type             = "cloud-init"  # Set to cloud-init to utilize templates
-        agent               = 1             # Set to 1 to enable the QEMU Guest Agent. Note, you must run the qemu-guest-agent daemon in the guest for this to have any effect.
-        full_clone          = true          # Set to true to create a full clone, or false to create a linked clone. See the docs about cloning for more info. Only applies when clone is set.
-        template            = "Debian11CloudInit"      # Name of Template Used to Clone
+        target_node         = "pvedell5437" # Nome do Servidor Proxmox
+        qemu_os             = "Linux"       # Tipo de sistema operacional
+        os_type             = "cloud-init"  # Defina como cloud-init para utilizar modelos
+        agent               = 1             # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
+        full_clone          = true          # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
+        template            = "Debian11CloudInit"      # Nome do modelo usado para clonar
         cores               = 2
         socket              = 1
         memory              = 3500
-        storage             = "35G"         # Size of Secondary hard drive assiged as bootable
+        storage             = "35G"         # Tamanho do disco rígido secundário atribuído como inicializável
         ip_address          = "192.168.2.11"
         gateway             = "192.168.2.254"
         description         = "Máquina virtual - ks8-vm1 - para Rancher."
@@ -24,22 +24,22 @@ locals {
         network_model       = "virtio"
         cloud_init_pass     = "ks8vm1"
         automatic_reboot    = true
-        network_firewall    = false #defaults to false
+        network_firewall    = false # o padrão é falso
         dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
       }
 
       m2 = {
         name                = "ks8-vm2"
-        target_node         = "pvedellt110" # Name of the Proxmox Server
-        qemu_os             = "Linux"       # Type of Operating System
-        os_type             = "cloud-init"  # Set to cloud-init to utilize templates
-        agent               = 1             # Set to 1 to enable the QEMU Guest Agent. Note, you must run the qemu-guest-agent daemon in the guest for this to have any effect.
-        full_clone          = true          # Set to true to create a full clone, or false to create a linked clone. See the docs about cloning for more info. Only applies when clone is set.
-        template            = "Debian11CloudInit"      # Name of Template Used to Clone
+        target_node         = "pvedellt110" # Nome do Servidor Proxmox
+        qemu_os             = "Linux"       # Tipo de sistema operacional
+        os_type             = "cloud-init"  # Defina como cloud-init para utilizar modelos
+        agent               = 1             # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
+        full_clone          = true          # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
+        template            = "Debian11CloudInit"      # Nome do modelo usado para clonar
         cores               = 2
         socket              = 1
         memory              = 3500
-        storage             = "35G"         # Size of Secondary hard drive assiged as bootable
+        storage             = "35G"         # Tamanho do disco rígido secundário atribuído como inicializável
         ip_address          = "192.168.2.12"
         gateway             = "192.168.2.254"
         description         = "Máquina virtual - ks8-vm2 - para Rancher."
@@ -51,22 +51,22 @@ locals {
         network_model       = "virtio"
         cloud_init_pass     = "ks8vm2"
         automatic_reboot    = true
-        network_firewall    = false #defaults to false
+        network_firewall    = false # o padrão é falso
         dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
       }
 
       m3 = {
         name                = "ks8-vm3"
-        target_node         = "pvedellt110" # Name of the Proxmox Server
-        qemu_os             = "Linux"       # Type of Operating System
-        os_type             = "cloud-init"  # Set to cloud-init to utilize templates
-        agent               = 1             # Set to 1 to enable the QEMU Guest Agent. Note, you must run the qemu-guest-agent daemon in the guest for this to have any effect.
-        full_clone          = true          # Set to true to create a full clone, or false to create a linked clone. See the docs about cloning for more info. Only applies when clone is set.
-        template            = "Debian11CloudInit"      # Name of Template Used to Clone
+        target_node         = "pvedellt110" # Nome do Servidor Proxmox
+        qemu_os             = "Linux"       # Tipo de sistema operacional
+        os_type             = "cloud-init"  # Defina como cloud-init para utilizar modelos
+        agent               = 1             # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
+        full_clone          = true          # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
+        template            = "Debian11CloudInit"      # Nome do modelo usado para clonar
         cores               = 2
         socket              = 1
         memory              = 3500
-        storage             = "35G"         # Size of Secondary hard drive assiged as bootable
+        storage             = "35G"         # Tamanho do disco rígido secundário atribuído como inicializável
         ip_address          = "192.168.2.13"
         gateway             = "192.168.2.254"
         description         = "Máquina virtual - ks8-vm3 - para Rancher."
@@ -78,22 +78,22 @@ locals {
         network_model       = "virtio"
         cloud_init_pass     = "ks8vm3"
         automatic_reboot    = true
-        network_firewall    = false #defaults to false
+        network_firewall    = false # o padrão é falso
         dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
       }
 
       m4 = {
         name                = "ks8-rancher"
-        target_node         = "pvedell5437" # Name of the Proxmox Server
-        qemu_os             = "Linux"       # Type of Operating System
-        os_type             = "cloud-init"  # Set to cloud-init to utilize templates
-        agent               = 1             # Set to 1 to enable the QEMU Guest Agent. Note, you must run the qemu-guest-agent daemon in the guest for this to have any effect.
-        full_clone          = true          # Set to true to create a full clone, or false to create a linked clone. See the docs about cloning for more info. Only applies when clone is set.
-        template            = "Debian11CloudInit"      # Name of Template Used to Clone
+        target_node         = "pvedell5437" # Nome do Servidor Proxmox
+        qemu_os             = "Linux"       # Tipo de sistema operacional
+        os_type             = "cloud-init"  # Defina como cloud-init para utilizar modelos
+        agent               = 1             # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
+        full_clone          = true          # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
+        template            = "Debian11CloudInit"      # Nome do modelo usado para clonar
         cores               = 2
         socket              = 1
         memory              = 3500
-        storage             = "35G"         # Size of Secondary hard drive assiged as bootable
+        storage             = "35G"         # Tamanho do disco rígido secundário atribuído como inicializável
         ip_address          = "192.168.2.10"
         gateway             = "192.168.2.254"
         description         = "Máquina virtual - ks8-rancher."
@@ -105,7 +105,7 @@ locals {
         network_model       = "virtio"
         cloud_init_pass     = "ks8rancher"
         automatic_reboot    = true
-        network_firewall    = false #defaults to false
+        network_firewall    = false # o padrão é falso
         dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
       }
     }
