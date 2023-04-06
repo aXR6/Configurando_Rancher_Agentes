@@ -34,7 +34,7 @@ esac
 
 # Baixando a imagem
 rm *.img                        # Apagando todas as imagens *.img
-wget -O $imageName $imageURL    # Baixnado a imagem escolhida
+wget -O $imageName $imageURL    # Baixando a imagem escolhida
 qm destroy $virtualMachineId    # Garantindo que não irá existir uma máquina com o mesmo ID (Apagando)
 
 virt-customize -a $imageName --install qemu-guest-agent
