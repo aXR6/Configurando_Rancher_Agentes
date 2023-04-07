@@ -1,5 +1,7 @@
 #!/bin/bash
 
+apt update && apt install -y libguestfs-tools
+
 # exibe o menu
 echo "Selecione uma opção:"
 echo "1 - Criar imagem Debian"
