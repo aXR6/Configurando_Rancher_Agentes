@@ -11,7 +11,7 @@ case $opcao in
   1)
     imageURL=https://cloud.debian.org/images/cloud/bullseye-backports/daily/20230406-1342/debian-11-backports-genericcloud-amd64-daily-20230406-1342.qcow2
     imageName="debian-11-backports-genericcloud-amd64-daily-20230406-1342.qcow2"
-    volumeName="local-lvm"
+    volumeName="local-zfs"
     virtualMachineId="300"
     templateName="Debian11CloudInit"
     tmp_cores="2"
@@ -20,7 +20,7 @@ case $opcao in
   2)
     imageURL=https://cloud-images.ubuntu.com/lunar/current/lunar-server-cloudimg-amd64.img
     imageName="lunar-server-cloudimg-amd64.img"
-    volumeName="local-lvm"
+    volumeName="local-zfs"
     virtualMachineId="301"
     templateName="UbuntuLunarCloudInit"
     tmp_cores="2"

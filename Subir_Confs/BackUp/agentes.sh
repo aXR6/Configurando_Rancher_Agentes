@@ -78,6 +78,29 @@ fi
 EOT
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
+echo -e "\033[1;31m:=> Configurando o serviço que iniciará o AUTOUPDATE \033[0m"
+echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
+touch /lib/systemd/system/updateserv.service
+chmod 777 /lib/systemd/system/updateserv.service
+
+cat >'/lib/systemd/system/updateserv.service' <<EOT
+[Unit]
+Description=Atualiza a distribuição Linux
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /bin/autoupdate --without-docker
+
+#./autoupdate                  # atualiza a distribuição normalmente
+#./autoupdate --without-docker # atualiza a distribuição sem atualizar o Docker
+
+
+[Install]
+WantedBy=multi-user.target
+EOT
+
+echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
+
 echo -e "\033[1;31m:=> Preparando o ambiente e instalando o Docker \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 curl https://releases.rancher.com/install-docker/20.10.sh | sh && usermod -aG docker root
@@ -115,10 +138,13 @@ EOT
 
 echo -e "\033[1;31m:=> Startando serviços recem criados \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
+systemctl daemon-reload
 
+systemctl enable updateserv.service
 systemctl enable dns.service
-systemctl start dns.service
 
+systemctl start updateserv.service
+systemctl start dns.service
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
 docker container ls
