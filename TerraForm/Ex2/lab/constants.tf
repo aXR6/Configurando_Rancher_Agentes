@@ -3,7 +3,7 @@ locals {
     machines = {
       m1 = {
         name                = "ks8-vm1"
-        target_node         = "pvedell5437" # Nome do Servidor Proxmox
+        target_node         = "dell5437" # Nome do Servidor Proxmox
         qemu_os             = "Linux"       # Tipo de sistema operacional
         os_type             = "cloud-init"  # Defina como cloud-init para utilizar modelos
         agent               = 1             # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
@@ -19,7 +19,7 @@ locals {
         ssh_user            = "ks8vm1"
         mac_address         = "22:E2:A0:2F:92:53"
         disk_type           = "virtio"
-        storage_dev         = "local-lvm"
+        storage_dev         = "local-zfs"
         network_bridge_type = "vmbr0"
         network_model       = "virtio"
         cloud_init_pass     = "ks8vm1"
@@ -30,7 +30,7 @@ locals {
 
       m2 = {
         name                = "ks8-vm2"
-        target_node         = "pvedellt110" # Nome do Servidor Proxmox
+        target_node         = "dell5437" # Nome do Servidor Proxmox
         qemu_os             = "Linux"       # Tipo de sistema operacional
         os_type             = "cloud-init"  # Defina como cloud-init para utilizar modelos
         agent               = 1             # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
@@ -44,9 +44,9 @@ locals {
         gateway             = "192.168.2.254"
         description         = "Máquina virtual - ks8-vm2 - para Rancher."
         ssh_user            = "ks8vm2"
-        mac_address         = "22:E2:A0:2F:92:53"
+        mac_address         = "82:57:68:61:12:DD"
         disk_type           = "virtio"
-        storage_dev         = "local-lvm"
+        storage_dev         = "local-zfs"
         network_bridge_type = "vmbr0"
         network_model       = "virtio"
         cloud_init_pass     = "ks8vm2"
@@ -57,7 +57,7 @@ locals {
 
       m3 = {
         name                = "ks8-vm3"
-        target_node         = "pvedellt110" # Nome do Servidor Proxmox
+        target_node         = "dell5437" # Nome do Servidor Proxmox
         qemu_os             = "Linux"       # Tipo de sistema operacional
         os_type             = "cloud-init"  # Defina como cloud-init para utilizar modelos
         agent               = 1             # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
@@ -71,9 +71,9 @@ locals {
         gateway             = "192.168.2.254"
         description         = "Máquina virtual - ks8-vm3 - para Rancher."
         ssh_user            = "ks8vm3"
-        mac_address         = "22:E2:A0:2F:92:53"
+        mac_address         = "4E:C0:9E:89:A1:DD"
         disk_type           = "virtio"
-        storage_dev         = "local-lvm"
+        storage_dev         = "local-zfs"
         network_bridge_type = "vmbr0"
         network_model       = "virtio"
         cloud_init_pass     = "ks8vm3"
@@ -84,7 +84,7 @@ locals {
 
       m4 = {
         name                = "ks8-rancher"
-        target_node         = "pvedell5437" # Nome do Servidor Proxmox
+        target_node         = "dell5437" # Nome do Servidor Proxmox
         qemu_os             = "Linux"       # Tipo de sistema operacional
         os_type             = "cloud-init"  # Defina como cloud-init para utilizar modelos
         agent               = 1             # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
@@ -98,9 +98,9 @@ locals {
         gateway             = "192.168.2.254"
         description         = "Máquina virtual - ks8-rancher."
         ssh_user            = "ks8rancher"
-        mac_address         = "22:E2:A0:2F:92:53"
+        mac_address         = "FA:58:B8:CE:04:B8"
         disk_type           = "virtio"
-        storage_dev         = "local-lvm"
+        storage_dev         = "local-zfs"
         network_bridge_type = "vmbr0"
         network_model       = "virtio"
         cloud_init_pass     = "ks8rancher"
