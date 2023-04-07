@@ -21,7 +21,7 @@ resource "proxmox_vm_qemu" "virtual_machines" {
   ssh_user         = each.value.ssh_user
   sshkeys          = tls_private_key.virtual_machine_keys.public_key_openssh
   ciuser           = each.value.ssh_user
-  ipconfig0        = "ip=${each.value.ip_address}/32,gw=${each.value.gateway}"
+  ipconfig0        = "ip=${each.value.ip_address}/24,gw=${each.value.gateway}"
   cipassword       = each.value.cloud_init_pass
   automatic_reboot = each.value.automatic_reboot
   nameserver       = each.value.dns_servers

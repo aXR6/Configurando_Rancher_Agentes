@@ -1,6 +1,6 @@
 #!/bin/bash
 
-apt update && apt install -y libguestfs-tools
+# apt update && apt install -y libguestfs-tools
 
 # exibe o menu
 echo "Selecione uma opção:"
@@ -41,10 +41,14 @@ qm destroy $virtualMachineId    # Garantindo que não irá existir uma máquina 
 
 virt-customize -a $imageName --install qemu-guest-agent
 
+# Crie uma imagem Proxmox VM a partir do Debian 11 Cloud Image.
 qm create $virtualMachineId --name $templateName --memory $tmp_memory --cores $tmp_cores --net0 virtio,bridge=vmbr0
 qm importdisk $virtualMachineId $imageName $volumeName
 qm set $virtualMachineId --scsihw virtio-scsi-pci --scsi0 $volumeName:vm-$virtualMachineId-disk-0
-qm set $virtualMachineId --boot c --bootdisk scsi0
+#qm set $VM_ID --agent enabled=1,fstrim_cloned_disks=1
+
+# Crie o Cloud-Init Disk e configure o boot.
 qm set $virtualMachineId --ide2 $volumeName:cloudinit
+qm set $virtualMachineId --boot c --bootdisk scsi0
 qm set $virtualMachineId --serial0 socket --vga serial0
 qm template $virtualMachineId

@@ -53,6 +53,7 @@ locals {
         automatic_reboot    = true
         network_firewall    = false # o padrão é falso
         dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
+        cloudinit           = ""
       }
 
       m3 = {
@@ -92,7 +93,7 @@ locals {
         template            = "Debian11CloudInit"      # Nome do modelo usado para clonar
         cores               = 2
         socket              = 1
-        memory              = 3500
+        memory              = 4500
         storage             = "35G"         # Tamanho do disco rígido secundário atribuído como inicializável
         ip_address          = "192.168.2.10"
         gateway             = "192.168.2.254"
@@ -104,6 +105,87 @@ locals {
         network_bridge_type = "vmbr0"
         network_model       = "virtio"
         cloud_init_pass     = "ks8rancher"
+        automatic_reboot    = true
+        network_firewall    = false # o padrão é falso
+        dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
+      }
+
+      m5 = {
+        name                = "DNS-NS1"
+        target_node         = "dellt110" # Nome do Servidor Proxmox
+        qemu_os             = "Linux"       # Tipo de sistema operacional
+        os_type             = "cloud-init"  # Defina como cloud-init para utilizar modelos
+        agent               = 1             # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
+        full_clone          = true          # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
+        template            = "Debian11CloudInitDados"      # Nome do modelo usado para clonar
+        cores               = 1
+        socket              = 1
+        memory              = 512
+        storage             = "10G"         # Tamanho do disco rígido secundário atribuído como inicializável
+        ip_address          = "192.168.2.200"
+        gateway             = "192.168.2.254"
+        description         = "Máquina virtual - DNS Master."
+        ssh_user            = "dnsmaster"
+        mac_address         = "6E:60:3D:9C:6E:60"
+        disk_type           = "virtio"
+        storage_dev         = "dados"
+        network_bridge_type = "vmbr0"
+        network_model       = "virtio"
+        cloud_init_pass     = "dnsmaster"
+        automatic_reboot    = true
+        network_firewall    = false # o padrão é falso
+        dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
+      }
+
+      m6 = {
+        name                = "DNS-NS2"
+        target_node         = "dellt110" # Nome do Servidor Proxmox
+        qemu_os             = "Linux"       # Tipo de sistema operacional
+        os_type             = "cloud-init"  # Defina como cloud-init para utilizar modelos
+        agent               = 1             # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
+        full_clone          = true          # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
+        template            = "Debian11CloudInitDados"      # Nome do modelo usado para clonar
+        cores               = 1
+        socket              = 1
+        memory              = 512
+        storage             = "10G"         # Tamanho do disco rígido secundário atribuído como inicializável
+        ip_address          = "192.168.2.201"
+        gateway             = "192.168.2.254"
+        description         = "Máquina virtual - DNS Slave."
+        ssh_user            = "dnsslave"
+        mac_address         = "02:C0:10:09:A7:D0"
+        disk_type           = "virtio"
+        storage_dev         = "dados"
+        network_bridge_type = "vmbr0"
+        network_model       = "virtio"
+        cloud_init_pass     = "dnsslave"
+        automatic_reboot    = true
+        network_firewall    = false # o padrão é falso
+        dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
+      }
+
+      m7 = {
+        name                = "NFS-SERVER-TORRENT"
+        target_node         = "dellt110" # Nome do Servidor Proxmox
+        qemu_os             = "Linux"       # Tipo de sistema operacional
+        os_type             = "cloud-init"  # Defina como cloud-init para utilizar modelos
+        agent               = 1             # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
+        full_clone          = true          # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
+        template            = "Debian11CloudInitDados"      # Nome do modelo usado para clonar
+        cores               = 1
+        socket              = 2
+        memory              = 2042
+        storage             = "120G"         # Tamanho do disco rígido secundário atribuído como inicializável
+        ip_address          = "192.168.2.203"
+        gateway             = "192.168.2.254"
+        description         = "Máquina virtual - NFS TORRENT."
+        ssh_user            = "nfstorrent"
+        mac_address         = "1E:45:79:99:5C:7B"
+        disk_type           = "virtio"
+        storage_dev         = "dados"
+        network_bridge_type = "vmbr0"
+        network_model       = "virtio"
+        cloud_init_pass     = "nfstorrent"
         automatic_reboot    = true
         network_firewall    = false # o padrão é falso
         dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
