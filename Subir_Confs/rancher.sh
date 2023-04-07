@@ -130,23 +130,6 @@ sudo apt-get update &&
 sudo apt-get install helm
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
-echo -e "\033[1;31m:=> Preparando o ambiente e configurando o mapeamento no NFS \033[0m"
-echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-sudo apt install -y nfs-common
-
-sudo mkdir /home/nextcloud
-sudo mkdir /home/torrent
-
-sudo cp /etc/fstab /etc/fstab.bak
-sudo cat >'/etc/fstab' <<EOT
-192.168.2.202:/home/nextcloud /home/nextcloud nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0
-192.168.2.203:/home/torrent /home/torrent nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0
-EOT
-
-# mount 192.168.2.202:/home/nextcloud /home/nextcloud
-# mount 192.168.2.203:/home/torrent /home/torrent
-echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-
 echo -e "\033[1;31m:=> Script para limpar containers, imagens e volumes não utilizados \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 sudo touch /bin/limparimg
