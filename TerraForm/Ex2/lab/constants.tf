@@ -8,7 +8,7 @@ locals {
         os_type             = "cloud-init"  # Defina como cloud-init para utilizar modelos
         agent               = 1             # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
         full_clone          = true          # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
-        template            = "Debian11CloudInit"      # Nome do modelo usado para clonar
+        template            = "Debian11CloudInitAgente"      # Nome do modelo usado para clonar
         cores               = 2
         socket              = 1
         memory              = 3500
@@ -35,7 +35,7 @@ locals {
         os_type             = "cloud-init"  # Defina como cloud-init para utilizar modelos
         agent               = 1             # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
         full_clone          = true          # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
-        template            = "Debian11CloudInit"      # Nome do modelo usado para clonar
+        template            = "Debian11CloudInitAgente"      # Nome do modelo usado para clonar
         cores               = 2
         socket              = 1
         memory              = 3500
@@ -63,7 +63,7 @@ locals {
         os_type             = "cloud-init"  # Defina como cloud-init para utilizar modelos
         agent               = 1             # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
         full_clone          = true          # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
-        template            = "Debian11CloudInit"      # Nome do modelo usado para clonar
+        template            = "Debian11CloudInitAgente"      # Nome do modelo usado para clonar
         cores               = 2
         socket              = 1
         memory              = 3500
