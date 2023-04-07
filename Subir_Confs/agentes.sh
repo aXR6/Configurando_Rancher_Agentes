@@ -2,15 +2,15 @@
 
 echo -e "\033[1;31m:=> Instalando complementos necessários para o longhorn \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-apt update && apt install -y bash curl grep mawk open-iscsi util-linux cloud-init
+sudo apt update && sudo apt install -y bash curl grep mawk open-iscsi util-linux
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
 echo -e "\033[1;31m:=> Criando o arquivo de configuração: RESOLVER \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-touch /bin/resolver
-chmod 777 /bin/resolver
+sudo touch /bin/resolver
+sudo chmod 777 /bin/resolver
 
-cat >'/bin/resolver' <<EOT
+sudo cat >'/bin/resolver' <<EOT
 
 cat >'/etc/resolv.conf' <<EOT
 search pve.datacenter.tsc
@@ -24,10 +24,10 @@ echo -e "\033[1;31m:=>----------------------------------------------------------
 
 echo -e "\033[1;31m:=> Configurando o serviço que iniciará o RESOLVER \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-touch /lib/systemd/system/dns.service
-chmod 777 /lib/systemd/system/dns.service
+sudo touch /lib/systemd/system/dns.service
+sudo chmod 777 /lib/systemd/system/dns.service
 
-cat >'/lib/systemd/system/dns.service' <<EOT
+sudo cat >'/lib/systemd/system/dns.service' <<EOT
 [Unit]
 Description=Padronizacao das configuracoes de DNS do Datacenter.
 
@@ -44,29 +44,29 @@ echo -e "\033[1;31m:=>----------------------------------------------------------
 
 echo -e "\033[1;31m:=> Criando o arquivo: AUTOUPDATE \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-touch /bin/autoupdate
-chmod 777 /bin/autoupdate
-cat >'/bin/autoupdate' <<EOT
+sudo touch /bin/autoupdate
+sudo chmod 777 /bin/autoupdate
+sudo cat >'/bin/autoupdate' <<EOT
 #!/bin/bash
 
 # Função que atualiza a distribuição Debian
 update_debian() {
-  apt-get update
-  apt-get upgrade -y
-  apt-get autoremove -y
-  apt-get autoclean
-  apt-get clean
+  sudo apt-get update
+  sudo apt-get upgrade -y
+  sudo apt-get autoremove -y
+  sudo apt-get autoclean
+  sudo apt-get clean
 }
 
 # Função que atualiza a distribuição Debian sem atualizar o Docker
 update_debian_without_docker() {
-  apt-mark hold docker-ce docker-ce-cli containerd.io docker-buildx-plugin
-  apt-get update
-  apt-get upgrade -y
-  apt-get autoremove -y
-  apt-get autoclean
-  apt-get clean
-  apt-mark unhold docker-ce docker-ce-cli containerd.io docker-buildx-plugin
+  sudo apt-mark hold docker-ce docker-ce-cli containerd.io docker-buildx-plugin
+  sudo apt-get update
+  sudo apt-get upgrade -y
+  sudo apt-get autoremove -y
+  sudo apt-get autoclean
+  sudo apt-get clean
+  sudo apt-mark unhold docker-ce docker-ce-cli containerd.io docker-buildx-plugin
 }
 
 # Verifica se o usuário deseja atualizar a distribuição sem atualizar o Docker
@@ -80,10 +80,10 @@ echo -e "\033[1;31m:=>----------------------------------------------------------
 
 echo -e "\033[1;31m:=> Configurando o serviço que iniciará o AUTOUPDATE \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-touch /lib/systemd/system/updateserv.service
-chmod 777 /lib/systemd/system/updateserv.service
+sudo touch /lib/systemd/system/updateserv.service
+sudo chmod 777 /lib/systemd/system/updateserv.service
 
-cat >'/lib/systemd/system/updateserv.service' <<EOT
+sudo cat >'/lib/systemd/system/updateserv.service' <<EOT
 [Unit]
 Description=Atualiza a distribuição Linux
 
@@ -103,18 +103,18 @@ echo -e "\033[1;31m:=>----------------------------------------------------------
 
 echo -e "\033[1;31m:=> Preparando o ambiente e instalando o Docker \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-curl https://releases.rancher.com/install-docker/20.10.sh | sh
+sudo curl https://releases.rancher.com/install-docker/20.10.sh | sh
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
 echo -e "\033[1;31m:=> Preparando o ambiente e configurando o mapeamento no NFS \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-apt install -y nfs-common
+sudo apt install -y nfs-common
 
-mkdir /home/nextcloud
-mkdir /home/torrent
+sudo mkdir /home/nextcloud
+sudo mkdir /home/torrent
 
-cp /etc/fstab /etc/fstab.bak
-cat >'/etc/fstab' <<EOT
+sudo cp /etc/fstab /etc/fstab.bak
+sudo cat >'/etc/fstab' <<EOT
 192.168.2.202:/home/nextcloud /home/nextcloud nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0
 192.168.2.203:/home/torrent /home/torrent nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0
 EOT
@@ -125,10 +125,10 @@ echo -e "\033[1;31m:=>----------------------------------------------------------
 
 echo -e "\033[1;31m:=> Script para limpar containers, imagens e volumes não utilizados \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-touch /bin/limparimg
-chmod 777 /bin/limparimg
+sudo touch /bin/limparimg
+sudo chmod 777 /bin/limparimg
 
-cat >'/bin/limparimg' <<EOT
+sudo cat >'/bin/limparimg' <<EOT
 docker system prune --all --force && 
 docker system prune -a && 
 docker volume ls -f dangling=true && 
@@ -138,14 +138,14 @@ EOT
 
 echo -e "\033[1;31m:=> Startando serviços recem criados \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-systemctl daemon-reload
+# sudo systemctl daemon-reload
 
-systemctl enable updateserv.service
-systemctl enable dns.service
+sudo systemctl enable updateserv.service
+sudo systemctl enable dns.service
 
-systemctl start updateserv.service
-systemctl start dns.service
+sudo systemctl start updateserv.service
+sudo systemctl start dns.service
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
-docker container ls
-docker --version
+sudo docker container ls
+sudo docker --version

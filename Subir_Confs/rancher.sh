@@ -2,7 +2,7 @@
 
 echo -e "\033[1;31m:=> Instalando complementos necessários para o longhorn \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-sudo apt update && sudo apt install -y bash curl grep mawk open-iscsi util-linux cloud-init
+sudo apt update && sudo apt install -y bash curl grep mawk open-iscsi util-linux
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
 echo -e "\033[1;31m:=> Criando o arquivo de configuração: RESOLVER \033[0m"
@@ -12,7 +12,7 @@ sudo chmod 777 /bin/resolver
 
 sudo cat >'/bin/resolver' <<EOT
 
-sudo cat >'/etc/resolv.conf' <<EOT
+cat >'/etc/resolv.conf' <<EOT
 search pve.datacenter.tsc
 nameserver 192.168.2.200
 nameserver 192.168.2.201
