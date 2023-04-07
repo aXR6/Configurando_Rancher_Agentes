@@ -2,7 +2,7 @@
 
 echo -e "\033[1;31m:=> Instalando complementos necessários para o longhorn \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-apt update && apt install -y bash curl grep mawk open-iscsi util-linux cloud-init
+apt update #&& apt install -y bash curl grep mawk open-iscsi util-linux cloud-init
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
 echo -e "\033[1;31m:=> Criando o arquivo de configuração: RESOLVER \033[0m"
