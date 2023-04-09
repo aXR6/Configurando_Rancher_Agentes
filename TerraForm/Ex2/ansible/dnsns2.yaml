@@ -1,0 +1,76 @@
+---
+# Copiando os arquivos de configuraçao ara subir o Bind9
+
+- name: DNSNS2
+  hosts: all
+  become: yes
+  tasks:
+    - name: install bind9
+      apt:
+        name: bind9
+        state: present
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: install bind9utils
+      apt:
+        name: bind9utils
+        state: present
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: install bind9-doc
+      apt:
+        name: bind9-doc
+        state: present
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: habilitando o bind9
+      service:
+        name: bind9
+        enabled: yes
+        state: started
+ 
+    - name: Servidor DNS primário
+      copy: 
+        src: /home/thalles/projetos-git/repo_axr6/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/dnsns2/
+        dest: /etc/bind/
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+
+## Enable log
+
+    - name: create named.conf.log
+      blockinfile:
+        create: yes
+        path: /etc/bind/named.conf.log
+        block: |
+          logging {
+            channel bind_log {
+              file "/var/lib/bind/bind.log" versions 3 size 5m;
+              severity info;
+              print-category yes;
+              print-severity yes;
+              print-time yes;
+            };
+            category default { bind_log; };
+            category update { bind_log; };
+            category update-security { bind_log; };
+            category security { bind_log; };
+            category queries { bind_log; };
+            category lame-servers { null; };
+          };
+
+    - name: add log into named.conf
+      lineinfile:
+        path: /etc/bind/named.conf
+        line: include "/etc/bind/named.conf.log";
+
+    - name: restart bind9
+      service:
+        name: bind9
+        state: restarted
+      when: ansible_os_family == "Debian"

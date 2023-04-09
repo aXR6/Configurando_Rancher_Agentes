@@ -9,6 +9,8 @@ locals {
         agent               = 1             # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
         full_clone          = true          # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
         template            = "Debian11CloudInitAgente"      # Nome do modelo usado para clonar
+        vmid                = 101
+        vcpus               = 2
         cores               = 2
         socket              = 1
         memory              = 3500
@@ -16,7 +18,7 @@ locals {
         ip_address          = "192.168.2.11"
         gateway             = "192.168.2.254"
         description         = "Máquina virtual - ks8-vm1 - para Rancher."
-        ssh_user            = "ks8vm1"
+        ssh_user            = "notroot"
         mac_address         = "22:E2:A0:2F:92:53"
         disk_type           = "virtio"
         storage_dev         = "local-zfs"
@@ -36,6 +38,8 @@ locals {
         agent               = 1             # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
         full_clone          = true          # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
         template            = "Debian11CloudInitAgente"      # Nome do modelo usado para clonar
+        vmid                = 102
+        vcpus               = 2
         cores               = 2
         socket              = 1
         memory              = 3500
@@ -43,7 +47,7 @@ locals {
         ip_address          = "192.168.2.12"
         gateway             = "192.168.2.254"
         description         = "Máquina virtual - ks8-vm2 - para Rancher."
-        ssh_user            = "ks8vm2"
+        ssh_user            = "notroot"
         mac_address         = "82:57:68:61:12:DD"
         disk_type           = "virtio"
         storage_dev         = "local-zfs"
@@ -64,6 +68,8 @@ locals {
         agent               = 1             # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
         full_clone          = true          # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
         template            = "Debian11CloudInitAgente"      # Nome do modelo usado para clonar
+        vmid                = 103
+        vcpus               = 2
         cores               = 2
         socket              = 1
         memory              = 3500
@@ -71,7 +77,7 @@ locals {
         ip_address          = "192.168.2.13"
         gateway             = "192.168.2.254"
         description         = "Máquina virtual - ks8-vm3 - para Rancher."
-        ssh_user            = "ks8vm3"
+        ssh_user            = "notroot"
         mac_address         = "4E:C0:9E:89:A1:DD"
         disk_type           = "virtio"
         storage_dev         = "local-zfs"
@@ -91,14 +97,16 @@ locals {
         agent               = 1             # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
         full_clone          = true          # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
         template            = "Debian11CloudInitRancher"      # Nome do modelo usado para clonar
+        vmid                = 100
+        vcpus               = 4
         cores               = 2
-        socket              = 1
+        socket              = 2
         memory              = 4500
         storage             = "35G"         # Tamanho do disco rígido secundário atribuído como inicializável
         ip_address          = "192.168.2.10"
         gateway             = "192.168.2.254"
         description         = "Máquina virtual - ks8-rancher."
-        ssh_user            = "ks8rancher"
+        ssh_user            = "notroot"
         mac_address         = "FA:58:B8:CE:04:B8"
         disk_type           = "virtio"
         storage_dev         = "local-zfs"
@@ -118,6 +126,8 @@ locals {
         agent               = 1             # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
         full_clone          = true          # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
         template            = "Debian11CloudInitComum"      # Nome do modelo usado para clonar
+        vmid                = 201
+        vcpus               = 1
         cores               = 1
         socket              = 1
         memory              = 512
@@ -125,7 +135,7 @@ locals {
         ip_address          = "192.168.2.200"
         gateway             = "192.168.2.254"
         description         = "Máquina virtual - DNS Master."
-        ssh_user            = "dnsmaster"
+        ssh_user            = "notroot"
         mac_address         = "6E:60:3D:9C:6E:60"
         disk_type           = "virtio"
         storage_dev         = "dados"
@@ -145,6 +155,8 @@ locals {
         agent               = 1             # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
         full_clone          = true          # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
         template            = "Debian11CloudInitComum"      # Nome do modelo usado para clonar
+        vmid                = 202
+        vcpus               = 1
         cores               = 1
         socket              = 1
         memory              = 512
@@ -152,7 +164,7 @@ locals {
         ip_address          = "192.168.2.201"
         gateway             = "192.168.2.254"
         description         = "Máquina virtual - DNS Slave."
-        ssh_user            = "dnsslave"
+        ssh_user            = "notroot"
         mac_address         = "02:C0:10:09:A7:D0"
         disk_type           = "virtio"
         storage_dev         = "dados"
@@ -172,6 +184,8 @@ locals {
         agent               = 1             # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
         full_clone          = true          # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
         template            = "Debian11CloudInitComum"      # Nome do modelo usado para clonar
+        vmid                = 200
+        vcpus               = 1
         cores               = 1
         socket              = 2
         memory              = 2042
@@ -179,7 +193,7 @@ locals {
         ip_address          = "192.168.2.203"
         gateway             = "192.168.2.254"
         description         = "Máquina virtual - NFS TORRENT."
-        ssh_user            = "nfstorrent"
+        ssh_user            = "notroot"
         mac_address         = "1E:45:79:99:5C:7B"
         disk_type           = "virtio"
         storage_dev         = "dados"

@@ -1,0 +1,10 @@
+all:
+  children:
+    agentes:
+      hosts:
+        age1:
+          ansible_host: 192.168.2.11
+        age2:
+          ansible_host: 192.168.2.12
+        age3:
+          ansible_host: 192.168.2.13

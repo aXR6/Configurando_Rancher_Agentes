@@ -1,0 +1,12 @@
+---
+- hosts: all
+  gather_facts: false
+  tasks:
+    - name: Baixando o Script
+      get_url:
+        url: https://raw.githubusercontent.com/aXR6/Configurando_Rancher_Agentes/utilitarios/Subir_Confs/rancher.sh
+        dest: /home/notroot/rancher.sh
+        mode: 0777
+    
+    - name: Rodando o Script
+      shell: /home/notroot/rancher.sh

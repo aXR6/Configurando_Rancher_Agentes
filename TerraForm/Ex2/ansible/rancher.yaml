@@ -1,0 +1,6 @@
+all:
+  children:
+    rancher:
+      hosts:
+        rancher:
+          ansible_host: 192.168.2.10
