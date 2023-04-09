@@ -16,8 +16,8 @@ options {
         allow-transfer { none; };         # disable zone transfers by default
 
         forwarders {
-                8.8.8.8;
-                8.8.4.4;
+                177.185.141.2;
+                177.185.142.3;
         };
 
 	dnssec-validation auto;

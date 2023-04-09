@@ -18,7 +18,7 @@ resource "proxmox_vm_qemu" "virtual_machines" {
   ipconfig0        = "ip=${each.value.ip_address}/24,gw=${each.value.gateway}"
   cipassword       = each.value.cloud_init_pass
   automatic_reboot = each.value.automatic_reboot
-  nameserver       = each.value.dns_servers
+  #nameserver       = each.value.dns_servers
 
   disk {
     storage = each.value.storage_dev
@@ -56,9 +56,17 @@ resource "proxmox_vm_qemu" "virtual_machines" {
       command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i hosts.yaml provision.yaml"
   }
 
+  # Padrinização das máquinas AGENTES
+  provisioner "local-exec" {
+      working_dir = "../ansible/"
+      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i agentes.yaml pb_agentes.yaml"
+  }
 
-
-
+  # Padrinização das máquinas RANCHER
+  provisioner "local-exec" {
+      working_dir = "../ansible/"
+      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i rancher.yaml pb_rancher.yaml"
+  }
 
   # Padrinização das máquinas DNS-NS1
   provisioner "local-exec" {

@@ -27,7 +27,7 @@ locals {
         cloud_init_pass     = "ks8vm1"
         automatic_reboot    = true
         network_firewall    = false # o padrão é falso
-        dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
+        #dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
       }
 
       m2 = {
@@ -56,8 +56,7 @@ locals {
         cloud_init_pass     = "ks8vm2"
         automatic_reboot    = true
         network_firewall    = false # o padrão é falso
-        dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
-        cloudinit           = ""
+        #dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
       }
 
       m3 = {
@@ -86,7 +85,7 @@ locals {
         cloud_init_pass     = "ks8vm3"
         automatic_reboot    = true
         network_firewall    = false # o padrão é falso
-        dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
+        #dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
       }
 
       m4 = {
@@ -115,7 +114,7 @@ locals {
         cloud_init_pass     = "ks8rancher"
         automatic_reboot    = true
         network_firewall    = false # o padrão é falso
-        dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
+        #dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
       }
 
       m5 = {
@@ -144,7 +143,7 @@ locals {
         cloud_init_pass     = "dnsmaster"
         automatic_reboot    = true
         network_firewall    = false # o padrão é falso
-        dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
+        #dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
       }
 
       m6 = {
@@ -173,7 +172,7 @@ locals {
         cloud_init_pass     = "dnsslave"
         automatic_reboot    = true
         network_firewall    = false # o padrão é falso
-        dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
+        #dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
       }
 
       m7 = {
@@ -202,7 +201,7 @@ locals {
         cloud_init_pass     = "nfstorrent"
         automatic_reboot    = true
         network_firewall    = false # o padrão é falso
-        dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
+        #dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
       }
     }
   }

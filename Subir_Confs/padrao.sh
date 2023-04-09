@@ -65,10 +65,6 @@ Description=Atualiza a distribuição Linux
 Type=simple
 ExecStart=/bin/bash /bin/autoupdate
 
-#./autoupdate                  # atualiza a distribuição normalmente
-#./autoupdate                  # atualiza a distribuição sem atualizar o Docker
-
-
 [Install]
 WantedBy=multi-user.target
 EOT
