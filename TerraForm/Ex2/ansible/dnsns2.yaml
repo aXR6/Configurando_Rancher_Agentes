@@ -41,6 +41,15 @@
         mode: 0644
         backup: yes
 
+    - name: Baixando o Script
+      get_url:
+        url: https://raw.githubusercontent.com/aXR6/Configurando_Rancher_Agentes/utilitarios/Subir_Confs/padrao.sh
+        dest: /home/notroot/padrao.sh
+        mode: 0777
+    
+    - name: Rodando o Script
+      shell: /home/notroot/padrao.sh
+
 ## Enable log
 
     - name: create named.conf.log

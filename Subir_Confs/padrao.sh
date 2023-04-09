@@ -94,3 +94,8 @@ ExecStart=/bin/bash /bin/autoupdate --without-docker
 WantedBy=multi-user.target
 EOT
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
+sudo systemctl enable updateserv.service &&
+sudo systemctl enable dns.service &&
+
+sudo systemctl start updateserv.service &&
+sudo systemctl start dns.service
