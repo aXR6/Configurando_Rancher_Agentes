@@ -28,7 +28,8 @@ locals {
         hotplug             = "network,disk"
         automatic_reboot    = true
         network_firewall    = false # o padrão é falso
-        #dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
+        searchdomain        = "pve.datacenter.tsc"
+        nameserver          = "192.168.2.200 192.168.2.201 8.8.8.8"
       }
 
       m2 = {
@@ -58,7 +59,8 @@ locals {
         hotplug             = "network,disk"
         automatic_reboot    = true
         network_firewall    = false # o padrão é falso
-        #dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
+        searchdomain        = "pve.datacenter.tsc"
+        nameserver          = "192.168.2.200 192.168.2.201 8.8.8.8"
       }
 
       m3 = {
@@ -88,7 +90,8 @@ locals {
         hotplug             = "network,disk"
         automatic_reboot    = true
         network_firewall    = false # o padrão é falso
-        #dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
+        searchdomain        = "pve.datacenter.tsc"
+        nameserver          = "192.168.2.200 192.168.2.201 8.8.8.8"
       }
 
       m4 = {
@@ -118,7 +121,8 @@ locals {
         hotplug             = "network,disk"
         automatic_reboot    = true
         network_firewall    = false # o padrão é falso
-        #dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
+        searchdomain        = "pve.datacenter.tsc"
+        nameserver          = "192.168.2.200 192.168.2.201 8.8.8.8"
       }
 
       m5 = {
@@ -148,7 +152,8 @@ locals {
         hotplug             = "network,disk"
         automatic_reboot    = true
         network_firewall    = false # o padrão é falso
-        #dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
+        searchdomain        = "pve.datacenter.tsc"
+        nameserver          = "192.168.2.200 192.168.2.201 8.8.8.8"
       }
 
       m6 = {
@@ -178,7 +183,8 @@ locals {
         hotplug             = "network,disk"
         automatic_reboot    = true
         network_firewall    = false # o padrão é falso
-        #dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
+        searchdomain        = "pve.datacenter.tsc"
+        nameserver          = "192.168.2.200 192.168.2.201 8.8.8.8"
       }
 
       m7 = {
@@ -208,7 +214,8 @@ locals {
         hotplug             = "network,disk"
         automatic_reboot    = true
         network_firewall    = false # o padrão é falso
-        #dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
+        searchdomain        = "pve.datacenter.tsc"
+        nameserver          = "192.168.2.200 192.168.2.201 8.8.8.8"
       }
     }
   }

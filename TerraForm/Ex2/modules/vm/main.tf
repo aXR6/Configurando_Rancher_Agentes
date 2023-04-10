@@ -19,7 +19,8 @@ resource "proxmox_vm_qemu" "virtual_machines" {
   cipassword       = each.value.cloud_init_pass
   automatic_reboot = each.value.automatic_reboot
   hotplug          = each.value.hotplug
-  #nameserver       = each.value.dns_servers
+  searchdomain     = each.value.searchdomain
+  nameserver       = each.value.nameserver
 
   disk {
     storage = each.value.storage_dev
