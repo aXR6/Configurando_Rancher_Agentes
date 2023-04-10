@@ -50,22 +50,21 @@ resource "proxmox_vm_qemu" "virtual_machines" {
 	  # Começar com Ansible local-exec 
     inline = [ "echo 'Legal, estamos prontos para provisionamento'"]
   }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt update",
+      "sudo apt dist-upgrade -y",
+      "sudo apt autoremove -y",
+      "sudo apt autoclean",
+      "sudo apt clean"
+    ]
+  }
+
   # Padrinização das máquinas para usuario e SSH
   provisioner "local-exec" {
       working_dir = "../ansible/"
       command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i hosts.yaml provision.yaml"
-  }
-
-  # Padrinização das máquinas AGENTES
-  provisioner "local-exec" {
-      working_dir = "../ansible/"
-      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i agentes.yaml pb_agentes.yaml"
-  }
-
-  # Padrinização das máquinas RANCHER
-  provisioner "local-exec" {
-      working_dir = "../ansible/"
-      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i rancher.yaml pb_rancher.yaml"
   }
 
   # Padrinização das máquinas DNS-NS1
@@ -78,5 +77,17 @@ resource "proxmox_vm_qemu" "virtual_machines" {
   provisioner "local-exec" {
       working_dir = "../ansible/"
       command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i indnsns2.yaml dnsns2.yaml"
+  }
+
+  # Padrinização das máquinas AGENTES
+  provisioner "local-exec" {
+      working_dir = "../ansible/"
+      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i agentes.yaml pb_agentes.yaml"
+  }
+
+  # Padrinização das máquinas RANCHER
+  provisioner "local-exec" {
+      working_dir = "../ansible/"
+      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i rancher.yaml pb_rancher.yaml"
   }
 }

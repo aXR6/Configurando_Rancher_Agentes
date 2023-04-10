@@ -13,7 +13,7 @@ locals {
         vcpus               = 2
         cores               = 2
         socket              = 1
-        memory              = 3500
+        memory              = 3000
         storage             = "35G"         # Tamanho do disco rígido secundário atribuído como inicializável
         ip_address          = "192.168.2.11"
         gateway             = "192.168.2.254"
@@ -42,7 +42,7 @@ locals {
         vcpus               = 2
         cores               = 2
         socket              = 1
-        memory              = 3500
+        memory              = 3000
         storage             = "35G"         # Tamanho do disco rígido secundário atribuído como inicializável
         ip_address          = "192.168.2.12"
         gateway             = "192.168.2.254"
@@ -71,7 +71,7 @@ locals {
         vcpus               = 2
         cores               = 2
         socket              = 1
-        memory              = 3500
+        memory              = 3000
         storage             = "35G"         # Tamanho do disco rígido secundário atribuído como inicializável
         ip_address          = "192.168.2.13"
         gateway             = "192.168.2.254"
@@ -100,7 +100,7 @@ locals {
         vcpus               = 4
         cores               = 2
         socket              = 2
-        memory              = 4500
+        memory              = 4000
         storage             = "35G"         # Tamanho do disco rígido secundário atribuído como inicializável
         ip_address          = "192.168.2.10"
         gateway             = "192.168.2.254"
@@ -118,7 +118,7 @@ locals {
       }
 
       m5 = {
-        name                = "DNS-NS1"
+        name                = "ns1"
         target_node         = "dellt110" # Nome do Servidor Proxmox
         qemu_os             = "Linux"       # Tipo de sistema operacional
         os_type             = "cloud-init"  # Defina como cloud-init para utilizar modelos
@@ -147,7 +147,7 @@ locals {
       }
 
       m6 = {
-        name                = "DNS-NS2"
+        name                = "ns2"
         target_node         = "dellt110" # Nome do Servidor Proxmox
         qemu_os             = "Linux"       # Tipo de sistema operacional
         os_type             = "cloud-init"  # Defina como cloud-init para utilizar modelos
@@ -176,7 +176,7 @@ locals {
       }
 
       m7 = {
-        name                = "NFS-SERVER-TORRENT"
+        name                = "nfstorrent"
         target_node         = "dellt110" # Nome do Servidor Proxmox
         qemu_os             = "Linux"       # Tipo de sistema operacional
         os_type             = "cloud-init"  # Defina como cloud-init para utilizar modelos
@@ -187,7 +187,7 @@ locals {
         vcpus               = 1
         cores               = 1
         socket              = 2
-        memory              = 2042
+        memory              = 512
         storage             = "120G"         # Tamanho do disco rígido secundário atribuído como inicializável
         ip_address          = "192.168.2.203"
         gateway             = "192.168.2.254"

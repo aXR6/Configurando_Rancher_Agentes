@@ -2,11 +2,11 @@
 - hosts: all
   gather_facts: false
   tasks:
-    - name: Baixando o Script
+    - name: Baixando o Script - Agentes
       get_url:
         url: https://raw.githubusercontent.com/aXR6/Configurando_Rancher_Agentes/utilitarios/Subir_Confs/agentes.sh
         dest: /home/notroot/agentes.sh
         mode: 0777
     
-    - name: Rodando o Script
+    - name: Rodando o Script - Agentes
       shell: /home/notroot/agentes.sh

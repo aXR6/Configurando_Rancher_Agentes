@@ -1,8 +1,5 @@
 ---
-# Copiando os arquivos de configuraçao ara subir o Bind9
-
-- name: DNSNS1
-  hosts: all
+- hosts: all
   become: yes
   tasks:
     - name: install bind9
@@ -41,13 +38,13 @@
         mode: 0644
         backup: yes
 
-    - name: Baixando o Script
+    - name: Baixando o Script - DNS-NS1
       get_url:
         url: https://raw.githubusercontent.com/aXR6/Configurando_Rancher_Agentes/utilitarios/Subir_Confs/padrao.sh
         dest: /home/notroot/padrao.sh
         mode: 0777
     
-    - name: Rodando o Script
+    - name: Rodando o Script - DNS-NS1
       shell: /home/notroot/padrao.sh
 
 ## Enable log
