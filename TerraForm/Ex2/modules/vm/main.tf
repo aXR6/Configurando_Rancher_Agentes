@@ -18,6 +18,7 @@ resource "proxmox_vm_qemu" "virtual_machines" {
   ipconfig0        = "ip=${each.value.ip_address}/24,gw=${each.value.gateway}"
   cipassword       = each.value.cloud_init_pass
   automatic_reboot = each.value.automatic_reboot
+  hotplug          = each.value.hotplug
   #nameserver       = each.value.dns_servers
 
   disk {

@@ -25,6 +25,7 @@ locals {
         network_bridge_type = "vmbr0"
         network_model       = "virtio"
         cloud_init_pass     = "ks8vm1"
+        hotplug             = "network,disk"
         automatic_reboot    = true
         network_firewall    = false # o padrão é falso
         #dns_servers         = "192.168.2.200 192.168.2.201 8.8.8.8"
