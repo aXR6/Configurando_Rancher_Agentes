@@ -12,6 +12,9 @@ resource "proxmox_vm_qemu" "virtual_machines" {
   sockets          = each.value.socket
   cores            = each.value.cores
   vcpus            = each.value.vcpus
+  cpu              = each.value.cpu
+  balloon          = each.value.balloon
+  numa             = each.value.numa
   ssh_user         = each.value.ssh_user
   sshkeys          = file(var.ssh_keys["pub"])
   ciuser           = each.value.ssh_user

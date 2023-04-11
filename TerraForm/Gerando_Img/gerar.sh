@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Instalação das dependências
-apt update
-apt install -y libguestfs-tools
+#apt update
+#apt install -y libguestfs-tools
 
 # Menu de opções
 echo "Selecione uma opção:"
@@ -14,28 +14,28 @@ read opcao
 # Verifica a opção selecionada
 case $opcao in
   1)
-    imageURL="http://192.168.2.100/debian-11-backports-genericcloud-amd64-daily.qcow2"
+    #imageURL="https://download937.mediafire.com/fbmvqmmb0yugg03MlvpVfbKfQ4Wf7c1E2hcf1SoMusTozKGni0eTKwmlyfRRb_wEc7YASbRA0ekNS6trxw49AR8C58AHFGPP/sgnuk7dh1fva4pn/debian-11-backports-genericcloud-amd64-daily.qcow2"
     imageName="debian-11-backports-genericcloud-amd64-daily.qcow2"
     volumeName="local-zfs"
-    virtualMachineId="300"
+    virtualMachineId="303"
     templateName="Debian11CloudInitRancher"
     tmp_cores="2"
     tmp_memory="3500"
     ;;
   2)
-    imageURL="http://192.168.2.100/debian-11-backports-genericcloud-amd64-daily.qcow2"
+    #imageURL="https://download937.mediafire.com/fbmvqmmb0yugg03MlvpVfbKfQ4Wf7c1E2hcf1SoMusTozKGni0eTKwmlyfRRb_wEc7YASbRA0ekNS6trxw49AR8C58AHFGPP/sgnuk7dh1fva4pn/debian-11-backports-genericcloud-amd64-daily.qcow2"
     imageName="debian-11-backports-genericcloud-amd64-daily.qcow2"
     volumeName="local-zfs"
-    virtualMachineId="301"
+    virtualMachineId="304"
     templateName="Debian11CloudInitAgente"
     tmp_cores="2"
     tmp_memory="3500"
     ;;
   3)
-    imageURL="http://192.168.2.100/debian-11-backports-genericcloud-amd64-daily.qcow2"
+    #imageURL="https://download937.mediafire.com/fbmvqmmb0yugg03MlvpVfbKfQ4Wf7c1E2hcf1SoMusTozKGni0eTKwmlyfRRb_wEc7YASbRA0ekNS6trxw49AR8C58AHFGPP/sgnuk7dh1fva4pn/debian-11-backports-genericcloud-amd64-daily.qcow2"
     imageName="debian-11-backports-genericcloud-amd64-daily.qcow2"
     volumeName="local-zfs"
-    virtualMachineId="302"
+    virtualMachineId="305"
     templateName="Debian11CloudInitComum"
     tmp_cores="2"
     tmp_memory="3500"
@@ -50,7 +50,7 @@ esac
 rm *.img
 
 # Download da imagem
-wget -O "$imageName" "$imageURL"
+#wget -O "$imageName" "$imageURL"
 
 # Remoção de uma possível máquina com o mesmo ID
 qm destroy "$virtualMachineId"
