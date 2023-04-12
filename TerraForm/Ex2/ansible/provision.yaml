@@ -2,14 +2,16 @@
 - hosts: all
   become: yes
   tasks:
-     - name: Atualizar e atualizar pacotes apt
-       become: yes
-       ignore_errors: yes
-       failed_when: "'FAILED' in command_result.stderr"
-       apt:
-         upgrade: yes
-         update_cache: yes
-         cache_valid_time: 86400 #One day
+# Eu preferi fazer o procedimento sempre que for provisionar as VM
+#     - name: Atualizar e atualizar pacotes apt
+#       become: yes
+#       ignore_errors: yes
+#       failed_when: "'FAILED' in command_result.stderr"
+#       apt:
+#         upgrade: yes
+#         update_cache: yes
+#         cache_valid_time: 86400 #One day
+# Eu preferi fazer o procedimento sempre que for provisionar as VM
 
      - name: Certifique-se de que temos um grupo 'wheel'
        group:
