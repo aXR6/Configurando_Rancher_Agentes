@@ -28,7 +28,7 @@
         name: bind9
         enabled: yes
         state: started
- 
+
     - name: Servidor DNS Secundario
       copy: 
         src: /home/thalles/projetos-git/repo_axr6/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/dnsns2/
