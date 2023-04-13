@@ -15,7 +15,7 @@ resource "proxmox_vm_qemu" "virtual_machines" {
   cpu              = each.value.cpu
   balloon          = each.value.balloon
   numa             = each.value.numa
-  ssh_user         = each.value.sshuser
+  ssh_user         = each.value.ssh_user
   sshkeys          = file(var.ssh_keys["pub"])
   ciuser           = each.value.ssh_user
   ipconfig0        = "ip=${each.value.ip_address}/24,gw=${each.value.gateway}"
@@ -59,30 +59,30 @@ resource "proxmox_vm_qemu" "virtual_machines" {
   # Padrinização das máquinas para usuario e SSH
   provisioner "local-exec" {
       working_dir = "../ansible/"
-      command = "ansible-playbook -u ${var.sshuser} --key-file ${var.ssh_keys["priv"]} -i hosts.yaml provision.yaml"
+      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i hosts.yaml provision.yaml"
   }
 
   # Padrinização das máquinas DNS-NS1
   provisioner "local-exec" {
       working_dir = "../ansible/"
-      command = "ansible-playbook -u ${var.sshuser} --key-file ${var.ssh_keys["priv"]} -i indnsns1.yaml dnsns1.yaml"
+      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i indnsns1.yaml dnsns1.yaml"
   }
 
   # Padrinização das máquinas DNS-NS2
   provisioner "local-exec" {
       working_dir = "../ansible/"
-      command = "ansible-playbook -u ${var.sshuser} --key-file ${var.ssh_keys["priv"]} -i indnsns2.yaml dnsns2.yaml"
+      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i indnsns2.yaml dnsns2.yaml"
   }
 
   # Padrinização das máquinas AGENTES
   provisioner "local-exec" {
       working_dir = "../ansible/"
-      command = "ansible-playbook -u ${var.sshuser} --key-file ${var.ssh_keys["priv"]} -i agentes.yaml pb_agentes.yaml"
+      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i agentes.yaml pb_agentes.yaml"
   }
 
   # Padrinização das máquinas RANCHER
   provisioner "local-exec" {
       working_dir = "../ansible/"
-      command = "ansible-playbook -u ${var.sshuser} --key-file ${var.ssh_keys["priv"]} -i rancher.yaml pb_rancher.yaml"
+      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i rancher.yaml pb_rancher.yaml"
   }
 }
