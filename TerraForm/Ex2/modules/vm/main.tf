@@ -40,73 +40,60 @@ resource "proxmox_vm_qemu" "virtual_machines" {
     rate     = 0
     firewall = each.value.network_firewall
   }
-}
  
-# Define a conexão SSH para cada host
-resource "null_resource" "ssh" {
-  count = length(var.hosts)
-
+  #creates ssh connection to check when the CT is ready for ansible provisioning
   connection {
     type        = "ssh"
-    host        = var.hosts[count.index]
-    user        = var.ssh_user
+    host        = each.value.ip_address
+    user        = each.value.ssh_user
     private_key = file(var.ssh_keys["priv"])
     agent       = false
     timeout     = "3m"
   }
+
+  provisioner "remote-exec" {
+	  # Começar com Ansible local-exec 
+    inline = [ "echo 'Legal, estamos prontos para provisionamento'"]
+  }
+
+# Definição das máquinas
+locals {
+  machines = [
+    {
+      name = "provision"
+      playbook = "provision.yaml"
+      inventory = "hosts.yaml"
+    },
+    {
+      name = "dnsns1"
+      playbook = "dnsns1.yaml"
+      inventory = "indnsns1.yaml"
+    },
+    {
+      name = "dnsns2"
+      playbook = "dnsns2.yaml"
+      inventory = "indnsns2.yaml"
+    },
+    {
+      name = "agentes"
+      playbook = "pb_agentes.yaml"
+      inventory = "agentes.yaml"
+    },
+    {
+      name = "rancher"
+      playbook = "pb_rancher.yaml"
+      inventory = "rancher.yaml"
+    }
+  ]
 }
 
-# Executa a tarefa de provisionamento do Ansible em cada host
-resource "null_resource" "provisioning" {
-  count = length(var.hosts)
+# Bloco de provisionamento para executar a padronização em todas as máquinas
+resource "null_resource" "ansible_provisioning" {
+  count = length(local.machines)
 
   provisioner "local-exec" {
     working_dir = "../ansible/"
-    command = "ansible-playbook -u ${var.ssh_user} --key-file ${var.ssh_keys["priv"]} -i hosts.yaml provision.yaml"
-    when = null_resource.ssh[count.index].connection_status == "success"
+    command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i ${local.machines[count.index].inventory} ${local.machines[count.index].playbook}"
   }
 }
-
-# Executa a tarefa de provisionamento de DNS-NS1 em cada host
-resource "null_resource" "dnsns1" {
-  count = length(var.hosts)
-
-  provisioner "local-exec" {
-    working_dir = "../ansible/"
-    command = "ansible-playbook -u ${var.ssh_user} --key-file ${var.ssh_keys["priv"]} -i indnsns1.yaml dnsns1.yaml"
-    when = null_resource.ssh[count.index].connection_status == "success"
-  }
-}
-
-# Executa a tarefa de provisionamento de DNS-NS2 em cada host
-resource "null_resource" "dnsns2" {
-  count = length(var.hosts)
-
-  provisioner "local-exec" {
-    working_dir = "../ansible/"
-    command = "ansible-playbook -u ${var.ssh_user} --key-file ${var.ssh_keys["priv"]} -i indnsns2.yaml dnsns2.yaml"
-    when = null_resource.ssh[count.index].connection_status == "success"
-  }
-}
-
-# Executa a tarefa de provisionamento dos agentes em cada host
-resource "null_resource" "agents" {
-  count = length(var.hosts)
-
-  provisioner "local-exec" {
-    working_dir = "../ansible/"
-    command = "ansible-playbook -u ${var.ssh_user} --key-file ${var.ssh_keys["priv"]} -i agentes.yaml pb_agentes.yaml"
-    when = null_resource.ssh[count.index].connection_status == "success"
-  }
-}
-
-# Executa a tarefa de provisionamento do Ranch
-resource "null_resource" "rancher" {
-  count = length(var.hosts)
-
-  provisioner "local-exec" {
-    working_dir = "../ansible/"
-    command = "ansible-playbook -u ${var.ssh_user} --key-file ${var.ssh_keys["priv"]} -i rancher.yaml pb_rancher.yaml"
-    when = null_resource.ssh[count.index].connection_status == "success"
-  }
 }
