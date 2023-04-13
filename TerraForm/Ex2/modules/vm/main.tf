@@ -60,10 +60,6 @@ locals {
 # Executa playbook Ansible para padronização das máquinas
 provisioner "local-exec" {
   working_dir = local.playbook_dir
-  command = "${local.ansible_cmd} -i hosts.yaml provision.yaml && \
-             ${local.ansible_cmd} -i indnsns1.yaml dnsns1.yaml && \
-             ${local.ansible_cmd} -i indnsns2.yaml dnsns2.yaml && \
-             ${local.ansible_cmd} -i agentes.yaml pb_agentes.yaml && \
-             ${local.ansible_cmd} -i rancher.yaml pb_rancher.yaml"
+  command = "${local.ansible_cmd} -i hosts.yaml provision.yaml && ${local.ansible_cmd} -i indnsns1.yaml dnsns1.yaml && ${local.ansible_cmd} -i indnsns2.yaml dnsns2.yaml && ${local.ansible_cmd} -i agentes.yaml pb_agentes.yaml && ${local.ansible_cmd} -i rancher.yaml pb_rancher.yaml"
 }
 }
