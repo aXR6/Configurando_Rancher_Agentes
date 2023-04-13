@@ -51,11 +51,6 @@ resource "proxmox_vm_qemu" "virtual_machines" {
     timeout     = "3m"
   }
 
-  provisioner "remote-exec" {
-	  # Começar com Ansible local-exec 
-    inline = [ "echo 'Legal, estamos prontos para provisionamento'"]
-  }
-}
 # Definição das máquinas
 locals {
   machines = [
@@ -95,4 +90,5 @@ resource "null_resource" "ansible_provisioning" {
     working_dir = "../ansible/"
     command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i ${local.machines[count.index].inventory} ${local.machines[count.index].playbook}"
   }
+}
 }
