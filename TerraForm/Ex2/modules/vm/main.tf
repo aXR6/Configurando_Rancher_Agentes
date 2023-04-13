@@ -52,7 +52,7 @@ connection {
 }
 
 # Define caminho e comando para executar playbook Ansible
-locals {
+local {
   playbook_dir = "../ansible/"
   ansible_cmd  = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]}"
 }
