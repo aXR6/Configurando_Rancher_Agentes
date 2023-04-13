@@ -31,7 +31,7 @@
 
     - name: Servidor DNS Secundario
       copy: 
-        scr: /home/terminal/projetos/terraform/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/dnsns2/
+        path: /home/terminal/projetos/terraform/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/dnsns2/
         dest: /etc/bind/
         owner: root
         group: root
