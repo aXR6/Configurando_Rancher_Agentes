@@ -56,15 +56,15 @@ resource "proxmox_vm_qemu" "virtual_machines" {
     inline = [ "echo 'Legal, estamos prontos para provisionamento'"]
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "sudo apt update",
-      "sudo apt dist-upgrade -y",
-      "sudo apt autoremove -y",
-      "sudo apt autoclean",
-      "sudo apt clean"
-    ]
-  }
+#  provisioner "remote-exec" {
+#    inline = [
+#      "sudo apt update",
+#      "sudo apt dist-upgrade -y",
+#      "sudo apt autoremove -y",
+#      "sudo apt autoclean",
+#      "sudo apt clean"
+#    ]
+#  }
 
   # Padrinização das máquinas para usuario e SSH
   provisioner "local-exec" {

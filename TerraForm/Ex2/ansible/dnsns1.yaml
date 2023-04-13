@@ -31,10 +31,10 @@
  
     - name: Servidor DNS primário
       copy: 
-        path: /home/terminal/projetos/terraform/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/dnsns1/
+        src: /home/terminal/projetos/terraform/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/dnsns1/
         dest: /etc/bind/
-        owner: root
-        group: root
+        owner: notroot
+        group: notroot
         mode: 0644
         backup: yes
 
