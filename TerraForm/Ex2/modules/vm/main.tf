@@ -41,25 +41,48 @@ resource "proxmox_vm_qemu" "virtual_machines" {
     firewall = each.value.network_firewall
   }
  
-# Cria conexão SSH para verificar se a CT está pronta para o provisionamento Ansible
-connection {
-  type        = "ssh"
-  host        = each.value.ip_address
-  user        = each.value.ssh_user
-  private_key = file(var.ssh_keys["priv"])
-  agent       = false
-  timeout     = "3m"
-}
+  #creates ssh connection to check when the CT is ready for ansible provisioning
+  connection {
+    type        = "ssh"
+    host        = each.value.ip_address
+    user        = each.value.ssh_user
+    private_key = file(var.ssh_keys["priv"])
+    agent       = false
+    timeout     = "3m"
+  }
 
-# Define caminho e comando para executar playbook Ansible
-teste {
-  playbook_dir = "../ansible/"
-  ansible_cmd  = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]}"
-}
+  provisioner "remote-exec" {
+	  # Começar com Ansible local-exec 
+    inline = [ "echo 'Legal, estamos prontos para provisionamento'"]
+  }
 
-# Executa playbook Ansible para padronização das máquinas
-provisioner "local-exec" {
-  working_dir = teste.playbook_dir
-  command = "${teste.ansible_cmd} -i hosts.yaml provision.yaml && ${teste.ansible_cmd} -i indnsns1.yaml dnsns1.yaml && ${local.ansible_cmd} -i indnsns2.yaml dnsns2.yaml && ${local.ansible_cmd} -i agentes.yaml pb_agentes.yaml && ${local.ansible_cmd} -i rancher.yaml pb_rancher.yaml"
-}
+  # Padrinização das máquinas para usuario e SSH
+  provisioner "local-exec" {
+      working_dir = "../ansible/"
+      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i hosts.yaml provision.yaml"
+  }
+
+  # Padrinização das máquinas DNS-NS1
+  provisioner "local-exec" {
+      working_dir = "../ansible/"
+      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i indnsns1.yaml dnsns1.yaml"
+  }
+
+  # Padrinização das máquinas DNS-NS2
+  provisioner "local-exec" {
+      working_dir = "../ansible/"
+      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i indnsns2.yaml dnsns2.yaml"
+  }
+
+  # Padrinização das máquinas AGENTES
+  provisioner "local-exec" {
+      working_dir = "../ansible/"
+      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i agentes.yaml pb_agentes.yaml"
+  }
+
+  # Padrinização das máquinas RANCHER
+  provisioner "local-exec" {
+      working_dir = "../ansible/"
+      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i rancher.yaml pb_rancher.yaml"
+  }
 }
