@@ -40,6 +40,7 @@ resource "proxmox_vm_qemu" "virtual_machines" {
     rate     = 0
     firewall = each.value.network_firewall
   }
+}
  
 # Define a conexão SSH para cada host
 resource "null_resource" "ssh" {
@@ -108,6 +109,4 @@ resource "null_resource" "rancher" {
     command = "ansible-playbook -u ${var.ssh_user} --key-file ${var.ssh_keys["priv"]} -i rancher.yaml pb_rancher.yaml"
     when = null_resource.ssh[count.index].connection_status == "success"
   }
-}
-
 }
