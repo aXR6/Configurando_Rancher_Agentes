@@ -51,44 +51,44 @@ resource "proxmox_vm_qemu" "virtual_machines" {
     timeout     = "3m"
   }
 
-# Definição das máquinas
-locals {
-  machines = [
-    {
-      name = "provision"
-      playbook = "provision.yaml"
-      inventory = "hosts.yaml"
-    },
-    {
-      name = "dnsns1"
-      playbook = "dnsns1.yaml"
-      inventory = "indnsns1.yaml"
-    },
-    {
-      name = "dnsns2"
-      playbook = "dnsns2.yaml"
-      inventory = "indnsns2.yaml"
-    },
-    {
-      name = "agentes"
-      playbook = "pb_agentes.yaml"
-      inventory = "agentes.yaml"
-    },
-    {
-      name = "rancher"
-      playbook = "pb_rancher.yaml"
-      inventory = "rancher.yaml"
-    }
-  ]
-}
-
-# Bloco de provisionamento para executar a padronização em todas as máquinas
-resource "null_resource" "ansible_provisioning" {
-  count = length(local.machines)
-
-  provisioner "local-exec" {
-    working_dir = "../ansible/"
-    command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i ${local.machines[count.index].inventory} ${local.machines[count.index].playbook}"
+  # Definição das máquinas
+  local {
+    machines = [
+      {
+        name = "provision"
+        playbook = "provision.yaml"
+        inventory = "hosts.yaml"
+      },
+      {
+        name = "dnsns1"
+        playbook = "dnsns1.yaml"
+        inventory = "indnsns1.yaml"
+      },
+      {
+        name = "dnsns2"
+        playbook = "dnsns2.yaml"
+        inventory = "indnsns2.yaml"
+      },
+      {
+        name = "agentes"
+        playbook = "pb_agentes.yaml"
+        inventory = "agentes.yaml"
+      },
+      {
+        name = "rancher"
+        playbook = "pb_rancher.yaml"
+        inventory = "rancher.yaml"
+      }
+    ]
   }
-}
+
+  # Bloco de provisionamento para executar a padronização em todas as máquinas
+  resource "null_resource" "ansible_provisioning" {
+    count = length(local.machines)
+
+    provisioner "local-exec" {
+      working_dir = "../ansible/"
+      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i ${local.machines[count.index].inventory} ${local.machines[count.index].playbook}"
+    }
+  }
 }
