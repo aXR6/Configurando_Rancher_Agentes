@@ -52,37 +52,37 @@ resource "proxmox_vm_qemu" "virtual_machines" {
   }
 
   provisioner "remote-exec" {
-    # Começar com Ansible local-exec
+    # Começar com Ansible local-exec 
     inline = [ "echo 'Legal, estamos prontos para provisionamento'"]
   }
 
-  # Loop através dos provisioners
-  dynamic "setting" {
-    for_each = [
-      {
-        service = "provision.yaml"
-        inventory = "hosts.yaml"
-      },
-      {
-        service = "dnsns1.yaml"
-        inventory = "indnsns1.yaml"
-      },
-      {
-        service = "dnsns2.yaml"
-        inventory = "indnsns2.yaml"
-      },
-      {
-        service = "pb_agentes.yaml"
-        inventory = "agentes.yaml"
-      },
-      {
-        service = "pb_rancher.yaml"
-        inventory = "rancher.yaml"
-      }
-    ]
-    content {
+  # Padrinização das máquinas para usuario e SSH
+  provisioner "local-exec" {
       working_dir = "../ansible/"
-      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i ${each.value.inventory} ${each.value.service}"
-    }
+      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i hosts.yaml provision.yaml"
+  }
+
+  # Padrinização das máquinas DNS-NS1
+  provisioner "local-exec" {
+      working_dir = "../ansible/"
+      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i indnsns1.yaml dnsns1.yaml"
+  }
+
+  # Padrinização das máquinas DNS-NS2
+  provisioner "local-exec" {
+      working_dir = "../ansible/"
+      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i indnsns2.yaml dnsns2.yaml"
+  }
+
+  # Padrinização das máquinas AGENTES
+  provisioner "local-exec" {
+      working_dir = "../ansible/"
+      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i agentes.yaml pb_agentes.yaml"
+  }
+
+  # Padrinização das máquinas RANCHER
+  provisioner "local-exec" {
+      working_dir = "../ansible/"
+      command = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i rancher.yaml pb_rancher.yaml"
   }
 }
