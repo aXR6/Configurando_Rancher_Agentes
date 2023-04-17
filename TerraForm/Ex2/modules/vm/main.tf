@@ -57,7 +57,7 @@ resource "proxmox_vm_qemu" "virtual_machines" {
   }
 
   # Loop através dos provisioners
-  dynamic "provisioner" {
+  dynamic "setting" {
     for_each = [
       {
         service = "provision.yaml"
