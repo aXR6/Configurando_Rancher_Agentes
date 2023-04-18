@@ -2,28 +2,25 @@
 - hosts: all
   become: yes
   tasks:
+    - name: update apt cache
+      command: apt update
+
     - name: instalando o bind9
       apt:
         name: bind9
         state: present
-      update_cache: yes
-      #upgrade: yes
       when: ansible_facts['os_family'] == "Debian"
 
     - name: instalando o bind9utils
       apt:
         name: bind9utils
         state: present
-      #update_cache: yes
-      #upgrade: yes
       when: ansible_facts['os_family'] == "Debian"
 
     - name: instalando o bind9-doc
       apt:
         name: bind9-doc
         state: present
-      #update_cache: yes
-      #upgrade: yes
       when: ansible_facts['os_family'] == "Debian"
 
     - name: habilitando o bind9
