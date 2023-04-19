@@ -112,32 +112,13 @@ SYN_ATTACK = "1"
 # Proteger contra ataques de portas aleatórias
 PORTFLOOD = "80;tcp;20;5"
 
-# Proecho -e "\033[1;31m:=> Configurando o CSF Firewall \033[0m"
-echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-sudo apt install -y perl zip unzip libwww-perl liblwp-protocol-https-perl wget
-sudo apt install -y sendmail-bin
+# Proteger contra ataque DDoS
+DDOS = "1"
 
-cd /usr/src
-sudo wget https://download.configserver.com/csf.tgz
-sudo tar -xzvf csf.tgz
-cd csf 
-sudo sh install.sh
+# Proteger contra ataques de bruteforce SSH
+LF_SSHD = "5"
 
-sudo perl /usr/local/csf/bin/csftest.pl
-
-sudo cat >'/etc/csf/csf.conf' <<EOT
-# Configurações de Firewall csf
-
-# Habilitar o csf
-TESTING = "0"
-# Alterar para "1" para executar no modo de teste sem bloquear
-# Alterar para "0" para executar no modo de produção
-
-# Lista de portas TCP permitidas
-TCP_IN = "20,21,22,25,53,80,110,143,443,465,587,993,995"
-TCP_OUT = "20,21,22,25,53,80,110,113,443"
-
-# Listteger contra ataques de bruteforce FTP
+# Proteger contra ataques de bruteforce FTP
 LF_FTPD = "5"
 
 # Proteger contra ataques de bruteforce POP3
