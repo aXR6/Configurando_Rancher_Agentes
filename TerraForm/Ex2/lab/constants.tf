@@ -2,6 +2,40 @@ locals {
   machine_map = {
     machines = {
       m1 = {
+        name                = "ks8-rancher"
+        target_node         = "dell5437"                 # Nome do Servidor Proxmox
+        qemu_os             = "Linux"                    # Tipo de sistema operacional
+        os_type             = "cloud-init"               # Defina como cloud-init para utilizar modelos
+        agent               = 1                          # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
+        full_clone          = true                       # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
+        template            = "Debian11CloudInitRancher" # Nome do modelo usado para clonar
+        vmid                = 100
+        vcpus               = 4
+        cores               = 2
+        socket              = 2
+        memory              = 4096
+        balloon             = 4096                       # Memória mínima
+        storage             = "35G"                      # Tamanho do disco rígido secundário atribuído como inicializável
+        cpu                 = "kvm64"
+        numa                = true                       # acesso não uniforme à memória (NUMA) e a fixação da CPU (afinidade do processador)
+        ip_address          = "192.168.2.10"
+        gateway             = "192.168.2.254"
+        description         = "Máquina virtual - ks8-rancher."
+        ssh_user            = "notroot"
+        mac_address         = "FA:58:B8:CE:04:B8"
+        disk_type           = "scsi"
+        storage_dev         = "local-zfs"
+        network_bridge_type = "vmbr0"
+        network_model       = "virtio"
+        cloud_init_pass     = "ks8rancher"
+        hotplug             = "network,disk,cpu,memory"
+        automatic_reboot    = true
+        network_firewall    = false                      # o padrão é falso
+        searchdomain        = "pve.datacenter.tsc"
+        nameserver          = "192.168.2.200 192.168.2.201 8.8.8.8"
+      }
+
+      m2 = {
         name                = "ks8-vm1"
         target_node         = "dell5437"                # Nome do Servidor Proxmox
         qemu_os             = "Linux"                   # Tipo de sistema operacional
@@ -35,7 +69,7 @@ locals {
         nameserver          = "192.168.2.200 192.168.2.201 8.8.8.8"
       }
 
-      m2 = {
+      m3 = {
         name                = "ks8-vm2"
         target_node         = "dell5437"                 # Nome do Servidor Proxmox
         qemu_os             = "Linux"                    # Tipo de sistema operacional
@@ -69,7 +103,7 @@ locals {
         nameserver          = "192.168.2.200 192.168.2.201 8.8.8.8"
       }
 
-      m3 = {
+      m4 = {
         name                = "ks8-vm3"
         target_node         = "dell5437"                 # Nome do Servidor Proxmox
         qemu_os             = "Linux"                    # Tipo de sistema operacional
@@ -96,40 +130,6 @@ locals {
         network_bridge_type = "vmbr0"
         network_model       = "virtio"
         cloud_init_pass     = "ks8vm3"
-        hotplug             = "network,disk,cpu,memory"
-        automatic_reboot    = true
-        network_firewall    = false                      # o padrão é falso
-        searchdomain        = "pve.datacenter.tsc"
-        nameserver          = "192.168.2.200 192.168.2.201 8.8.8.8"
-      }
-
-      m4 = {
-        name                = "ks8-rancher"
-        target_node         = "dell5437"                 # Nome do Servidor Proxmox
-        qemu_os             = "Linux"                    # Tipo de sistema operacional
-        os_type             = "cloud-init"               # Defina como cloud-init para utilizar modelos
-        agent               = 1                          # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
-        full_clone          = true                       # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
-        template            = "Debian11CloudInitRancher" # Nome do modelo usado para clonar
-        vmid                = 100
-        vcpus               = 4
-        cores               = 2
-        socket              = 2
-        memory              = 4096
-        balloon             = 4096                       # Memória mínima
-        storage             = "35G"                      # Tamanho do disco rígido secundário atribuído como inicializável
-        cpu                 = "kvm64"
-        numa                = true                       # acesso não uniforme à memória (NUMA) e a fixação da CPU (afinidade do processador)
-        ip_address          = "192.168.2.10"
-        gateway             = "192.168.2.254"
-        description         = "Máquina virtual - ks8-rancher."
-        ssh_user            = "notroot"
-        mac_address         = "FA:58:B8:CE:04:B8"
-        disk_type           = "scsi"
-        storage_dev         = "local-zfs"
-        network_bridge_type = "vmbr0"
-        network_model       = "virtio"
-        cloud_init_pass     = "ks8rancher"
         hotplug             = "network,disk,cpu,memory"
         automatic_reboot    = true
         network_firewall    = false                      # o padrão é falso

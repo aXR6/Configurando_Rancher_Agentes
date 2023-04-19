@@ -72,9 +72,9 @@ update_debian_without_docker() {
 
 # Verifica se o usuário deseja atualizar a distribuição sem atualizar o Docker
 if [ "$1" == "--without-docker" ]; then
-  sudo update_debian_without_docker
+  update_debian_without_docker
 else
-  sudo update_debian
+  update_debian
 fi
 EOT
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
