@@ -70,3 +70,5 @@
          mode: 0400
        with_items:
          - { src: 'authorized_keys', dest: '/home/notroot/.ssh/authorized_keys' }
+
+         
