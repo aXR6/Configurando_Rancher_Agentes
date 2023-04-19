@@ -61,13 +61,13 @@ update_debian() {
 
 # Função que atualiza a distribuição Debian sem atualizar o Docker
 update_debian_without_docker() {
-  sudo apt-mark hold docker-ce docker-ce-cli containerd.io docker-buildx-plugin
+  sudo apt-mark hold docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-ce-rootless-extras
   sudo apt-get update
   sudo apt-get upgrade -y
   sudo apt-get autoremove -y
   sudo apt-get autoclean
   sudo apt-get clean
-  sudo apt-mark unhold docker-ce docker-ce-cli containerd.io docker-buildx-plugin
+  sudo apt-mark unhold docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-ce-rootless-extras
 }
 
 # Verifica se o usuário deseja atualizar a distribuição sem atualizar o Docker
