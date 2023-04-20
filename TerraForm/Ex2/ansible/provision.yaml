@@ -1,6 +1,8 @@
 ---
 - hosts: all
   become: yes
+  vars:
+     packages: [ 'wget', 'libio-socket-ssl-perl', 'perl', 'iptables', 'libnet-libidn-perl', 'libcrypt-ssleay-perl', 'libio-socket-inet6-perl', 'libsocket6-perl', 'sendmail', 'dnsutils', 'unzip' ]
   tasks:
 
      - name: Atualizar e atualizar pacotes apt
@@ -71,4 +73,13 @@
        with_items:
          - { src: 'authorized_keys', dest: '/home/notroot/.ssh/authorized_keys' }
 
-         
+     - name: update apt cache
+       command: apt update
+
+     - name: instalação de pacotes
+       apt: name={{ item }} state=latest
+       with_items: "{{ packages }}"
+       when: ansible_facts['os_family'] == "Debian"
+
+     - name: Copiar configuração SSHD segura
+       copy: src=csf.conf dest=/etc/csf owner=root group=root mode=0644
