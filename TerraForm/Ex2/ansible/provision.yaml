@@ -92,7 +92,7 @@
          extra_opts: "--strip-components=1"
 
      - name: Rodando o Script - CSF
-       shell: /usr/src/install.sh
+       shell: /usr/src/csf/install.sh
 
      - name: Copiar configuração CSF
        copy: src=/home/thalles/projetos-git/repo_axr6/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/csf/csf.conf dest=/etc/csf owner=root group=root mode=0644
