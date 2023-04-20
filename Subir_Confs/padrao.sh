@@ -72,8 +72,9 @@ echo -e "\033[1;31m:=>----------------------------------------------------------
 
 echo -e "\033[1;31m:=> Configurando o CSF Firewall \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-sudo apt install -y perl zip unzip libwww-perl liblwp-protocol-https-perl wget
-sudo apt install -y sendmail-bin
+sudo apt install -y wget libio-socket-ssl-perl perl iptables
+sudo apt install -y libnet-libidn-perl libcrypt-ssleay-perl
+sudo apt install -y libio-socket-inet6-perl libsocket6-perl sendmail dnsutils unzip
 
 sudo wget https://download.configserver.com/csf.tgz -P /usr/src
 sudo tar -xvzf /usr/src/csf.tgz
