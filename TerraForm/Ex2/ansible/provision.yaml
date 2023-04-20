@@ -81,12 +81,12 @@
      - name: Baixando CSF
        get_url:
          url: https://download.configserver.com/csf.tgz
-         dest: /tmp/csf.tgz
+         dest: /usr/src/csf.tgz
          mode: 0777
 
      - name: Extrair conteúdo de csf.tgz
        unarchive:
-         src: /tmp/csf.tgz
+         src: /usr/src/csf.tgz
          dest: /usr/src
          remote_src: yes
          extra_opts: "--strip-components=1"
