@@ -75,6 +75,8 @@ echo -e "\033[1;31m:=>----------------------------------------------------------
 sudo apt install -y wget libio-socket-ssl-perl perl iptables
 sudo apt install -y libnet-libidn-perl libcrypt-ssleay-perl
 sudo apt install -y libio-socket-inet6-perl libsocket6-perl sendmail dnsutils unzip
+sudo apt autoremove -y
+sudo apt autoclean
 
 sudo wget https://download.configserver.com/csf.tgz -P /usr/src
 sudo tar -xvzf /usr/src/csf.tgz
