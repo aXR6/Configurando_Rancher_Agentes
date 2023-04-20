@@ -77,5 +77,21 @@
        with_items: "{{ packages }}"
        when: ansible_facts['os_family'] == "Debian"
 
-     - name: Copiar configuração SSHD segura
-       copy: src=csf.conf dest=/etc/csf owner=root group=root mode=0644
+     - name: Baixando o Script - CSF
+       get_url:
+         url: https://download.configserver.com/csf.tgz
+         dest: /tmp/csf.tgz
+         mode: 0777
+
+     - name: Extrair conteúdo de csf.tgz
+       unarchive:
+         src: /tmp/csf.tgz
+         dest: /usr/src
+         remote_src: yes
+         extra_opts: "--strip-components=1"
+
+     - name: Rodando o Script - CSF
+       shell: /usr/src/install.sh
+
+     - name: Copiar configuração CSF
+       copy: src=/home/thalles/projetos-git/repo_axr6/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/csf/csf.conf dest=/etc/csf owner=root group=root mode=0644
