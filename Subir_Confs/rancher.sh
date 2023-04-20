@@ -175,6 +175,25 @@ fi
 
 # Imprime o hash do container encontrado
 echo "Encontre o ID do contêiner '$nome_container' com a seguinte hash $hash_container"
+echo -e "\033[1;31m:=> Configurando o CSF Firewall \033[0m"
+echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
+sudo wget https://download.configserver.com/csf.tgz -P /usr/src
+sudo tar -xvzf /usr/src/csf.tgz
+cd /usr/src/csf
+sudo sh install.sh
+
+sudo perl /usr/local/csf/bin/csftest.pl
+
+sudo csf -a 192.168.2.10
+sudo csf -a 192.168.2.11
+sudo csf -a 192.168.2.12
+sudo csf -a 192.168.2.13
+sudo csf -a 192.168.2.200
+sudo csf -a 192.168.2.201
+sudo csf -a 192.168.2.203
+sudo csf -a 192.168.2.150
+
+sudo csf -s
 
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 sudo systemctl enable updateserv.service

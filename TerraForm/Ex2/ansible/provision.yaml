@@ -4,7 +4,6 @@
   vars:
      packages: [ 'wget', 'libio-socket-ssl-perl', 'perl', 'iptables', 'libnet-libidn-perl', 'libcrypt-ssleay-perl', 'libio-socket-inet6-perl', 'libsocket6-perl', 'sendmail', 'dnsutils', 'unzip' ]
   tasks:
-
      - name: Atualizar e atualizar pacotes apt
        become: yes
        ignore_errors: yes
@@ -72,9 +71,6 @@
          mode: 0400
        with_items:
          - { src: 'authorized_keys', dest: '/home/notroot/.ssh/authorized_keys' }
-
-     - name: update apt cache
-       command: apt update
 
      - name: instalação de pacotes
        apt: name={{ item }} state=latest
