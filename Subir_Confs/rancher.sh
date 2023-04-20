@@ -263,5 +263,6 @@ sudo csf -a 192.168.2.13
 sudo csf -a 192.168.2.200
 sudo csf -a 192.168.2.201
 sudo csf -a 192.168.2.203
+sudo csf -a 192.168.2.150
 
 sudo csf -s
