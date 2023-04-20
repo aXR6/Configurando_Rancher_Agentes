@@ -4,6 +4,91 @@ echo -e "\033[1;31m:=> Instalando complementos necessários para o longhorn \033
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 sudo apt update && sudo apt install -y bash curl grep mawk open-iscsi util-linux wget
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
+echo -e "\033[1;31m:=> Configurando o CSF Firewall \033[0m"
+echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
+sudo apt install -y wget libio-socket-ssl-perl perl iptables
+sudo apt install -y libnet-libidn-perl libcrypt-ssleay-perl
+sudo apt install -y libio-socket-inet6-perl libsocket6-perl sendmail dnsutils unzip
+sudo apt autoremove -y
+sudo apt autoclean
+
+sudo wget https://download.configserver.com/csf.tgz -P /usr/src
+sudo tar -xvzf /usr/src/csf.tgz
+cd /usr/src/csf
+sudo sh install.sh
+
+sudo perl /usr/local/csf/bin/csftest.pl
+
+sudo cat >'/etc/csf/csf.conf' <<EOT
+# Configurações de Firewall csf
+
+# Habilitar o csf
+TESTING = "0"
+# Alterar para "1" para executar no modo de teste sem bloquear
+# Alterar para "0" para executar no modo de produção
+
+# Lista de portas TCP permitidas
+TCP_IN = "20,21,22,25,53,80,110,143,443,465,587,993,995"
+TCP_OUT = "20,21,22,25,53,80,110,113,443"
+
+# Lista de portas UDP permitidas
+UDP_IN = "53"
+UDP_OUT = "20,21,53"
+
+# Proteger contra ataques SYN
+SYN_ATTACK = "1"
+
+# Proteger contra ataques de portas aleatórias
+PORTFLOOD = "80;tcp;20;5"
+
+# Proteger contra ataque DDoS
+DDOS = "1"
+
+# Proteger contra ataques de bruteforce SSH
+LF_SSHD = "5"
+
+# Proteger contra ataques de bruteforce FTP
+LF_FTPD = "5"
+
+# Proteger contra ataques de bruteforce POP3
+LF_POP3D = "5"
+
+# Proteger contra ataques de bruteforce IMAP
+LF_IMAPD = "5"
+
+# Proteger contra ataques de bruteforce SFTP
+LF_SFTPD = "5"
+
+# Proteger contra ataques de bruteforce Exim
+LF_EXIMSYNTAX = "5"
+
+# Proteger contra ataques de bruteforce cPanel
+LF_CPANEL = "5"
+
+# Proteger contra ataques de bruteforce WHM
+LF_CPANEL = "5"
+
+# Bloquear IPs mal-intencionados
+DROP_IPS = "1"
+
+# Proteger contra o uso malicioso de executáveis PHP
+PHP_FPM = "1"
+
+# Permitir conexões SSL
+CT_LIMIT = "80;300;5/300;6"
+EOT
+
+sudo csf -a 192.168.2.10
+sudo csf -a 192.168.2.11
+sudo csf -a 192.168.2.12
+sudo csf -a 192.168.2.13
+sudo csf -a 192.168.2.200
+sudo csf -a 192.168.2.201
+sudo csf -a 192.168.2.203
+sudo csf -a 192.168.2.150
+
+sudo csf -s
+echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
 echo -e "\033[1;31m:=> Criando o arquivo de configuração: RESOLVER \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
@@ -175,91 +260,6 @@ fi
 
 # Imprime o hash do container encontrado
 echo "Encontre o ID do contêiner '$nome_container' com a seguinte hash $hash_container"
-
-echo -e "\033[1;31m:=> Configurando o CSF Firewall \033[0m"
-echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-sudo apt install -y wget libio-socket-ssl-perl perl iptables
-sudo apt install -y libnet-libidn-perl libcrypt-ssleay-perl
-sudo apt install -y libio-socket-inet6-perl libsocket6-perl sendmail dnsutils unzip
-sudo apt autoremove -y
-sudo apt autoclean
-
-sudo wget https://download.configserver.com/csf.tgz -P /usr/src
-sudo tar -xvzf /usr/src/csf.tgz
-cd /usr/src/csf
-sudo sh install.sh
-
-sudo perl /usr/local/csf/bin/csftest.pl
-
-sudo cat >'/etc/csf/csf.conf' <<EOT
-# Configurações de Firewall csf
-
-# Habilitar o csf
-TESTING = "0"
-# Alterar para "1" para executar no modo de teste sem bloquear
-# Alterar para "0" para executar no modo de produção
-
-# Lista de portas TCP permitidas
-TCP_IN = "20,21,22,25,53,80,110,143,443,465,587,993,995"
-TCP_OUT = "20,21,22,25,53,80,110,113,443"
-
-# Lista de portas UDP permitidas
-UDP_IN = "53"
-UDP_OUT = "20,21,53"
-
-# Proteger contra ataques SYN
-SYN_ATTACK = "1"
-
-# Proteger contra ataques de portas aleatórias
-PORTFLOOD = "80;tcp;20;5"
-
-# Proteger contra ataque DDoS
-DDOS = "1"
-
-# Proteger contra ataques de bruteforce SSH
-LF_SSHD = "5"
-
-# Proteger contra ataques de bruteforce FTP
-LF_FTPD = "5"
-
-# Proteger contra ataques de bruteforce POP3
-LF_POP3D = "5"
-
-# Proteger contra ataques de bruteforce IMAP
-LF_IMAPD = "5"
-
-# Proteger contra ataques de bruteforce SFTP
-LF_SFTPD = "5"
-
-# Proteger contra ataques de bruteforce Exim
-LF_EXIMSYNTAX = "5"
-
-# Proteger contra ataques de bruteforce cPanel
-LF_CPANEL = "5"
-
-# Proteger contra ataques de bruteforce WHM
-LF_CPANEL = "5"
-
-# Bloquear IPs mal-intencionados
-DROP_IPS = "1"
-
-# Proteger contra o uso malicioso de executáveis PHP
-PHP_FPM = "1"
-
-# Permitir conexões SSL
-CT_LIMIT = "80;300;5/300;6"
-EOT
-
-sudo csf -a 192.168.2.10
-sudo csf -a 192.168.2.11
-sudo csf -a 192.168.2.12
-sudo csf -a 192.168.2.13
-sudo csf -a 192.168.2.200
-sudo csf -a 192.168.2.201
-sudo csf -a 192.168.2.203
-sudo csf -a 192.168.2.150
-
-sudo csf -s
 
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 sudo systemctl enable updateserv.service
