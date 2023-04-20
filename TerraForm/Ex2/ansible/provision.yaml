@@ -72,12 +72,13 @@
        with_items:
          - { src: 'authorized_keys', dest: '/home/notroot/.ssh/authorized_keys' }
 
+     #Linha para configuração do FireWall
      - name: instalação de pacotes
        apt: name={{ item }} state=latest
        with_items: "{{ packages }}"
        when: ansible_facts['os_family'] == "Debian"
 
-     - name: Baixando o Script - CSF
+     - name: Baixando CSF
        get_url:
          url: https://download.configserver.com/csf.tgz
          dest: /tmp/csf.tgz
@@ -95,3 +96,4 @@
 
      - name: Copiar configuração CSF
        copy: src=/home/thalles/projetos-git/repo_axr6/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/csf/csf.conf dest=/etc/csf owner=root group=root mode=0644
+     #Linha para configuração do FireWall
