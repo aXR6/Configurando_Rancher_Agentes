@@ -139,10 +139,9 @@ echo -e "\033[1;31m:=>----------------------------------------------------------
 sudo apt install -y perl zip unzip libwww-perl liblwp-protocol-https-perl wget
 sudo apt install -y sendmail-bin
 
-cd /usr/src
-sudo wget https://download.configserver.com/csf.tgz
-sudo tar -xzvf csf.tgz
-cd csf 
+sudo wget https://download.configserver.com/csf.tgz -P /usr/src
+sudo tar -xvzf /usr/src/csf.tgz
+cd /usr/src/csf
 sudo sh install.sh
 
 sudo perl /usr/local/csf/bin/csftest.pl
