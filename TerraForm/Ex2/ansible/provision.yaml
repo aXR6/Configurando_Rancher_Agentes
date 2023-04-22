@@ -114,10 +114,10 @@
        shell: /home/notroot/install_comp_csf.sh
 
      - name: Copiar lista de permissão
-       copy: src=/home/thalles/projetos-git/repo_axr6/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/csf/csf.allow dest=/etc/csf owner=root group=root mode=0644
+       copy: src=/home/terminal/projetos/terraform/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/csf/csf.allow dest=/etc/csf owner=root group=root mode=0644
 
      - name: Copiar configuração CSF
-       copy: src=/home/thalles/projetos-git/repo_axr6/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/csf/csf.conf dest=/etc/csf owner=root group=root mode=0644
+       copy: src=/home/terminal/projetos/terraform/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/csf/csf.conf dest=/etc/csf owner=root group=root mode=0644
 
      - name: Reiniciar o serviço do CSF FireWall
        service: name=csf state=restarted enabled=yes
