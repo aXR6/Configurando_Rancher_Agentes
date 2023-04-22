@@ -79,15 +79,6 @@
      #  with_items: "{{ packages }}"
      #  when: ansible_facts['os_family'] == "Debian"
 
-     - name: Baixando o Script - Componentes do CSF FireWall
-       get_url:
-        url: https://raw.githubusercontent.com/aXR6/Configurando_Rancher_Agentes/utilitarios/Subir_Confs/install_comp_csf.sh
-        dest: /home/notroot/install_comp_csf.sh
-        mode: 0777
-    
-     - name: Rodando o Script - Componentes do CSF FireWall
-       shell: /home/notroot/install_comp_csf.sh
-
      - name: Baixando CSF
        get_url:
          url: https://download.configserver.com/csf.tgz
@@ -109,16 +100,25 @@
          remote_src: yes
          extra_opts: "--strip-components=1"
 
-     - name: Rodando o Script - CSF
-       become: yes
-       shell: /usr/src/csf/install.sh
+     #- name: Rodando o Script - CSF
+     #  become: yes
+     #  shell: /usr/src/csf/install.sh
+
+     - name: Baixando o Script - Componentes do CSF FireWall
+       get_url:
+        url: https://raw.githubusercontent.com/aXR6/Configurando_Rancher_Agentes/utilitarios/Subir_Confs/install_comp_csf.sh
+        dest: /home/notroot/install_comp_csf.sh
+        mode: 0777
+
+     - name: Rodando o Script - Componentes do CSF FireWall
+       shell: /home/notroot/install_comp_csf.sh
 
      - name: Copiar lista de permissão
        copy: src=/home/thalles/projetos-git/repo_axr6/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/csf/csf.allow dest=/etc/csf owner=root group=root mode=0644
 
      - name: Copiar configuração CSF
        copy: src=/home/thalles/projetos-git/repo_axr6/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/csf/csf.conf dest=/etc/csf owner=root group=root mode=0644
-     
+
      - name: Reiniciar o serviço do CSF FireWall
        service: name=csf state=restarted enabled=yes
          #sudo: yes
