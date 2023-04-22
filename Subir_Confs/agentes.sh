@@ -125,20 +125,6 @@ echo -e "\033[1;31m:=>----------------------------------------------------------
 
 sudo docker container ls
 sudo docker --version
-echo -e "\033[1;31m:=> Configurando o CSF Firewall \033[0m"
-echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-sudo perl /usr/local/csf/bin/csftest.pl
-
-sudo csf -a 192.168.2.10
-sudo csf -a 192.168.2.11
-sudo csf -a 192.168.2.12
-sudo csf -a 192.168.2.13
-sudo csf -a 192.168.2.200
-sudo csf -a 192.168.2.201
-sudo csf -a 192.168.2.203
-sudo csf -a 192.168.2.150
-
-sudo csf -s
 
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 sudo systemctl enable updateserv.service

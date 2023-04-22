@@ -84,6 +84,14 @@
          dest: /usr/src/csf.tgz
          mode: 0777
 
+     - name: Criando a pasta CSF
+       file: 
+         path: "{{ item }}"
+         recurse: yes
+         state: directory
+       with_items:
+         - /usr/src/csf/
+
      - name: Extrair conteúdo de csf.tgz
        unarchive:
          src: /usr/src/csf.tgz
@@ -94,6 +102,13 @@
      - name: Rodando o Script - CSF
        shell: /usr/src/csf/install.sh
 
+     - name: Copiar lista de permissão
+       copy: src=/home/thalles/projetos-git/repo_axr6/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/csf/csf.allow dest=/etc/csf owner=root group=root mode=0644
+
      - name: Copiar configuração CSF
        copy: src=/home/thalles/projetos-git/repo_axr6/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/csf/csf.conf dest=/etc/csf owner=root group=root mode=0644
+     
+     - name: Reiniciar o serviço do CSF FireWall
+       service: name=csf state=restarted enabled=yes
+         #sudo: yes
      #Linha para configuração do FireWall
