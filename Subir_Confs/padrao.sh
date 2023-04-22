@@ -6,7 +6,6 @@ sudo touch /bin/resolver
 sudo chmod 777 /bin/resolver
 
 sudo cat >'/bin/resolver' <<EOT
-
 cat >'/etc/resolv.conf' <<EOT
 search pve.datacenter.tsc
 nameserver 192.168.2.200
@@ -14,7 +13,6 @@ nameserver 192.168.2.201
 nameserver 192.168.2.254
 nameserver 8.8.8.8
 EOT
-
 EOT
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
