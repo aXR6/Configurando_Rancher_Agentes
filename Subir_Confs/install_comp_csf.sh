@@ -1,1 +1,1 @@
-apt-get install sendmail dnsutils unzip libio-socket-ssl-perl libcrypt-ssleay-perl git perl iptables libnet-libidn-perl libio-socket-inet6-perl libsocket6-perl -y
+sudo apt-get install sendmail dnsutils unzip libio-socket-ssl-perl libcrypt-ssleay-perl git perl iptables libnet-libidn-perl libio-socket-inet6-perl libsocket6-perl -y
