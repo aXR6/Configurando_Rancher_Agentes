@@ -1,8 +1,8 @@
 ---
 - hosts: all
   become: yes
-  vars:
-     packages: [ 'wget', 'libio-socket-ssl-perl', 'perl', 'iptables', 'libnet-libidn-perl', 'libcrypt-ssleay-perl', 'libio-socket-inet6-perl', 'libsocket6-perl', 'sendmail', 'dnsutils', 'unzip' ]
+  #vars:
+     #packages: [ 'wget', 'unzip', 'sendmail', 'dnsutils', 'descompacte', 'libio-socket-ssl-perl', 'libcrypt-ssleay-perl', 'git', 'perl', 'iptables', 'libnet-libidn-perl', 'libio-socket-inet6-perl', 'libsocket6-perl' ]
   tasks:
      - name: Atualizar e atualizar pacotes apt
        become: yes
@@ -73,10 +73,20 @@
          - { src: 'authorized_keys', dest: '/home/notroot/.ssh/authorized_keys' }
 
      #Linha para configuração do FireWall
-     - name: instalação de pacotes
-       apt: name={{ item }} state=latest
-       with_items: "{{ packages }}"
-       when: ansible_facts['os_family'] == "Debian"
+     #- name: instalação de pacotes
+     #  become: yes
+     #  apt: name={{ item }} state=latest
+     #  with_items: "{{ packages }}"
+     #  when: ansible_facts['os_family'] == "Debian"
+
+     - name: Baixando o Script - Componentes do CSF FireWall
+       get_url:
+        url: https://raw.githubusercontent.com/aXR6/Configurando_Rancher_Agentes/utilitarios/Subir_Confs/install_comp_csf.sh
+        dest: /home/notroot/install_comp_csf.sh
+        mode: 0777
+    
+     - name: Rodando o Script - Componentes do CSF FireWall
+       shell: /home/notroot/install_comp_csf.sh
 
      - name: Baixando CSF
        get_url:
@@ -100,6 +110,7 @@
          extra_opts: "--strip-components=1"
 
      - name: Rodando o Script - CSF
+       become: yes
        shell: /usr/src/csf/install.sh
 
      - name: Copiar lista de permissão
