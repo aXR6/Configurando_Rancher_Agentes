@@ -2,5 +2,6 @@ sudo apt update && sudo apt-get install sendmail dnsutils unzip libio-socket-ssl
 cd /usr/src/csf/
 sudo ./install.sh
 sudo systemctl enable csf
+sudo systemctl start csf
 sudo apt autoremove -y
 sudo apt autoclean
