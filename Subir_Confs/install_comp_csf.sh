@@ -2,4 +2,3 @@ sudo apt-get install sendmail dnsutils unzip libio-socket-ssl-perl libcrypt-ssle
 cd /usr/src/csf/
 sudo ./install.sh
 sudo systemctl enable csf
-sudo systemctl restart csf
