@@ -118,8 +118,4 @@
 
      - name: Copiar configuração CSF
        copy: src=/home/terminal/projetos/terraform/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/csf/csf.conf dest=/etc/csf owner=root group=root mode=0644
-
-     - name: Reiniciar o serviço do CSF FireWall
-       service: name=csf state=restarted enabled=yes
-         #sudo: yes
      #Linha para configuração do FireWall
