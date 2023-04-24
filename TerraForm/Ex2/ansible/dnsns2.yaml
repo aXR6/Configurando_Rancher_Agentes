@@ -2,9 +2,6 @@
 - hosts: all
   become: yes
   tasks:
-    - name: update apt cache
-      command: apt update
-
     - name: instalando o bind9
       apt:
         name: bind9
