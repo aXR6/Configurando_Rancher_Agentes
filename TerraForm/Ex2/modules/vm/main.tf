@@ -1,6 +1,7 @@
 resource "proxmox_vm_qemu" "virtual_machines" {
   for_each         = var.virtual_machines
   name             = each.value.name
+  onboot           = each.value.onboot
   qemu_os          = each.value.qemu_os
   desc             = each.value.description
   target_node      = each.value.target_node
