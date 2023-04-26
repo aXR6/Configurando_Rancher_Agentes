@@ -28,7 +28,7 @@
  
     - name: Servidor DNS primário
       copy: 
-        src: /home/terminal/projetos/terraform/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/dnsns1/
+        src: /home/terminal/projetos/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/dnsns1/
         dest: /etc/bind/
         owner: notroot
         group: notroot
