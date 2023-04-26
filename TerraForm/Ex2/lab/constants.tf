@@ -149,7 +149,7 @@ locals {
         agent               = 1                          # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
         full_clone          = true                       # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
         template            = "Debian11CloudInitComum"   # Nome do modelo usado para clonar
-        vmid                = 201
+        vmid                = 104
         vcpus               = 1
         cores               = 1
         socket              = 1
@@ -184,7 +184,7 @@ locals {
         agent               = 1                         # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
         full_clone          = true                      # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
         template            = "Debian11CloudInitComum"  # Nome do modelo usado para clonar
-        vmid                = 202
+        vmid                = 105
         vcpus               = 1
         cores               = 1
         socket              = 1
@@ -219,7 +219,7 @@ locals {
         agent               = 1                         # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
         full_clone          = true                      # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
         template            = "Debian11CloudInitComum"  # Nome do modelo usado para clonar
-        vmid                = 200
+        vmid                = 106
         vcpus               = 1
         cores               = 1
         socket              = 2
