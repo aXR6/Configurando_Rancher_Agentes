@@ -6,7 +6,7 @@ sudo systemctl start csf
 sudo apt autoremove -y
 sudo apt autoclean
 
-sudo csf -a 192.168.2.10 Rancher
+sudo csf -a 192.168.2.10 Servidor do Rancher
 sudo csf -a 192.168.2.11 Primeiro agente do Rancher
 sudo csf -a 192.168.2.12 Segundo agente do Rancher
 sudo csf -a 192.168.2.13 Terceiro agente do Rancher
