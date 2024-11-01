@@ -2,7 +2,7 @@
 
 echo -e "\033[1;31m:=> Instalando complementos necessários para o longhorn \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-sudo apt update && sudo apt install -y bash curl grep mawk open-iscsi util-linux
+sudo apt update && sudo apt install -y bash curl grep mawk open-iscsi util-linux sudo
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
 echo -e "\033[1;31m:=> Criando o arquivo: AUTOUPDATE \033[0m"
@@ -23,13 +23,11 @@ update_debian() {
 
 # Função que atualiza a distribuição Debian sem atualizar o Docker
 update_debian_without_docker() {
-  sudo apt-mark hold docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-ce-rootless-extras
   sudo apt-get update
   sudo apt-get upgrade -y
   sudo apt-get autoremove -y
   sudo apt-get autoclean
   sudo apt-get clean
-  sudo apt-mark unhold docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-ce-rootless-extras
 }
 
 # Verifica se o usuário deseja atualizar a distribuição sem atualizar o Docker
@@ -61,26 +59,7 @@ ExecStart=/bin/bash /bin/autoupdate --without-docker
 [Install]
 WantedBy=multi-user.target
 EOT
-
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-
-echo -e "\033[1;31m:=> Preparando o ambiente e instalando o Docker \033[0m"
-echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-sudo curl https://releases.rancher.com/install-docker/20.10.sh | sh
-echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-
-echo -e "\033[1;31m:=> Script para limpar containers, imagens e volumes não utilizados \033[0m"
-echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-sudo touch /bin/limparimg
-sudo chmod 777 /bin/limparimg
-
-sudo cat >'/bin/limparimg' <<EOT
-docker system prune --all --force && 
-docker system prune -a && 
-docker volume ls -f dangling=true && 
-docker volume prune &&
-docker image prune --filter="label=deprecated"
-EOT
 
 echo -e "\033[1;31m:=> Startando serviços recem criados \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"

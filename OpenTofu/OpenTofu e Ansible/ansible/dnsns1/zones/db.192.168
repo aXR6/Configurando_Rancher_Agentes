@@ -1,0 +1,22 @@
+;
+; BIND reverse data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     ns1.pve.datacenter.tsc. admin.pve.datacenter.tsc. (
+                              3         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+                         
+; name servers - NS records
+      IN      NS      ns1.pve.datacenter.tsc.
+      IN      NS      ns2.pve.datacenter.tsc.
+      
+; PTR Records
+200.3  IN      PTR     ns1.pve.datacenter.tsc.              ; 192.168.3.200
+201.3  IN      PTR     ns2.pve.datacenter.tsc.              ; 192.168.3.201
+10.3   IN      PTR     rancher-ks8.pve.datacenter.tsc.      ; 192.168.3.10
+11.3   IN      PTR     *.rancher-ks8.pve.datacenter.tsc.    ; 192.168.3.11
+12.3   IN      PTR     *.rancher-ks8.pve.datacenter.tsc.    ; 192.168.3.12
+13.3   IN      PTR     *.rancher-ks8.pve.datacenter.tsc.    ; 192.168.3.13

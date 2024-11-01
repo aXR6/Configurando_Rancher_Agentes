@@ -1,0 +1,50 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: atualizar repositorios
+      command: apt update
+
+    - name: instalar o git
+      apt:
+        name: git
+        state: present
+
+    - name: upgrade do sistema
+      command: apt upgrade -y
+
+    - name: remover pacotes orfoos
+      command: apt autoremove -y
+
+
+    - name: Checking to make sure postfix is installed
+      apt:
+        name:
+        - postfix
+        - mailutils
+        - ca-certificates
+        - curl 
+        - openssh-server
+        state: present
+      tags: [postfix]
+      when: ansible_os_family == 'Debian'        
+    
+    - name: Install GitLab repository
+      get_url:
+        url: https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh
+        dest: /tmp/script.deb.sh
+        mode: 0777
+    
+    - name: Run GitLab repository script
+      shell: /tmp/script.deb.sh
+
+    - name: Install GitLab CE
+      package:
+        name:    
+        - gitlab-ce
+        state: latest 
+        update_cache: yes
+
+
+    - name: reboot host
+      reboot:

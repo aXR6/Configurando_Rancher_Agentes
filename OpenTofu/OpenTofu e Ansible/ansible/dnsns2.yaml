@@ -1,0 +1,79 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: instalando o bind9
+      apt:
+        name: bind9
+        state: present
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: instalando o bind9utils
+      apt:
+        name: bind9utils
+        state: present
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: instalando o bind9-doc
+      apt:
+        name: bind9-doc
+        state: present
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: habilitando o bind9
+      service:
+        name: bind9
+        enabled: yes
+        state: started
+
+    - name: Servidor DNS Secundario
+      copy: 
+        src: /home/terminal/projetos/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/dnsns2/
+        dest: /etc/bind/
+        owner: notroot
+        group: notroot
+        mode: 0644
+        backup: yes
+
+    - name: Baixando o Script - DNS-NS2
+      get_url:
+        url: https://raw.githubusercontent.com/aXR6/Configurando_Rancher_Agentes/utilitarios/Subir_Confs/padrao.sh
+        dest: /home/notroot/padrao.sh
+        mode: 0777
+    
+    - name: Rodando o Script - DNS-NS2
+      shell: /home/notroot/padrao.sh
+
+## Enable log
+
+    - name: create named.conf.log
+      blockinfile:
+        create: yes
+        path: /etc/bind/named.conf.log
+        block: |
+          logging {
+            channel bind_log {
+              file "/var/lib/bind/bind.log" versions 3 size 5m;
+              severity info;
+              print-category yes;
+              print-severity yes;
+              print-time yes;
+            };
+            category default { bind_log; };
+            category update { bind_log; };
+            category update-security { bind_log; };
+            category security { bind_log; };
+            category queries { bind_log; };
+            category lame-servers { null; };
+          };
+
+    - name: add log into named.conf
+      lineinfile:
+        path: /etc/bind/named.conf
+        line: include "/etc/bind/named.conf.log";
+
+    - name: restart bind9
+      service:
+        name: bind9
+        state: restarted
+      when: ansible_facts['os_family'] == "Debian"

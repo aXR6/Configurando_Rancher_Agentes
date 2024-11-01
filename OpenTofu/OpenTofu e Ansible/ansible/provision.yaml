@@ -1,0 +1,118 @@
+---
+- hosts: all
+  become: yes
+  #vars:
+     #packages: [ 'wget', 'unzip', 'sendmail', 'dnsutils', 'descompacte', 'libio-socket-ssl-perl', 'libcrypt-ssleay-perl', 'git', 'perl', 'iptables', 'libnet-libidn-perl', 'libio-socket-inet6-perl', 'libsocket6-perl' ]
+  tasks:
+     - name: Atualizar e atualizar pacotes apt
+       become: yes
+       ignore_errors: yes
+       failed_when: "'FAILED' in command_result.stderr"
+       apt:
+         #upgrade: yes
+         update_cache: yes
+         cache_valid_time: 86400 #One day
+
+     - name: Certifique-se de que temos um grupo 'wheel'
+       group:
+         name: wheel
+         state: present
+
+     - name: Permitir que o grupo 'wheel' tenha sudo sem senha
+       lineinfile:
+         dest: /etc/sudoers
+         state: present
+         regexp: '^%wheel'
+         line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+         validate: 'visudo -cf %s'
+
+     - name: Adicionar usuários sudoers ao grupo wheel
+       user:
+         name: notroot
+         groups: wheel
+         append: yes
+         state: present
+         createhome: yes
+         shell: /bin/bash
+
+     - name: Crie as pastas necessárias
+       file: 
+         path: "{{ item }}"
+         recurse: yes
+         state: directory
+       with_items:
+         - /home/notroot/.ssh/
+
+     - name: Copiar configuração SSHD segura
+       copy: src=sshd_config_secured dest=/etc/ssh/sshd_config owner=root group=root mode=0644
+       #sudo: yes
+
+     - name: Desabilitar IPv6
+       sysctl: 
+         name: "{{ item }}" 
+         value: '1'
+         sysctl_set: yes 
+         state: present
+       with_items:
+         - net.ipv6.conf.all.disable_ipv6
+         - net.ipv6.conf.default.disable_ipv6
+         - net.ipv6.conf.lo.disable_ipv6
+
+     - name: SSHD Restart
+       service: name=sshd state=restarted enabled=yes
+         #sudo: yes
+
+     - name: Copiar chaves e perfis
+       copy:
+         src: "{{ item.src }}"
+         dest: "{{ item.dest }}"
+         owner: notroot
+         group: notroot
+         mode: 0400
+       with_items:
+         - { src: 'authorized_keys', dest: '/home/notroot/.ssh/authorized_keys' }
+
+     #Linha para configuração do FireWall
+     #- name: instalação de pacotes
+     #  become: yes
+     #  apt: name={{ item }} state=latest
+     #  with_items: "{{ packages }}"
+     #  when: ansible_facts['os_family'] == "Debian"
+
+     - name: Baixando CSF
+       get_url:
+         url: https://download.configserver.com/csf.tgz
+         dest: /usr/src/csf.tgz
+         mode: 0777
+
+     - name: Criando a pasta CSF
+       file: 
+         path: "{{ item }}"
+         recurse: yes
+         state: directory
+       with_items:
+         - /usr/src/csf/
+
+     - name: Extrair conteúdo de csf.tgz
+       unarchive:
+         src: /usr/src/csf.tgz
+         dest: /usr/src/csf/
+         remote_src: yes
+         extra_opts: "--strip-components=1"
+
+     #- name: Rodando o Script - CSF
+     #  become: yes
+     #  shell: /usr/src/csf/install.sh
+
+     - name: Baixando o Script - Componentes do CSF FireWall
+       get_url:
+        url: https://raw.githubusercontent.com/aXR6/Configurando_Rancher_Agentes/utilitarios/Subir_Confs/install_comp_csf.sh
+        dest: /home/notroot/install_comp_csf.sh
+        mode: 0777
+
+     - name: Rodando o Script - Componentes do CSF FireWall
+       shell: /home/notroot/install_comp_csf.sh
+
+     - name: Copiar configuração CSF
+       copy: src=/home/terminal/projetos/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/csf/csf.conf dest=/etc/csf owner=root group=root mode=0644
+     #Linha para configuração do FireWall

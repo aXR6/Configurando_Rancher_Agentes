@@ -1,0 +1,18 @@
+all:
+  children:
+    geral:
+      hosts:
+        gera1:
+          ansible_host: 192.168.3.10
+        gera2:
+          ansible_host: 192.168.3.11
+        gera3:
+          ansible_host: 192.168.3.12
+        gera4:
+          ansible_host: 192.168.3.13
+        gera5:
+          ansible_host: 192.168.3.200
+        gera6:
+          ansible_host: 192.168.3.201
+        gera7:
+          ansible_host: 192.168.3.203

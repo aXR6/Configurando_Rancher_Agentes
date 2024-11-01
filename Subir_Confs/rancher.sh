@@ -2,7 +2,7 @@
 
 echo -e "\033[1;31m:=> Instalando complementos necessários para o longhorn \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-sudo apt update && sudo apt install -y bash curl grep mawk open-iscsi util-linux wget
+sudo apt update && sudo apt install -y bash curl grep mawk open-iscsi util-linux wget sudo
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
 echo -e "\033[1;31m:=> Criando o arquivo: AUTOUPDATE \033[0m"
@@ -65,12 +65,12 @@ echo -e "\033[1;31m:=>----------------------------------------------------------
 
 echo -e "\033[1;31m:=> Preparando o ambiente e instalando o Docker \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-sudo curl https://releases.rancher.com/install-docker/20.10.sh | sh
+sudo curl https://releases.rancher.com/install-docker/27.2.sh | sh
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
 echo -e "\033[1;31m:=> Preparando o ambiente e instalando o rancher \033[0m"
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
-sudo docker run --name rancher --privileged -d --restart=unless-stopped -v dbrancher:/var/lib/rancher -p 80:80 -p 443:443 rancher/rancher
+sudo docker run -d --name rancher --privileged --restart unless-stopped -p 80:80 -p 443:443 -v rancher_data:/var/lib/rancher --network rancher rancher/rancher
 echo -e "\033[1;31m:=>---------------------------------------------------------------------------------------------------------------------------\033[0m"
 
 echo -e "\033[1;31m:=> Preparando o ambiente e instalando o kubectl \033[0m"
