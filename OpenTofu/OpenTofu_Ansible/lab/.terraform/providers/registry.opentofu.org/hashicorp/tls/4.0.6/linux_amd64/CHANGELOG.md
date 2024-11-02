@@ -1,3 +1,101 @@
+## 4.0.6 (September 11, 2024)
+
+NOTES:
+
+* all: This release introduces no functional changes. It does however include dependency updates which address upstream CVEs. ([#552](https://github.com/hashicorp/terraform-provider-tls/issues/552))
+
+## 4.0.5 (November 27, 2023)
+
+NOTES:
+
+* This release introduces no functional changes. It does however include dependency updates which address upstream CVEs. ([#432](https://github.com/hashicorp/terraform-provider-tls/issues/432))
+
+## 4.0.4 (October 31, 2022)
+
+BUG FIXES:
+
+* resource/tls_locally_signed_cert: Ensure `terraform refresh` updates state when cert is ready for renewal ([#278](https://github.com/hashicorp/terraform-provider-tls/issues/278)).
+* resource/tls_self_signed_cert: Ensure `terraform refresh` updates state when cert is ready for renewal ([#278](https://github.com/hashicorp/terraform-provider-tls/issues/278)).
+
+## 4.0.3 (September 20, 2022)
+
+BUG FIXES:
+
+* resource/tls_locally_signed_cert: Prevented `Config Read Error` with Terraform version 1.3.0 and later
+* resource/tls_self_signed_cert: Prevented `Config Read Error` with Terraform version 1.3.0 and later
+
+## 4.0.2 (August 30, 2022)
+
+BUG FIXES:
+
+* resource/tls_cert_request: Fix regexp in attribute plan modifier to correctly match PEM ([#255](https://github.com/hashicorp/terraform-provider-tls/issues/255)).
+* resource/tls_locally_signed_cert: Fix regexp in attribute plan modifier to correctly match PEM ([#255](https://github.com/hashicorp/terraform-provider-tls/issues/255)).
+* resource/tls_self_signed_cert: Fix regexp in attribute plan modifier to correctly match PEM ([#255](https://github.com/hashicorp/terraform-provider-tls/issues/255)).
+
+## 4.0.1 (July 25, 2022)
+
+BUG FIXES:
+
+* data-source/tls_certificate: Prevented `empty list of object` error with `certificates` attribute ([#244](https://github.com/hashicorp/terraform-provider-tls/issues/244)).
+
+## 4.0.0 (July 21, 2022)
+
+NOTES:
+
+* Provider has been re-written using the new [`terraform-plugin-framework`](https://www.terraform.io/plugin/framework) ([#215](https://github.com/hashicorp/terraform-provider-tls/pull/215)).
+
+* resource/tls_cert_request: `private_key_pem` attribute is now stored in the state _as-is_; first apply may result in an update-in-place ([#87](https://github.com/hashicorp/terraform-provider-tls/issues/87), [#215](https://github.com/hashicorp/terraform-provider-tls/pull/215)).
+
+* resource/tls_self_signed_cert: `private_key_pem` attribute is now stored in the state _as-is_; first apply may result in an update-in-place ([#87](https://github.com/hashicorp/terraform-provider-tls/issues/87), [#215](https://github.com/hashicorp/terraform-provider-tls/pull/215)).
+
+* resource/tls_locally_signed_cert: `cert_request_pem`, `ca_private_key_pem` and `ca_cert_pem` attributes are now stored in the state _as-is_; first apply may result in an update-in-place ([#87](https://github.com/hashicorp/terraform-provider-tls/issues/87), [#215](https://github.com/hashicorp/terraform-provider-tls/pull/215)).
+  
+* resource/tls_private_key: `private_key_pem_pkcs8`, `private_key_openssh` and `public_key_fingerprint_sha256` attributes are now retro-fitted, depending on version being updated; first apply may result in an update-in-place ([#210](https://github.com/hashicorp/terraform-provider-tls/issues/210), [#225](https://github.com/hashicorp/terraform-provider-tls/pull/225))).
+
+ENHANCEMENTS:
+
+* resource/tls_private_key: New attribute `private_key_pem_pkcs8` ([PKCS#8](https://datatracker.ietf.org/doc/html/rfc5208)) ([#210](https://github.com/hashicorp/terraform-provider-tls/issues/210), [#225](https://github.com/hashicorp/terraform-provider-tls/pull/225))).
+
+BREAKING CHANGES:
+
+* resource/tls_cert_request: Attribute `key_algorithm` is now read-only, as it's inferred from `private_key_pem` ([#174](https://github.com/hashicorp/terraform-provider-tls/issues/174), [#215](https://github.com/hashicorp/terraform-provider-tls/pull/215)).
+* resource/tls_self_signed_cert: Attribute `private_key_pem` is stored (and returned) _as-is_ (in accordance with [guidelines](https://www.terraform.io/plugin/sdkv2/best-practices/sensitive-state#don-t-encrypt-state)) ([#87](https://github.com/hashicorp/terraform-provider-tls/issues/87), [#215](https://github.com/hashicorp/terraform-provider-tls/pull/215)).
+
+* resource/tls_self_signed_cert: Attribute `key_algorithm` is now read-only, as it's inferred from `private_key_pem` ([#174](https://github.com/hashicorp/terraform-provider-tls/issues/174), [#215](https://github.com/hashicorp/terraform-provider-tls/pull/215)).
+* resource/tls_self_signed_cert: Setting an unsupported value in `allowed_uses` attribute, will now return an error instead of just a warning ([#185](https://github.com/hashicorp/terraform-provider-tls/issues/185), [#215](https://github.com/hashicorp/terraform-provider-tls/pull/215)).
+* resource/tls_self_signed_cert: Attribute `private_key_pem` is stored (and returned) _as-is_ (in accordance with [guidelines](https://www.terraform.io/plugin/sdkv2/best-practices/sensitive-state#don-t-encrypt-state)) ([#87](https://github.com/hashicorp/terraform-provider-tls/issues/87), [#215](https://github.com/hashicorp/terraform-provider-tls/pull/215)).
+
+* resource/tls_locally_signed_cert: Attribute `ca_key_algorithm` is now read-only, as it's inferred from `ca_private_key_pem` ([#174](https://github.com/hashicorp/terraform-provider-tls/issues/174), [#215](https://github.com/hashicorp/terraform-provider-tls/pull/215)).
+* resource/tls_locally_signed_cert: Setting an unsupported value in `allowed_uses` attribute, will now return an error instead of just a warning ([#185](https://github.com/hashicorp/terraform-provider-tls/issues/185), [#215](https://github.com/hashicorp/terraform-provider-tls/pull/215)).
+* resource/tls_locally_signed_cert: Attributes `cert_request_pem`, `ca_private_key_pem`, `ca_cert_pem` are stored (and returned) _as-is_ (in accordance with [guidelines](https://www.terraform.io/plugin/sdkv2/best-practices/sensitive-state#don-t-encrypt-state)) ([#87](https://github.com/hashicorp/terraform-provider-tls/issues/87), [#215](https://github.com/hashicorp/terraform-provider-tls/pull/215)).
+
+* provider: Default value for `proxy.from_env` is now `true`, and relies upon [`httpproxy.FromEnvironment`](https://pkg.go.dev/golang.org/x/net/http/httpproxy#FromEnvironment) ([#224](https://github.com/hashicorp/terraform-provider-tls/pull/224)).
+
+## 3.4.0 (May 16, 2022)
+
+NEW FEATURES:
+
+* data-source/tls_certificate: New attribute `content` that can be used in alternative to `url`, to provide the certificate in PEM format ([#189](https://github.com/hashicorp/terraform-provider-tls/pull/189)).
+* data-source/tls_certificate: Objects in the `certificates` chain attribute expose a new attribute `cert_pem` (PEM format) ([#208](https://github.com/hashicorp/terraform-provider-tls/pull/208)).
+
+* resource/tls_self_signed_cert: New attribute `set_authority_key_id` to make the generated certificate include an [authority key identifier](https://datatracker.ietf.org/doc/html/rfc5280#section-4.2.1.1) ([#212](https://github.com/hashicorp/terraform-provider-tls/pull/212)).
+
+ENHANCEMENTS:
+
+* resource/tls_locally_signed_cert: If CA provided via `ca_cert_pem` is not an actual CA, a warning will be raised, but the certificate will still be created ([#209](https://github.com/hashicorp/terraform-provider-tls/pull/209)). 
+
+NOTES:
+
+* data-source/tls_certificate: The `id` attribute has changed to the hashing of all certificates information in the chain. The first apply of this updated data source may show this difference ([#189](https://github.com/hashicorp/terraform-provider-tls/pull/189)).
+
+BUG FIXES:
+
+* data-source/tls_certificate: Prevent plan differences with the `id` attribute ([#79](https://github.com/hashicorp/terraform-provider-tls/issues/79), [#189](https://github.com/hashicorp/terraform-provider-tls/pull/189)).
+
+* resource/tls_cert_request: Allow for absent or empty `subject` block ([#209](https://github.com/hashicorp/terraform-provider-tls/pull/209)).
+
+* resource/tls_self_signed_cert: Allow for absent or empty `subject` block ([#209](https://github.com/hashicorp/terraform-provider-tls/pull/209)).
+
 ## 3.3.0 (April 07, 2022)
 
 NEW FEATURES:
@@ -107,7 +205,7 @@ IMPROVEMENTS:
 
 FEATURES: 
 
-* `tls_private_key` (both datasource and resource) include MD5 public key fingerprints as computed attributes.
+* `tls_private_key` (both datasource and resource) include MD5 public key fingerprints as read-only attributes.
 
 
 BUG FIXES:

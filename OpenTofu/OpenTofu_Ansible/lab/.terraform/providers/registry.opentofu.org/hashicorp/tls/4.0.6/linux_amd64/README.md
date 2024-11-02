@@ -9,15 +9,38 @@ created as part of a Terraform deployment.
 
 Official documentation on how to use this provider can be found on the 
 [Terraform Registry](https://registry.terraform.io/providers/hashicorp/tls/latest/docs).
-In case of specific questions or discussions, please use the 
-[HashiCorp Terraform providers Discuss](https://discuss.hashicorp.com/c/terraform-providers/31). 
+In case of specific questions or discussions, please use the
+HashiCorp [Terraform Providers Discuss forums](https://discuss.hashicorp.com/c/terraform-providers/31),
+in accordance with HashiCorp [Community Guidelines](https://www.hashicorp.com/community-guidelines).
+
+We also provide:
+
+* [Support](.github/SUPPORT.md) page for help when using the provider
+* [Contributing](.github/CONTRIBUTING.md) guidelines in case you want to help this project
+* [Design](DESIGN.md) documentation to understand the scope and maintenance decisions
 
 The remainder of this document will focus on the development aspects of the provider.
 
+## Compatibility
+
+Compatibility table between this provider, the [Terraform Plugin Protocol](https://www.terraform.io/plugin/how-terraform-works#terraform-plugin-protocol)
+version it implements, and Terraform:
+
+| TLS Provider | Terraform Plugin Protocol | Terraform |
+|:------------:|:-------------------------:|:---------:|
+|   `>= 4.x`   |            `5`            | `>= 0.12` |
+|   `>= 3.x`   |            `5`            | `>= 0.12` |
+|   `>= 2.x`   |        `4` and `5`        | `<= 0.12` |
+|   `>= 0.x`   |            `4`            | `<= 0.11` |
+
+Details can be found querying the [Registry API](https://www.terraform.io/internals/provider-registry-protocol#list-available-versions)
+that return all the details about which version are currently available for a particular provider.
+[Here](https://registry.terraform.io/v1/providers/hashicorp/tls/versions) are the details for TLS (JSON response).
+
 ## Requirements
 
-* [Terraform](https://www.terraform.io/downloads) (>= 0.12)
-* [Go](https://go.dev/doc/install) (1.17)
+* [Terraform](https://www.terraform.io/downloads)
+* [Go](https://go.dev/doc/install) (1.22)
 * [GNU Make](https://www.gnu.org/software/make/)
 * [golangci-lint](https://golangci-lint.run/usage/install/#local-installation) (optional)
 
@@ -59,28 +82,29 @@ If [running tests and acceptance tests](#testing) isn't enough, it's possible to
 to use a development builds of the provider. This can be achieved by leveraging the Terraform CLI
 [configuration file development overrides](https://www.terraform.io/cli/config/config-file#development-overrides-for-provider-developers).
 
-First, use `make install` to place a fresh development build of the provider in your [`${GOBIN}`](https://pkg.go.dev/cmd/go#hdr-Compile_and_install_packages_and_dependencies) (defaults to `${GOPATH}/bin` or `${HOME}/go/bin` if `${GOPATH}` is not set). Repeat
+First, use `make install` to place a fresh development build of the provider in your
+[`${GOBIN}`](https://pkg.go.dev/cmd/go#hdr-Compile_and_install_packages_and_dependencies)
+(defaults to `${GOPATH}/bin` or `${HOME}/go/bin` if `${GOPATH}` is not set). Repeat
 this every time you make changes to the provider locally.
 
-Then, in your `${HOME}/.terraformrc` (Unix) / `%APPDATA%\terraform.rc` (Windows), a `provider_installation` that contains
-the following `dev_overrides`:
+Then, setup your environment following [these instructions](https://www.terraform.io/plugin/debugging#terraform-cli-development-overrides)
+to make your local terraform use your local build.
 
-```hcl
-provider_installation {
-  dev_overrides {
-    "hashicorp/tls" = "${GOBIN}" //< replace `${GOBIN}` with the actual path on your system
-  }
+### Testing GitHub Actions
 
-  direct {}
-}
+This project uses [GitHub Actions](https://docs.github.com/en/actions/automating-builds-and-tests) to realize its CI.
+
+Sometimes it might be helpful to locally reproduce the behaviour of those actions,
+and for this we use [act](https://github.com/nektos/act). Once installed, you can _simulate_ the actions executed
+when opening a PR with:
+
+```shell
+# List of workflows for the 'pull_request' action
+$ act -l pull_request
+
+# Execute the workflows associated with the `pull_request' action 
+$ act pull_request
 ```
-
-Note that it's also possible to use a dedicated Terraform configuration file and invoke `terraform` while setting
-the environment variable `TF_CLI_CONFIG_FILE=my_terraform_config_file`.
-
-Once the `dev_overrides` are in place, any local execution of `terraform plan` and `terraform apply` will
-use the version of the provider found in the given `${GOBIN}` directory,
-instead of the one indicated in your terraform configuration.
 
 ## Releasing
 

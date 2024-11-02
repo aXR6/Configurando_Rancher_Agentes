@@ -31,6 +31,7 @@ resource "proxmox_vm_qemu" "virtual_machines" {
     storage = each.value.storage_dev
     type    = each.value.disk_type
     size    = each.value.storage
+    slot    = each.value.slot
   }
 
   # Configuração de rede
@@ -43,7 +44,7 @@ resource "proxmox_vm_qemu" "virtual_machines" {
     rate     = 0
     firewall = each.value.network_firewall
   }
- 
+
   # Conexão SSH para verificar status de provisionamento
   connection {
     type        = "ssh"
@@ -51,7 +52,7 @@ resource "proxmox_vm_qemu" "virtual_machines" {
     user        = each.value.ssh_user
     private_key = file(var.ssh_keys["priv"])
     agent       = false
-    timeout     = "3m"
+    timeout     = "5m"
   }
 
   # Provisionamento remoto com execução de comando básico de status
