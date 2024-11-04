@@ -3,7 +3,9 @@
 # Variáveis globais fixas
 IMAGE_NAME="debian-12-backports-genericcloud-amd64-daily.qcow2"
 VOLUME_NAME="local-lvm"
-SSHD_CONFIG_FILE="/home/img/sshd_config"  # Caminho do arquivo local
+SSHD_CONFIG_FILE="sshd_config"  # Caminho do arquivo local do sshd_config
+PUBLIC_KEY_FILE="id_rsa.pub"    # Caminho do arquivo local da chave pública
+PRIVATE_KEY_FILE="id_rsa"       # Caminho do arquivo local da chave privada
 
 # Função para exibir mensagens de erro e sair
 error_exit() {
@@ -54,10 +56,32 @@ create_template() {
   # Remoção de uma possível VM com o mesmo ID
   qm destroy "$VM_ID" --purge &> /dev/null || echo "Nenhuma VM com ID $VM_ID encontrada para remover."
 
-  # Instalação do qemu-guest-agent, SSH e configuração do sshd_config
-  echo "Instalando qemu-guest-agent, SSH e copiando configuração sshd_config na imagem..."
+  # Instalação do qemu-guest-agent, SSH, configuração do sshd_config e cópia das chaves SSH
+  echo "Instalando qemu-guest-agent, SSH e copiando configuração sshd_config e chaves SSH na imagem..."
   virt-customize -a "$IMAGE_NAME" --install qemu-guest-agent,openssh-server || error_exit "Falha ao instalar qemu-guest-agent e SSH."
   virt-customize -a "$IMAGE_NAME" --copy-in "$SSHD_CONFIG_FILE":/etc/ssh || error_exit "Falha ao copiar sshd_config."
+
+  # Criação do diretório ~/.ssh
+  virt-customize -a "$IMAGE_NAME" --run-command 'mkdir -p /root/.ssh && chmod 700 /root/.ssh' || error_exit "Falha ao criar diretório ~/.ssh."
+
+  # Criação do diretório /home/notroot/.ssh/
+  virt-customize -a "$IMAGE_NAME" --run-command 'mkdir -p /home/notroot/.ssh/ && chmod 700 /home/notroot/.ssh/' || error_exit "Falha ao criar diretório /home/notroot/.ssh/"
+
+  # Cópia das chaves pública e privada - /root/.ssh/
+  virt-customize -a "$IMAGE_NAME" --copy-in "$PUBLIC_KEY_FILE":/root/.ssh/ || error_exit "Falha ao copiar chave pública."
+  virt-customize -a "$IMAGE_NAME" --copy-in "$PRIVATE_KEY_FILE":/root/.ssh/ || error_exit "Falha ao copiar chave privada."
+
+    # Ajuste de permissões das chaves - /root/.ssh/
+    virt-customize -a "$IMAGE_NAME" --run-command 'chmod 600 /root/.ssh/id_rsa' || error_exit "Falha ao ajustar permissões das chaves SSH."
+    virt-customize -a "$IMAGE_NAME" --run-command 'chmod 644 /root/.ssh/id_rsa.pub' || error_exit "Falha ao ajustar permissões das chaves SSH."
+
+  # Cópia das chaves pública e privada - /home/notroot/.ssh/
+  virt-customize -a "$IMAGE_NAME" --copy-in "$PUBLIC_KEY_FILE":/home/notroot/.ssh/ || error_exit "Falha ao copiar chave pública."
+  virt-customize -a "$IMAGE_NAME" --copy-in "$PRIVATE_KEY_FILE":/home/notroot/.ssh/ || error_exit "Falha ao copiar chave privada."
+
+    # Ajuste de permissões das chaves - /home/notroot/.ssh/
+    virt-customize -a "$IMAGE_NAME" --run-command 'chmod 600 /home/notroot/.ssh/id_rsa' || error_exit "Falha ao ajustar permissões das chaves SSH."
+    virt-customize -a "$IMAGE_NAME" --run-command 'chmod 644 /home/notroot/.ssh/id_rsa.pub' || error_exit "Falha ao ajustar permissões das chaves SSH."
 
   # Criação da VM no Proxmox
   qm create "$VM_ID" --name "$TEMPLATE_NAME" --memory "$MEMORY" --cores "$CORES" --net0 virtio,bridge=vmbr0 || error_exit "Falha ao criar VM."

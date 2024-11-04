@@ -41,10 +41,10 @@
          recurse: yes
          state: directory
        with_items:
-         - /home/notroot/.ssh/
+         - /root/.ssh/
 
-     - name: Copiar configuração SSHD segura
-       copy: src=sshd_config_secured dest=/etc/ssh/sshd_config owner=root group=root mode=0644
+     #- name: Copiar configuração SSHD segura
+       #copy: src=sshd_config_secured dest=/etc/ssh/sshd_config owner=root group=root mode=0644
        #sudo: yes
 
      - name: Desabilitar IPv6
@@ -70,7 +70,7 @@
          group: notroot
          mode: 0400
        with_items:
-         - { src: 'authorized_keys', dest: '/home/notroot/.ssh/authorized_keys' }
+         - { src: 'authorized_keys', dest: '/root/.ssh/authorized_keys' }
 
      #Linha para configuração do FireWall
      #- name: instalação de pacotes
@@ -114,5 +114,5 @@
        shell: /home/notroot/install_comp_csf.sh
 
      - name: Copiar configuração CSF
-       copy: src=/home/terminal/projetos/Configurando_Rancher_Agentes/TerraForm/Ex2/ansible/csf/csf.conf dest=/etc/csf owner=root group=root mode=0644
+       copy: src=/home/tscanela/projetos-git/repo_axr6/Configurando_Rancher_Agentes/OpenTofu/OpenTofu_Ansible/ansible/csf/csf.conf dest=/etc/csf owner=root group=root mode=0644
      #Linha para configuração do FireWall

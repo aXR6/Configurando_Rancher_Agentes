@@ -17,7 +17,6 @@ locals {
     agent               = var.vm_agent_enabled
     hotplug             = var.vm_hotplug_options
     ssh_user            = var.vm_ssh_user
-    storage_dev         = var.vm_storage_dev
     gateway             = var.vm_gateway
     automatic_reboot    = var.vm_reboot
     onboot              = var.vm_onboot
@@ -26,27 +25,30 @@ locals {
     os_type             = var.vm_os_type
     numa                = var.vm_numa
     full_clone          = var.vm_full_clone
-    slot                = var.vm_slot
+    bootdisk            = var.vm_bootdisk
     qemu_os             = var.vm_ostype
     cloud_init_pass     = var.vm_cloud_init_password
+    #boot               = var.vm_boot_order "Ordem de boot da VM. Use 'c' para disco, 'd' para CD-ROM, 'n' para rede, etc."
+    scsihw              = var.vm_scsihw_type
   }
 
   # Definição de máquinas virtuais específicas
   machine_map = {
     m2 = merge(local.default_vm_config, {
-      name            = "agente-vm1"
-      target_node     = "pve"
-      template        = "Debian12CloudInitAgente"
-      vmid            = 101
-      vcpus           = 2
-      cores           = 2
-      socket          = 1
-      memory          = 3072
-      balloon         = 3072
-      storage         = "35G"
-      ip_address      = "192.168.3.11"
-      description     = "Máquina virtual - agente-vm1 - para Rancher."
-      mac_address     = "22:E2:A0:2F:92:53"
+      name        = "agente-vm1"
+      target_node = "pve"
+      template    = "Debian12CloudInitAgente"
+      vmid        = 101
+      vcpus       = 2
+      cores       = 2
+      socket      = 1
+      memory      = 3072
+      balloon     = 3072
+      storage     = "35G"
+      ip_address  = "192.168.3.11"
+      description = "Máquina virtual - agente-vm1 - para Rancher."
+      mac_address = "22:E2:A0:2F:92:53"
+      storage_dev = var.vm_storage_dev_2
     })
 
     m3 = merge(local.default_vm_config, {
@@ -63,6 +65,7 @@ locals {
       ip_address      = "192.168.3.12"
       description     = "Máquina virtual - agente-vm2 - para Rancher."
       mac_address     = "82:57:68:61:12:DD"
+      storage_dev     = var.vm_storage_dev_2
     })
 
     m5 = merge(local.default_vm_config, {
@@ -79,6 +82,7 @@ locals {
       ip_address      = "192.168.3.200"
       description     = "Máquina virtual - DNS Master."
       mac_address     = "6E:60:3D:9C:6E:60"
+      storage_dev     = var.vm_storage_dev
     })
 
     m6 = merge(local.default_vm_config, {
@@ -95,6 +99,7 @@ locals {
       ip_address      = "192.168.3.201"
       description     = "Máquina virtual - DNS Slave."
       mac_address     = "02:C0:10:09:A7:D0"
+      storage_dev     = var.vm_storage_dev
     })
   }
 

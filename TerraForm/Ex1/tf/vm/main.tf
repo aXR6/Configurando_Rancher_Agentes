@@ -14,10 +14,10 @@ resource "proxmox_vm_qemu" "prox-vm" {
 
   cores = 2
   sockets = 1
+  boot =  "c"
   vcpus = 2
   memory = 2048
   balloon = 2048
-  boot =  "c"
   bootdisk = "virtio0"
 
   scsihw = "virtio-scsi-pci"

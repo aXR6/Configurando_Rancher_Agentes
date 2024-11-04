@@ -3,4 +3,4 @@ all:
     dns1:
       hosts:
         ns1:
-          ansible_host: 192.168.3.200
+          ansible_host: 192.168.2.200

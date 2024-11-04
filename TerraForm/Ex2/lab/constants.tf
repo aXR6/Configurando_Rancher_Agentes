@@ -1,14 +1,15 @@
 locals {
   machine_map = {
     machines = {
+      /*
       m1 = {
         name                = "ks8-rancher"
-        target_node         = "dell5437"                 # Nome do Servidor Proxmox
+        target_node         = "pve"                 # Nome do Servidor Proxmox
         qemu_os             = "Linux"                    # Tipo de sistema operacional
         os_type             = "cloud-init"               # Defina como cloud-init para utilizar modelos
         agent               = 1                          # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
         full_clone          = true                       # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
-        template            = "Debian11CloudInitRancher" # Nome do modelo usado para clonar
+        template            = "Debian12CloudInitRancher" # Nome do modelo usado para clonar
         vmid                = 100
         vcpus               = 4
         cores               = 2
@@ -35,15 +36,15 @@ locals {
         searchdomain        = "pve.datacenter.tsc"
         nameserver          = "192.168.2.200 192.168.2.201 192.168.2.254 8.8.8.8"
       }
-
+    */
       m2 = {
         name                = "ks8-vm1"
-        target_node         = "dell5437"                # Nome do Servidor Proxmox
+        target_node         = "pve"                # Nome do Servidor Proxmox
         qemu_os             = "Linux"                   # Tipo de sistema operacional
         os_type             = "cloud-init"              # Defina como cloud-init para utilizar modelos
         agent               = 1                         # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
         full_clone          = true                      # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
-        template            = "Debian11CloudInitAgente" # Nome do modelo usado para clonar
+        template            = "Debian12CloudInitAgente" # Nome do modelo usado para clonar
         vmid                = 101
         vcpus               = 2
         cores               = 2
@@ -53,13 +54,13 @@ locals {
         storage             = "35G"                     # Tamanho do disco rígido secundário atribuído como inicializável
         cpu                 = "kvm64"
         numa                = true                      # acesso não uniforme à memória (NUMA) e a fixação da CPU (afinidade do processador)
-        ip_address          = "192.168.2.11"
-        gateway             = "192.168.2.254"
+        ip_address          = "192.168.3.11"
+        gateway             = "192.168.3.254"
         description         = "Máquina virtual - ks8-vm1 - para Rancher."
         ssh_user            = "notroot"
         mac_address         = "22:E2:A0:2F:92:53"
         disk_type           = "scsi"
-        storage_dev         = "local-zfs"
+        storage_dev         = "local-lvm"
         network_bridge_type = "vmbr0"
         network_model       = "virtio"
         cloud_init_pass     = "ks8vm1"
@@ -68,17 +69,17 @@ locals {
         onboot              = true
         network_firewall    = false                      # o padrão é falso
         searchdomain        = "pve.datacenter.tsc"
-        nameserver          = "192.168.2.200 192.168.2.201 192.168.2.254 8.8.8.8"
+        nameserver          = "192.168.3.200 192.168.3.201 192.168.3.1 8.8.8.8"
       }
 
       m3 = {
         name                = "ks8-vm2"
-        target_node         = "dell5437"                 # Nome do Servidor Proxmox
+        target_node         = "pve"                 # Nome do Servidor Proxmox
         qemu_os             = "Linux"                    # Tipo de sistema operacional
         os_type             = "cloud-init"               # Defina como cloud-init para utilizar modelos
         agent               = 1                          # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
         full_clone          = true                       # Defina como true para criar um clone completo ou false para criar um clone vinculado. Veja os documentos sobre clonagem para mais informações. Só se aplica quando o clone está definido.
-        template            = "Debian11CloudInitAgente"  # Nome do modelo usado para clonar
+        template            = "Debian12CloudInitAgente"  # Nome do modelo usado para clonar
         vmid                = 102
         vcpus               = 2
         cores               = 2
@@ -88,13 +89,13 @@ locals {
         storage             = "35G"                      # Tamanho do disco rígido secundário atribuído como inicializável
         cpu                 = "kvm64"
         numa                = true                       # acesso não uniforme à memória (NUMA) e a fixação da CPU (afinidade do processador)
-        ip_address          = "192.168.2.12"
-        gateway             = "192.168.2.254"
+        ip_address          = "192.168.3.12"
+        gateway             = "192.168.3.1"
         description         = "Máquina virtual - ks8-vm2 - para Rancher."
         ssh_user            = "notroot"
         mac_address         = "82:57:68:61:12:DD"
         disk_type           = "scsi"
-        storage_dev         = "local-zfs"
+        storage_dev         = "local-lvm"
         network_bridge_type = "vmbr0"
         network_model       = "virtio"
         cloud_init_pass     = "ks8vm2"
@@ -103,12 +104,12 @@ locals {
         onboot              = true
         network_firewall    = false                      # o padrão é falso
         searchdomain        = "pve.datacenter.tsc"
-        nameserver          = "192.168.2.200 192.168.2.201 192.168.2.254 8.8.8.8"
+        nameserver          = "192.168.3.200 192.168.3.201 192.168.3.1 8.8.8.8"
       }
-
+/*
       m4 = {
         name                = "ks8-vm3"
-        target_node         = "dell5437"                 # Nome do Servidor Proxmox
+        target_node         = "pve"                 # Nome do Servidor Proxmox
         qemu_os             = "Linux"                    # Tipo de sistema operacional
         os_type             = "cloud-init"               # Defina como cloud-init para utilizar modelos
         agent               = 1                          # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
@@ -143,7 +144,7 @@ locals {
 
       m5 = {
         name                = "ns1"
-        target_node         = "dellt110"                 # Nome do Servidor Proxmox
+        target_node         = "pve"                 # Nome do Servidor Proxmox
         qemu_os             = "Linux"                    # Tipo de sistema operacional
         os_type             = "cloud-init"               # Defina como cloud-init para utilizar modelos
         agent               = 1                          # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
@@ -178,7 +179,7 @@ locals {
 
       m6 = {
         name                = "ns2"
-        target_node         = "dellt110"                # Nome do Servidor Proxmox
+        target_node         = "pve"                # Nome do Servidor Proxmox
         qemu_os             = "Linux"                   # Tipo de sistema operacional
         os_type             = "cloud-init"              # Defina como cloud-init para utilizar modelos
         agent               = 1                         # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
@@ -213,7 +214,7 @@ locals {
 
       m7 = {
         name                = "nfstorrent"
-        target_node         = "dellt110"                # Nome do Servidor Proxmox
+        target_node         = "pve"                # Nome do Servidor Proxmox
         qemu_os             = "Linux"                   # Tipo de sistema operacional
         os_type             = "cloud-init"              # Defina como cloud-init para utilizar modelos
         agent               = 1                         # Defina como 1 para habilitar o QEMU Guest Agent. Observe que você deve executar o daemon qemu-guest-agent no convidado para que isso tenha algum efeito.
@@ -244,7 +245,7 @@ locals {
         network_firewall    = false                     # o padrão é falso
         searchdomain        = "pve.datacenter.tsc"
         nameserver          = "192.168.2.200 192.168.2.201 192.168.2.254 8.8.8.8"
-      }
+      }*/
     }
   }
 
