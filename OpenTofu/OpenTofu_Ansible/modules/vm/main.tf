@@ -59,6 +59,20 @@ resource "null_resource" "provision_vms" {
 
   depends_on = [proxmox_vm_qemu.virtual_machine] # Aguarda a criação de todas as VMs
 
+  # Remove chaves de host antigas para evitar problemas de verificação
+  provisioner "local-exec" {
+    command = "ssh-keygen -R ${each.value.ip_address}"
+  }
+
+  # Cria o arquivo de configuração SSH para desabilitar StrictHostKeyChecking
+  provisioner "local-exec" {
+    command = <<EOF
+      echo "Host ${each.value.ip_address}
+      StrictHostKeyChecking no
+      UserKnownHostsFile=/dev/null" >> ~/.ssh/config
+EOF
+  }
+
   provisioner "remote-exec" {
     inline = [
       "echo 'notroot ALL=(ALL) NOPASSWD:ALL' | sudo tee /etc/sudoers.d/notroot",
@@ -70,37 +84,37 @@ resource "null_resource" "provision_vms" {
     type     = "ssh"
     host     = each.value.ip_address
     user     = each.value.ssh_user
-    password = each.value.cloud_init_pass # Substitua pelo valor correspondente da senha
+    password = each.value.cloud_init_pass
     timeout  = "5m"
   }
 
   # Provisionamento inicial com Ansible para cada VM
   provisioner "local-exec" {
     working_dir = "../ansible/"
-    command     = "ansible-playbook -u ${each.value.ssh_user} -i hosts.yaml provision.yaml --extra-vars 'ansible_password=${each.value.cloud_init_pass}'"
+    command     = "ansible-playbook -u ${each.value.ssh_user} -i hosts.yaml provision.yaml --extra-vars 'ansible_password=${each.value.cloud_init_pass}' -o StrictHostKeyChecking=no"
   }
 
   # Provisionamento para DNS-NS1
   provisioner "local-exec" {
     working_dir = "../ansible/"
-    command     = "ansible-playbook -u ${each.value.ssh_user} -i indnsns1.yaml dnsns1.yaml --extra-vars 'ansible_password=${each.value.cloud_init_pass}'"
+    command     = "ansible-playbook -u ${each.value.ssh_user} -i indnsns1.yaml dnsns1.yaml --extra-vars 'ansible_password=${each.value.cloud_init_pass}' -o StrictHostKeyChecking=no"
   }
 
   # Provisionamento para DNS-NS2
   provisioner "local-exec" {
     working_dir = "../ansible/"
-    command     = "ansible-playbook -u ${each.value.ssh_user} -i indnsns2.yaml dnsns2.yaml --extra-vars 'ansible_password=${each.value.cloud_init_pass}'"
+    command     = "ansible-playbook -u ${each.value.ssh_user} -i indnsns2.yaml dnsns2.yaml --extra-vars 'ansible_password=${each.value.cloud_init_pass}' -o StrictHostKeyChecking=no"
   }
 
   # Provisionamento para AGENTES
   provisioner "local-exec" {
     working_dir = "../ansible/"
-    command     = "ansible-playbook -u ${each.value.ssh_user} -i agentes.yaml pb_agentes.yaml --extra-vars 'ansible_password=${each.value.cloud_init_pass}'"
+    command     = "ansible-playbook -u ${each.value.ssh_user} -i agentes.yaml pb_agentes.yaml --extra-vars 'ansible_password=${each.value.cloud_init_pass}' -o StrictHostKeyChecking=no"
   }
 
   # Provisionamento para RANCHER
   provisioner "local-exec" {
     working_dir = "../ansible/"
-    command     = "ansible-playbook -u ${each.value.ssh_user} -i rancher.yaml pb_rancher.yaml --extra-vars 'ansible_password=${each.value.cloud_init_pass}'"
+    command     = "ansible-playbook -u ${each.value.ssh_user} -i rancher.yaml pb_rancher.yaml --extra-vars 'ansible_password=${each.value.cloud_init_pass}' -o StrictHostKeyChecking=no"
   }
 }
