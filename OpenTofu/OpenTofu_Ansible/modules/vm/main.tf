@@ -21,7 +21,7 @@ resource "proxmox_vm_qemu" "virtual_machine" {
   ssh_user         = each.value.ssh_user
   sshkeys          = file(var.ssh_keys["pub"])
   ciuser           = each.value.ssh_user        
-  cipassword       = each.value.cloud_init_pass 
+  #cipassword       = each.value.cloud_init_pass 
   ipconfig0        = "ip=${each.value.ip_address}/24,gw=${each.value.gateway}"
   automatic_reboot = each.value.automatic_reboot
   hotplug          = each.value.hotplug
@@ -67,45 +67,40 @@ resource "null_resource" "provision_vms" {
   }
 
   connection {
-    type        = "ssh"
-    host        = each.value.ip_address
-    user        = each.value.ssh_user
-    private_key = file(var.ssh_keys["priv"])
-    timeout     = "5m"
+    type     = "ssh"
+    host     = each.value.ip_address
+    user     = each.value.ssh_user
+    password = each.value.cloud_init_pass # Substitua pelo valor correspondente da senha
+    timeout  = "5m"
   }
 
   # Provisionamento inicial com Ansible para cada VM
   provisioner "local-exec" {
     working_dir = "../ansible/"
-    command     = "ansible-playbook -u ${each.value.ssh_user} --key-file ${each.value.cloud_init_pass} -i hosts.yaml provision.yaml"
-    #command     = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i hosts.yaml provision.yaml"
+    command     = "ansible-playbook -u ${each.value.ssh_user} --ask-pass -i hosts.yaml provision.yaml"
   }
 
   # Provisionamento para DNS-NS1
   provisioner "local-exec" {
     working_dir = "../ansible/"
-    command     = "ansible-playbook -u ${each.value.ssh_user} --key-file ${each.value.cloud_init_pass} -i indnsns1.yaml dnsns1.yaml"
-    #command     = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i indnsns1.yaml dnsns1.yaml"
+    command     = "ansible-playbook -u ${each.value.ssh_user} --ask-pass -i indnsns1.yaml dnsns1.yaml"
   }
 
   # Provisionamento para DNS-NS2
   provisioner "local-exec" {
     working_dir = "../ansible/"
-    command     = "ansible-playbook -u ${each.value.ssh_user} --key-file ${each.value.cloud_init_pass} -i indnsns2.yaml dnsns2.yaml"
-    #command     = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i indnsns2.yaml dnsns2.yaml"
+    command     = "ansible-playbook -u ${each.value.ssh_user} --ask-pass -i indnsns2.yaml dnsns2.yaml"
   }
 
   # Provisionamento para AGENTES
   provisioner "local-exec" {
     working_dir = "../ansible/"
-    command     = "ansible-playbook -u ${each.value.ssh_user} --key-file ${each.value.cloud_init_pass} -i agentes.yaml pb_agentes.yaml"
-    #command     = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i agentes.yaml pb_agentes.yaml"
+    command     = "ansible-playbook -u ${each.value.ssh_user} --ask-pass -i agentes.yaml pb_agentes.yaml"
   }
 
   # Provisionamento para RANCHER
   provisioner "local-exec" {
     working_dir = "../ansible/"
-    command     = "ansible-playbook -u ${each.value.ssh_user} --key-file ${each.value.cloud_init_pass} -i rancher.yaml pb_rancher.yaml"
-    #command     = "ansible-playbook -u ${each.value.ssh_user} --key-file ${var.ssh_keys["priv"]} -i rancher.yaml pb_rancher.yaml"
+    command     = "ansible-playbook -u ${each.value.ssh_user} --ask-pass -i rancher.yaml pb_rancher.yaml"
   }
 }
