@@ -70,37 +70,37 @@ resource "null_resource" "provision_vms" {
     type     = "ssh"
     host     = each.value.ip_address
     user     = each.value.ssh_user
-    password = each.value.cloud_init_pass # Substitua pelo valor correspondente da senha
+    password = each.value.ssh_password # Substitua pelo valor correspondente da senha
     timeout  = "5m"
   }
 
   # Provisionamento inicial com Ansible para cada VM
   provisioner "local-exec" {
     working_dir = "../ansible/"
-    command     = "ansible-playbook -u ${each.value.ssh_user} --ask-pass -i hosts.yaml provision.yaml"
+    command     = "ansible-playbook -u ${each.value.ssh_user} -i hosts.yaml provision.yaml --extra-vars 'ansible_password=${each.value.ssh_password}'"
   }
 
   # Provisionamento para DNS-NS1
   provisioner "local-exec" {
     working_dir = "../ansible/"
-    command     = "ansible-playbook -u ${each.value.ssh_user} --ask-pass -i indnsns1.yaml dnsns1.yaml"
+    command     = "ansible-playbook -u ${each.value.ssh_user} -i indnsns1.yaml dnsns1.yaml --extra-vars 'ansible_password=${each.value.ssh_password}'"
   }
 
   # Provisionamento para DNS-NS2
   provisioner "local-exec" {
     working_dir = "../ansible/"
-    command     = "ansible-playbook -u ${each.value.ssh_user} --ask-pass -i indnsns2.yaml dnsns2.yaml"
+    command     = "ansible-playbook -u ${each.value.ssh_user} -i indnsns2.yaml dnsns2.yaml --extra-vars 'ansible_password=${each.value.ssh_password}'"
   }
 
   # Provisionamento para AGENTES
   provisioner "local-exec" {
     working_dir = "../ansible/"
-    command     = "ansible-playbook -u ${each.value.ssh_user} --ask-pass -i agentes.yaml pb_agentes.yaml"
+    command     = "ansible-playbook -u ${each.value.ssh_user} -i agentes.yaml pb_agentes.yaml --extra-vars 'ansible_password=${each.value.ssh_password}'"
   }
 
   # Provisionamento para RANCHER
   provisioner "local-exec" {
     working_dir = "../ansible/"
-    command     = "ansible-playbook -u ${each.value.ssh_user} --ask-pass -i rancher.yaml pb_rancher.yaml"
+    command     = "ansible-playbook -u ${each.value.ssh_user} -i rancher.yaml pb_rancher.yaml --extra-vars 'ansible_password=${each.value.ssh_password}'"
   }
 }
