@@ -1,6 +1,18 @@
-# Recurso para criação das VMs sem provisionamento SSH imediato
+# Definindo variáveis locais fora do recurso para evitar conflitos
+locals {
+  ansible_playbooks = {
+    "initial_provision" = "provision.yaml"
+    "dns_ns1"           = "dnsns1.yaml"
+    "dns_ns2"           = "dnsns2.yaml"
+    "agents"            = "pb_agentes.yaml"
+    "rancher"           = "pb_rancher.yaml"
+  }
+}
+
+# Módulo para criação das VMs
 resource "proxmox_vm_qemu" "virtual_machine" {
   for_each         = var.virtual_machines
+
   name             = each.value.name
   onboot           = each.value.onboot
   scsihw           = each.value.scsihw
@@ -21,7 +33,7 @@ resource "proxmox_vm_qemu" "virtual_machine" {
   ssh_user         = each.value.ssh_user
   sshkeys          = file(var.ssh_keys["pub"])
   ciuser           = each.value.ssh_user        
-  #cipassword       = each.value.cloud_init_pass 
+  cipassword       = each.value.cloud_init_pass 
   ipconfig0        = "ip=${each.value.ip_address}/24,gw=${each.value.gateway}"
   automatic_reboot = each.value.automatic_reboot
   hotplug          = each.value.hotplug
@@ -29,6 +41,7 @@ resource "proxmox_vm_qemu" "virtual_machine" {
   nameserver       = each.value.nameserver
   agent            = each.value.agent
 
+  # Configuração de discos
   disk {
     type    = var.disk_type_ci
     storage = var.storage_ci
@@ -42,6 +55,7 @@ resource "proxmox_vm_qemu" "virtual_machine" {
     slot    = each.value.bootdisk
   }
 
+  # Configuração de rede
   network {
     bridge   = each.value.network_bridge_type
     model    = each.value.network_model
@@ -53,16 +67,17 @@ resource "proxmox_vm_qemu" "virtual_machine" {
   }
 }
 
-# Recurso para provisionamento e configuração via SSH após a criação das VMs
+# Módulo para provisionamento e configuração das VMs
 resource "null_resource" "provision_vms" {
   for_each = var.virtual_machines
 
   depends_on = [proxmox_vm_qemu.virtual_machine] # Aguarda a criação de todas as VMs
 
+  # Configurações iniciais de sudo para o usuário
   provisioner "remote-exec" {
     inline = [
-      "echo 'notroot ALL=(ALL) NOPASSWD:ALL' | sudo tee /etc/sudoers.d/notroot",
-      "sudo chmod 0440 /etc/sudoers.d/notroot"
+      "echo '${each.value.ssh_user} ALL=(ALL) NOPASSWD:ALL' | sudo tee /etc/sudoers.d/${each.value.ssh_user}",
+      "sudo chmod 0440 /etc/sudoers.d/${each.value.ssh_user}"
     ]
   }
 
@@ -70,37 +85,16 @@ resource "null_resource" "provision_vms" {
     type     = "ssh"
     host     = each.value.ip_address
     user     = each.value.ssh_user
-    password = each.value.ssh_password # Substitua pelo valor correspondente da senha
+    password = each.value.cloud_init_pass # Substitua pelo valor correspondente da senha
     timeout  = "5m"
   }
 
-  # Provisionamento inicial com Ansible para cada VM
+  # Executa os playbooks de provisionamento usando um único comando e diferentes inventários
   provisioner "local-exec" {
     working_dir = "../ansible/"
-    command     = "ansible-playbook -u ${each.value.ssh_user} -i hosts.yaml provision.yaml --extra-vars 'ansible_password=${each.value.ssh_password}'"
-  }
-
-  # Provisionamento para DNS-NS1
-  provisioner "local-exec" {
-    working_dir = "../ansible/"
-    command     = "ansible-playbook -u ${each.value.ssh_user} -i indnsns1.yaml dnsns1.yaml --extra-vars 'ansible_password=${each.value.ssh_password}'"
-  }
-
-  # Provisionamento para DNS-NS2
-  provisioner "local-exec" {
-    working_dir = "../ansible/"
-    command     = "ansible-playbook -u ${each.value.ssh_user} -i indnsns2.yaml dnsns2.yaml --extra-vars 'ansible_password=${each.value.ssh_password}'"
-  }
-
-  # Provisionamento para AGENTES
-  provisioner "local-exec" {
-    working_dir = "../ansible/"
-    command     = "ansible-playbook -u ${each.value.ssh_user} -i agentes.yaml pb_agentes.yaml --extra-vars 'ansible_password=${each.value.ssh_password}'"
-  }
-
-  # Provisionamento para RANCHER
-  provisioner "local-exec" {
-    working_dir = "../ansible/"
-    command     = "ansible-playbook -u ${each.value.ssh_user} -i rancher.yaml pb_rancher.yaml --extra-vars 'ansible_password=${each.value.ssh_password}'"
+    command = join(" && ", [
+      for playbook_name, playbook_file in local.ansible_playbooks : 
+      "ansible-playbook -u ${each.value.ssh_user} -i ${playbook_name}.yaml ${playbook_file} --extra-vars 'ansible_password=${each.value.cloud_init_pass}'"
+    ])
   }
 }
