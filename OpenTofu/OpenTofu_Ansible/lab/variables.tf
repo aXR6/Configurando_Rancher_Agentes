@@ -58,7 +58,7 @@ variable "vm_cloud_init_password" {
   description = "Senha padrão para cloud-init (usar somente se necessário)"
   type        = string
   sensitive   = true
-  default     = "testando123"
+  default     = "123"
 }
 
 variable "vm_agent_enabled" {
