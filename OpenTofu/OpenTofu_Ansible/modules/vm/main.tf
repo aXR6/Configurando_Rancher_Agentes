@@ -52,7 +52,7 @@ resource "proxmox_vm_qemu" "virtual_machine" {
     firewall = each.value.network_firewall
   }
 }
-
+/*
 # Recurso para provisionamento e configuração via SSH após a criação das VMs
 resource "null_resource" "provision_vms" {
   for_each = var.virtual_machines
@@ -104,3 +104,4 @@ resource "null_resource" "provision_vms" {
     command     = "ansible-playbook -u ${each.value.ssh_user} -i rancher.yaml pb_rancher.yaml --extra-vars 'ansible_password=${each.value.cloud_init_pass}'"
   }
 }
+*/
