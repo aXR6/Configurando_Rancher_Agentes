@@ -176,7 +176,6 @@ create_template_dns1() {
   virt-customize -a "$IMAGE_NAME" --run-command 'systemctl enable custom-script.service' || error_exit "Falha ao habilitar o serviço no systemd."
 
   echo "Criando e copiando a pasta do sistema BIND para dentro da imagem"
-  #virt-customize -a "$IMAGE_NAME" --run-command "mkdir -p /etc/bind"
   virt-customize -a "$IMAGE_NAME" --copy-in "${Dir_dnsns1}/.":/etc/bind
 
   echo "Criação da VM no Proxmox"
