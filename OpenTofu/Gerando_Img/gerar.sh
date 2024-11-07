@@ -54,7 +54,7 @@ configure_image_params() {
 create_template() {
   echo "Criando template $TEMPLATE_NAME com ID $VM_ID..."
 
-  # Remoção de uma possível VM com o mesmo ID
+  echo "Remoção de uma possível VM com o mesmo ID"
   qm destroy "$VM_ID" --purge &> /dev/null || echo "Nenhuma VM com ID $VM_ID encontrada para remover."
 
   # Instalação do qemu-guest-agent, SSH, configuração do sshd_config e cópia das chaves SSH
@@ -62,52 +62,52 @@ create_template() {
   virt-customize -a "$IMAGE_NAME" --install qemu-guest-agent,openssh-server || error_exit "Falha ao instalar qemu-guest-agent e SSH."
   virt-customize -a "$IMAGE_NAME" --copy-in "$SSHD_CONFIG_FILE":/etc/ssh || error_exit "Falha ao copiar sshd_config."
 
-  # Criação do diretório ~/.ssh
+  echo "Criação do diretório ~/.ssh"
   virt-customize -a "$IMAGE_NAME" --run-command 'mkdir -p /root/.ssh && chmod 700 /root/.ssh' || error_exit "Falha ao criar diretório ~/.ssh."
 
-  # Criação do diretório /home/notroot/.ssh/
+  echo "Criação do diretório /home/notroot/.ssh/"
   virt-customize -a "$IMAGE_NAME" --run-command 'mkdir -p /home/notroot/.ssh/ && chmod 700 /home/notroot/.ssh/' || error_exit "Falha ao criar diretório /home/notroot/.ssh/"
 
-  # Cópia das chaves pública e privada - /root/.ssh/
+  echo "Cópia das chaves pública e privada - /root/.ssh/"
   virt-customize -a "$IMAGE_NAME" --copy-in "$PUBLIC_KEY_FILE":/root/.ssh/ || error_exit "Falha ao copiar chave pública."
   virt-customize -a "$IMAGE_NAME" --copy-in "$PRIVATE_KEY_FILE":/root/.ssh/ || error_exit "Falha ao copiar chave privada."
 
-    # Ajuste de permissões das chaves - /root/.ssh/
+    echo "Ajuste de permissões das chaves - /root/.ssh/"
     virt-customize -a "$IMAGE_NAME" --run-command 'chmod 600 /root/.ssh/id_rsa' || error_exit "Falha ao ajustar permissões das chaves SSH."
     virt-customize -a "$IMAGE_NAME" --run-command 'chmod 644 /root/.ssh/id_rsa.pub' || error_exit "Falha ao ajustar permissões das chaves SSH."
 
-  # Cópia das chaves pública e privada - /home/notroot/.ssh/
+  echo "Cópia das chaves pública e privada - /home/notroot/.ssh/"
   virt-customize -a "$IMAGE_NAME" --copy-in "$PUBLIC_KEY_FILE":/home/notroot/.ssh/ || error_exit "Falha ao copiar chave pública."
   virt-customize -a "$IMAGE_NAME" --copy-in "$PRIVATE_KEY_FILE":/home/notroot/.ssh/ || error_exit "Falha ao copiar chave privada."
 
-    # Ajuste de permissões das chaves - /home/notroot/.ssh/
+    echo "Ajuste de permissões das chaves - /home/notroot/.ssh/"
     virt-customize -a "$IMAGE_NAME" --run-command 'chmod 600 /home/notroot/.ssh/id_rsa' || error_exit "Falha ao ajustar permissões das chaves SSH."
     virt-customize -a "$IMAGE_NAME" --run-command 'chmod 644 /home/notroot/.ssh/id_rsa.pub' || error_exit "Falha ao ajustar permissões das chaves SSH."
 
-  # Copiar o script para a imagem
+  echo "Copiar o script para a imagem"
   virt-customize -a "$IMAGE_NAME" --copy-in "$SCRIPT_FILE":/usr/local/bin/ || error_exit "Falha ao copiar o script."
 
-  # Tornar o script executável
+  echo "Tornar o script executável"
   virt-customize -a "$IMAGE_NAME" --run-command "chmod +x /usr/local/bin/$SCRIPT_FILE" || error_exit "Falha ao tornar o script executável."
 
-  # Criar o arquivo de serviço systemd
+  echo "Criar o arquivo de serviço systemd"
   virt-customize -a "$IMAGE_NAME" --run-command "echo -e '[Unit]\nDescription=Executar script customizado no boot\n\n[Service]\nType=simple\nExecStart=/usr/local/bin/$SCRIPT_FILE\n\n[Install]\nWantedBy=multi-user.target' > /etc/systemd/system/custom-script.service" || error_exit "Falha ao criar o arquivo de serviço systemd."
 
-  # Habilitar o serviço para iniciar no boot
+  echo "Habilitar o serviço para iniciar no boot"
   virt-customize -a "$IMAGE_NAME" --run-command 'systemctl enable custom-script.service' || error_exit "Falha ao habilitar o serviço no systemd."
 
-  # Criação da VM no Proxmox
+  echo "Criação da VM no Proxmox"
   qm create "$VM_ID" --name "$TEMPLATE_NAME" --memory "$MEMORY" --cores "$CORES" --net0 virtio,bridge=vmbr0 || error_exit "Falha ao criar VM."
   qm importdisk "$VM_ID" "$IMAGE_NAME" "$VOLUME_NAME" || error_exit "Falha ao importar disco."
   qm set "$VM_ID" --scsihw virtio-scsi-single --scsi0 "$VOLUME_NAME:vm-$VM_ID-disk-0" || error_exit "Falha ao configurar o SCSI."
   qm set "$VM_ID" --agent enabled=1,fstrim_cloned_disks=1 || error_exit "Falha ao configurar o agente."
 
-  # Configuração do Cloud-Init Disk, boot e vídeo padrão
+  echo "Configuração do Cloud-Init Disk, boot e vídeo padrão"
   qm set "$VM_ID" --ide2 "$VOLUME_NAME:cloudinit" || error_exit "Falha ao configurar Cloud-Init."
   qm set "$VM_ID" --boot c --bootdisk scsi0 || error_exit "Falha ao configurar o boot."
   qm set "$VM_ID" --serial0 socket --vga std || error_exit "Falha ao configurar VGA padrão."
 
-  # Convertendo para template
+  echo "Convertendo para template"
   qm template "$VM_ID" || error_exit "Falha ao converter para template."
 
   echo "Template $TEMPLATE_NAME criado com sucesso."
