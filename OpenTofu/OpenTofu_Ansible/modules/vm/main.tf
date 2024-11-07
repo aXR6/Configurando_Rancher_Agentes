@@ -52,7 +52,7 @@ resource "proxmox_vm_qemu" "virtual_machine" {
     firewall = each.value.network_firewall
   }
 }
-/*
+
 # Recurso para provisionamento e configuração via SSH após a criação das VMs
 resource "null_resource" "provision_vms" {
   for_each = var.virtual_machines
@@ -65,7 +65,7 @@ resource "null_resource" "provision_vms" {
       "sudo chmod 0440 /etc/sudoers.d/notroot"
     ]
   }
-
+}/*
   connection {
     type     = "ssh"
     host     = each.value.ip_address
