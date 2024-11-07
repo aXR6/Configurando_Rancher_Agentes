@@ -71,7 +71,7 @@ locals {
     m5 = merge(local.default_vm_config, {
       name            = "ns1"
       target_node     = "pve"
-      template        = "Debian12CloudInitComum"
+      template        = "Debian12CloudInitDNS1"
       vmid            = 200
       vcpus           = 1
       cores           = 1
@@ -88,7 +88,7 @@ locals {
     m6 = merge(local.default_vm_config, {
       name            = "ns2"
       target_node     = "pve"
-      template        = "Debian12CloudInitComum"
+      template        = "Debian12CloudInitDNS2"
       vmid            = 201
       vcpus           = 1
       cores           = 1
