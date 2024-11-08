@@ -27,12 +27,23 @@ done
 echo "Atualizando todos os pacotes do sistema..."
 sudo apt-get upgrade -y || { echo "Erro ao atualizar pacotes do sistema."; exit 1; }
 
+echo "Listando pacotes atualizáveis..."
+sudo apt list --upgradable
+
+echo "Corrigindo pacotes quebrados, se houver..."
+sudo apt --fix-broken install -y || { echo "Erro ao corrigir pacotes quebrados."; exit 1; }
+
+echo "Atualizando pacotes para distribuição completa..."
+sudo apt dist-upgrade -y || { echo "Erro ao atualizar distribuição completa."; exit 1; }
+
+# Remover pacotes obsoletos
 echo "Removendo pacotes obsoletos..."
 sudo apt-get autoremove -y || { echo "Erro ao remover pacotes obsoletos."; exit 1; }
 
 echo "Executando limpeza de pacotes..."
 sudo apt-get autoclean || { echo "Erro ao realizar autoclean."; exit 1; }
 
+# Limpeza do cache de pacotes
 echo "Limpando cache de pacotes..."
 sudo apt-get clean || { echo "Erro ao limpar cache de pacotes."; exit 1; }
 

@@ -23,16 +23,31 @@ for package in "${PACKAGES[@]}"; do
   fi
 done
 
+# Lista pacotes que podem ser atualizados
+echo "Listando pacotes que podem ser atualizados..."
+apt list --upgradable
+
+# Instala pacotes quebrados
+echo "Corrigindo pacotes quebrados..."
+sudo apt --fix-broken install -y || { echo "Erro ao corrigir pacotes quebrados."; exit 1; }
+
+# Realiza atualização completa do sistema
+echo "Realizando dist-upgrade..."
+sudo apt dist-upgrade -y || { echo "Erro ao realizar dist-upgrade."; exit 1; }
+
 # Realiza atualizações gerais do sistema
 echo "Atualizando todos os pacotes do sistema..."
 sudo apt-get upgrade -y || { echo "Erro ao atualizar pacotes do sistema."; exit 1; }
 
+# Remove pacotes obsoletos
 echo "Removendo pacotes obsoletos..."
 sudo apt-get autoremove -y || { echo "Erro ao remover pacotes obsoletos."; exit 1; }
 
+# Executa limpeza de pacotes
 echo "Executando limpeza de pacotes..."
 sudo apt-get autoclean || { echo "Erro ao realizar autoclean."; exit 1; }
 
+# Limpa cache de pacotes
 echo "Limpando cache de pacotes..."
 sudo apt-get clean || { echo "Erro ao limpar cache de pacotes."; exit 1; }
 
