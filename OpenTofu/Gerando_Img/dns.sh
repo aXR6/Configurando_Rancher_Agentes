@@ -54,4 +54,8 @@ USER_TO_ADD="notroot"
 echo "Adicionando o usuário $USER_TO_ADD ao grupo 'wheel'..."
 sudo usermod -aG wheel "$USER_TO_ADD" || { echo "Erro ao adicionar o usuário $USER_TO_ADD ao grupo 'wheel'."; exit 1; }
 
+# Adicionar informações de DNS ao /etc/resolv.conf
+echo "Configurando DNS em /etc/resolv.conf..."
+echo -e "search pve.datacenter.tsc\nnameserver 192.168.3.200\nnameserver 192.168.3.201\nnameserver 192.168.3.1\nnameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null || { echo "Erro ao configurar o arquivo /etc/resolv.conf."; exit 1; }
+
 echo "Processo concluído com sucesso."
