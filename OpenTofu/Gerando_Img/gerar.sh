@@ -455,9 +455,6 @@ create_template_nfs() {
   echo "Configurando /etc/exports para exportação NFS..."
   virt-customize -a "$IMAGE_NAME" --run-command "echo -e '/srv/nfs/torrent *(rw,sync,no_subtree_check)\n/srv/nfs/music *(rw,sync,no_subtree_check)' >> /etc/exports" || error_exit "Falha ao configurar /etc/exports."
 
-  echo "Reiniciando o serviço NFS..."
-  virt-customize -a "$IMAGE_NAME" --run-command 'systemctl restart nfs-kernel-server' || error_exit "Falha ao reiniciar o servidor NFS."
-
   echo "Criação da VM no Proxmox"
   qm create "$VM_ID" --name "$TEMPLATE_NAME" --memory "$MEMORY" --cores "$CORES" --net0 virtio,bridge=vmbr0 || error_exit "Falha ao criar VM."
   qm importdisk "$VM_ID" "$IMAGE_NAME" "$VOLUME_NAME" || error_exit "Falha ao importar disco."

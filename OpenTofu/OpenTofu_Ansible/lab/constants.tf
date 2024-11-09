@@ -5,6 +5,7 @@
 	192.168.3.13;   # agente-vm3  -   74:86:7A:F4:34:EC
 	192.168.3.200;  # dns-ns1     -   6E:60:3D:9C:6E:60
 	192.168.3.201;  # dns-ns2     -   02:C0:10:09:A7:D0
+  192.168.3.100;  # NFS         -   52:54:00:85:F2:BA
 */
 locals {
   # Configurações padrão para todas as máquinas virtuais
