@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Lista de pacotes necessários
-PACKAGES=(bash curl grep mawk open-iscsi util-linux wget sudo)
+PACKAGES=(bash grep mawk open-iscsi util-linux wget)
 
 # Função para verificar se um pacote está instalado
 is_installed() {
