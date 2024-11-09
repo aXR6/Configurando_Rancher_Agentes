@@ -35,20 +35,20 @@ locals {
   # Definição de máquinas virtuais específicas
   machine_map = {
     m2 = merge(local.default_vm_config, {
-      name        = "agente-vm1"
-      target_node = "pve"
-      template    = "Debian12CloudInitAgente"
-      vmid        = 101
-      vcpus       = 2
-      cores       = 2
-      socket      = 1
-      memory      = 3072
-      balloon     = 3072
-      storage     = "35G"
-      ip_address  = "192.168.3.11"
-      description = "Máquina virtual - agente-vm1 - para Rancher."
-      mac_address = "22:E2:A0:2F:92:53"
-      storage_dev = var.vm_storage_dev_2
+      name            = "agente-vm1"
+      target_node     = "pve"
+      template        = "Debian12CloudInitAgente"
+      vmid            = 101
+      vcpus           = 2
+      cores           = 2
+      socket          = 1
+      memory          = 3072
+      balloon         = 3072
+      storage         = "35G"
+      ip_address      = "192.168.3.11"
+      description     = "Máquina virtual - agente-vm1 - para Rancher."
+      mac_address     = "22:E2:A0:2F:92:53"
+      storage_dev     = var.vm_storage_dev_2
     })
 
     m3 = merge(local.default_vm_config, {
@@ -101,6 +101,24 @@ locals {
       mac_address     = "02:C0:10:09:A7:D0"
       storage_dev     = var.vm_storage_dev
     })
+/*
+    m7 = merge(local.default_vm_config, {
+      name            = "nfs"
+      target_node     = "pve"
+      template        = "Debian12CloudInitComum"
+      vmid            = 100
+      vcpus           = 1
+      cores           = 1
+      socket          = 1
+      memory          = 1024
+      balloon         = 512
+      storage         = "900G"
+      ip_address      = "192.168.3.100"
+      description     = "Máquina virtual - NFS."
+      mac_address     = "52:54:00:85:F2:BA"
+      storage_dev     = var.vm_storage_dev_3
+    })
+*/
   }
 
   # Map resultante das máquinas

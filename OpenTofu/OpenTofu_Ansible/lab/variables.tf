@@ -100,6 +100,12 @@ variable "vm_storage_dev_2" {
   default     = "local-lvm"
 }
 
+variable "vm_storage_dev_3" {
+  description = "Dispositivo de armazenamento padrão para as máquinas virtuais"
+  type        = string
+  default     = "Stream"
+}
+
 variable "vm_disk_type" {
   description = "Tipo de disco padrão para todas as máquinas virtuais (ex: disk para armazenamento)"
   type        = string
