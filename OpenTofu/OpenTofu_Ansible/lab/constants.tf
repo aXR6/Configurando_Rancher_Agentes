@@ -101,7 +101,7 @@ locals {
       mac_address     = "02:C0:10:09:A7:D0"
       storage_dev     = var.vm_storage_dev
     })
-/*
+
     m7 = merge(local.default_vm_config, {
       name            = "nfs"
       target_node     = "pve"
@@ -118,7 +118,6 @@ locals {
       mac_address     = "52:54:00:85:F2:BA"
       storage_dev     = var.vm_storage_dev_3
     })
-*/
   }
 
   # Map resultante das máquinas

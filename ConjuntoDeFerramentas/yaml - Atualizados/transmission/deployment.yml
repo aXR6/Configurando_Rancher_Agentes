@@ -1,10 +1,9 @@
-## deployment.yml
+# deployment.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: transmission
-  labels:
-    app: transmission
+  name: transmission-deployment
+  namespace: transmission
 spec:
   replicas: 1
   selector:
@@ -17,19 +16,22 @@ spec:
     spec:
       containers:
       - name: transmission
-        image: linuxserver/transmission
+        image: linuxserver/transmission:latest
         ports:
         - containerPort: 9091
-        - containerPort: 51413
         volumeMounts:
-        - name: transmission-config
-          mountPath: /config
-        - name: transmission-downloads
+        - name: nfs-storage
           mountPath: /downloads
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: TZ
+          value: "America/Sao_Paulo"
       volumes:
-      - name: transmission-config
-        emptyDir: {}
-      - name: transmission-downloads
+      - name: nfs-storage
         nfs:
           server: 192.168.3.100
           path: /path/to/nfs/share
+          readOnly: false

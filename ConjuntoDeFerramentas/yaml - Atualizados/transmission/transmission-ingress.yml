@@ -1,13 +1,14 @@
-## transmission-ingress.yml
+# transmission-ingress.yml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: transmission-ingress
+  namespace: transmission
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: transmission.example.com
+  - host: transmission.rancher-ks8.pve.datacenter.tsc
     http:
       paths:
       - path: /
@@ -16,4 +17,4 @@ spec:
           service:
             name: transmission-service
             port:
-              number: 9091
+              number: 80

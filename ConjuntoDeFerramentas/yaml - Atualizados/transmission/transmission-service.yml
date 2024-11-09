@@ -1,16 +1,14 @@
-## transmission-service.yml
+# transmission-service.yml
 apiVersion: v1
 kind: Service
 metadata:
   name: transmission-service
+  namespace: transmission
 spec:
   selector:
     app: transmission
   ports:
   - protocol: TCP
-    port: 9091
+    port: 80
     targetPort: 9091
-  - protocol: TCP
-    port: 51413
-    targetPort: 51413
   type: ClusterIP
