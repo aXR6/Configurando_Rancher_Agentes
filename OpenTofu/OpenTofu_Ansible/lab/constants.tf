@@ -105,7 +105,7 @@ locals {
     m7 = merge(local.default_vm_config, {
       name            = "nfs"
       target_node     = "pve"
-      template        = "Debian12CloudInitComum"
+      template        = "Debian12CloudInitNFS"
       vmid            = 100
       vcpus           = 1
       cores           = 1
