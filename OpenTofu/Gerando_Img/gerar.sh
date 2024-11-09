@@ -421,17 +421,17 @@ create_template_nfs() {
   virt-customize -a "$IMAGE_NAME" --copy-in "$PUBLIC_KEY_FILE":/root/.ssh/ || error_exit "Falha ao copiar chave pública."
   virt-customize -a "$IMAGE_NAME" --copy-in "$PRIVATE_KEY_FILE":/root/.ssh/ || error_exit "Falha ao copiar chave privada."
 
-    echo "Ajuste de permissões das chaves - /root/.ssh/"
-    virt-customize -a "$IMAGE_NAME" --run-command 'chmod 600 /root/.ssh/id_rsa' || error_exit "Falha ao ajustar permissões das chaves SSH."
-    virt-customize -a "$IMAGE_NAME" --run-command 'chmod 644 /root/.ssh/id_rsa.pub' || error_exit "Falha ao ajustar permissões das chaves SSH."
+  echo "Ajuste de permissões das chaves - /root/.ssh/"
+  virt-customize -a "$IMAGE_NAME" --run-command 'chmod 600 /root/.ssh/id_rsa' || error_exit "Falha ao ajustar permissões das chaves SSH."
+  virt-customize -a "$IMAGE_NAME" --run-command 'chmod 644 /root/.ssh/id_rsa.pub' || error_exit "Falha ao ajustar permissões das chaves SSH."
 
   echo "Cópia das chaves pública e privada - /home/notroot/.ssh/"
   virt-customize -a "$IMAGE_NAME" --copy-in "$PUBLIC_KEY_FILE":/home/notroot/.ssh/ || error_exit "Falha ao copiar chave pública."
   virt-customize -a "$IMAGE_NAME" --copy-in "$PRIVATE_KEY_FILE":/home/notroot/.ssh/ || error_exit "Falha ao copiar chave privada."
 
-    echo "Ajuste de permissões das chaves - /home/notroot/.ssh/"
-    virt-customize -a "$IMAGE_NAME" --run-command 'chmod 600 /home/notroot/.ssh/id_rsa' || error_exit "Falha ao ajustar permissões das chaves SSH."
-    virt-customize -a "$IMAGE_NAME" --run-command 'chmod 644 /home/notroot/.ssh/id_rsa.pub' || error_exit "Falha ao ajustar permissões das chaves SSH."
+  echo "Ajuste de permissões das chaves - /home/notroot/.ssh/"
+  virt-customize -a "$IMAGE_NAME" --run-command 'chmod 600 /home/notroot/.ssh/id_rsa' || error_exit "Falha ao ajustar permissões das chaves SSH."
+  virt-customize -a "$IMAGE_NAME" --run-command 'chmod 644 /home/notroot/.ssh/id_rsa.pub' || error_exit "Falha ao ajustar permissões das chaves SSH."
 
   echo "Copiar o script para a imagem"
   virt-customize -a "$IMAGE_NAME" --copy-in "$SCRIPT_FILE_nfs":/usr/local/bin/ || error_exit "Falha ao copiar o script."
@@ -440,10 +440,23 @@ create_template_nfs() {
   virt-customize -a "$IMAGE_NAME" --run-command "chmod +x /usr/local/bin/$SCRIPT_FILE_nfs" || error_exit "Falha ao tornar o script executável."
 
   echo "Criar o arquivo de serviço systemd"
-  virt-customize -a "$IMAGE_NAME" --run-command "echo -e '[Unit]\nDescription=Executar script customizado no boot\n\n[Service]\nType=simple\nExecStart=/usr/local/bin/$SCRIPT_FILE\n\n[Install]\nWantedBy=multi-user.target' > /etc/systemd/system/custom-script.service" || error_exit "Falha ao criar o arquivo de serviço systemd."
+  virt-customize -a "$IMAGE_NAME" --run-command "echo -e '[Unit]\nDescription=Executar script customizado no boot\n\n[Service]\nType=simple\nExecStart=/usr/local/bin/$SCRIPT_FILE_nfs\n\n[Install]\nWantedBy=multi-user.target' > /etc/systemd/system/custom-script.service" || error_exit "Falha ao criar o arquivo de serviço systemd."
 
   echo "Habilitar o serviço para iniciar no boot"
   virt-customize -a "$IMAGE_NAME" --run-command 'systemctl enable custom-script.service' || error_exit "Falha ao habilitar o serviço no systemd."
+
+  # Instalação e configuração do servidor NFS
+  echo "Instalando e configurando servidor NFS na imagem..."
+  virt-customize -a "$IMAGE_NAME" --install nfs-kernel-server || error_exit "Falha ao instalar o servidor NFS."
+
+  echo "Criando diretórios para compartilhamento NFS..."
+  virt-customize -a "$IMAGE_NAME" --run-command 'mkdir -p /srv/nfs/torrent /srv/nfs/music && chown nobody:nogroup /srv/nfs/torrent /srv/nfs/music && chmod 755 /srv/nfs/torrent /srv/nfs/music' || error_exit "Falha ao criar diretórios NFS."
+
+  echo "Configurando /etc/exports para exportação NFS..."
+  virt-customize -a "$IMAGE_NAME" --run-command "echo -e '/srv/nfs/torrent *(rw,sync,no_subtree_check)\n/srv/nfs/music *(rw,sync,no_subtree_check)' >> /etc/exports" || error_exit "Falha ao configurar /etc/exports."
+
+  echo "Reiniciando o serviço NFS..."
+  virt-customize -a "$IMAGE_NAME" --run-command 'systemctl restart nfs-kernel-server' || error_exit "Falha ao reiniciar o servidor NFS."
 
   echo "Criação da VM no Proxmox"
   qm create "$VM_ID" --name "$TEMPLATE_NAME" --memory "$MEMORY" --cores "$CORES" --net0 virtio,bridge=vmbr0 || error_exit "Falha ao criar VM."

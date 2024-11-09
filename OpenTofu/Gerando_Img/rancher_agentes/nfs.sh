@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Lista de pacotes necessários
-PACKAGES=(bash curl grep mawk open-iscsi util-linux wget sudo nfs-kernel-server)
+PACKAGES=(bash curl grep mawk open-iscsi util-linux wget sudo)
 
 # Função para verificar se um pacote está instalado
 is_installed() {
@@ -72,51 +72,5 @@ sudo usermod -aG wheel "$USER_TO_ADD" || { echo "Erro ao adicionar o usuário $U
 # Configurar DNS no /etc/resolv.conf
 echo "Configurando DNS no /etc/resolv.conf..."
 echo -e "search pve.datacenter.tsc\nnameserver 192.168.3.200\nnameserver 192.168.3.201\nnameserver 192.168.3.1\nnameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null || { echo "Erro ao configurar o /etc/resolv.conf."; exit 1; }
-
-# Caminho do arquivo de verificação para a configuração do NFS
-NFS_FLAG_FILE="/etc/nfs_config_done"
-
-# Configuração do servidor NFS (executada apenas uma vez)
-if [ ! -f "$NFS_FLAG_FILE" ]; then
-  echo "Configurando o servidor NFS pela primeira vez..."
-  
-  NFS_DIR_TORRENT="/srv/nfs/torrent"
-  NFS_DIR_MUSIC="/srv/nfs/music"
-  EXPORTS_FILE="/etc/exports"
-
-  # Criando os diretórios para compartilhar
-  echo "Criando os diretórios para compartilhamento NFS..."
-  sudo mkdir -p $NFS_DIR_TORRENT
-  sudo mkdir -p $NFS_DIR_MUSIC
-
-  # Configurando permissões dos diretórios
-  echo "Configurando permissões dos diretórios NFS..."
-  sudo chown nobody:nogroup $NFS_DIR_TORRENT
-  sudo chown nobody:nogroup $NFS_DIR_MUSIC
-  sudo chmod 755 $NFS_DIR_TORRENT
-  sudo chmod 755 $NFS_DIR_MUSIC
-
-  # Configurando o arquivo /etc/exports
-  echo "Configurando o arquivo /etc/exports..."
-  {
-      echo "$NFS_DIR_TORRENT *(rw,sync,no_subtree_check)"
-      echo "$NFS_DIR_MUSIC *(rw,sync,no_subtree_check)"
-  } | sudo tee -a $EXPORTS_FILE
-
-  # Reiniciando o serviço NFS
-  echo "Reiniciando o serviço NFS..."
-  sudo systemctl restart nfs-kernel-server || { echo "Erro ao reiniciar o serviço NFS."; exit 1; }
-
-  # Habilitando o serviço NFS para iniciar no boot
-  echo "Habilitando o serviço NFS para iniciar no boot..."
-  sudo systemctl enable nfs-kernel-server || { echo "Erro ao habilitar o serviço NFS."; exit 1; }
-
-  # Criando o arquivo de verificação para evitar reconfiguração
-  sudo touch $NFS_FLAG_FILE
-
-  echo "Servidor NFS configurado com sucesso pela primeira vez."
-else
-  echo "A configuração do servidor NFS já foi realizada anteriormente. Pulando esta etapa."
-fi
 
 echo "Processo concluído com sucesso."
