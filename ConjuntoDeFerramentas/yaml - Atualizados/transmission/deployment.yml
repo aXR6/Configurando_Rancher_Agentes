@@ -19,7 +19,7 @@ spec:
         ports:
         - containerPort: 9091
         volumeMounts:
-        - name: nfs-storage
+        - name: media-storage
           mountPath: /downloads
         env:
         - name: PUID
@@ -29,8 +29,6 @@ spec:
         - name: TZ
           value: "America/Sao_Paulo"
       volumes:
-      - name: nfs-storage
-        nfs:
-          server: 192.168.3.100
-          path: /srv/nfs/torrent
-          readOnly: false
+      - name: media-storage
+        persistentVolumeClaim:
+          claimName: media-transmission-claim
