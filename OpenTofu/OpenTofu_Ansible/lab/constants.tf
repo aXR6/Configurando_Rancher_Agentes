@@ -34,7 +34,7 @@ locals {
 
   # Definição de máquinas virtuais específicas
   machine_map = {
-    m2 = merge(local.default_vm_config, {
+    m1 = merge(local.default_vm_config, {
       name            = "agente-vm1"
       target_node     = "pve"
       template        = "Debian12CloudInitAgente"
@@ -51,7 +51,7 @@ locals {
       storage_dev     = var.vm_storage_dev_2
     })
 
-    m3 = merge(local.default_vm_config, {
+    m2 = merge(local.default_vm_config, {
       name            = "agente-vm2"
       target_node     = "pve"
       template        = "Debian12CloudInitAgente"
@@ -68,7 +68,7 @@ locals {
       storage_dev     = var.vm_storage_dev_2
     })
 
-    m5 = merge(local.default_vm_config, {
+    m3 = merge(local.default_vm_config, {
       name            = "ns1"
       target_node     = "pve"
       template        = "Debian12CloudInitDNS1"
@@ -85,7 +85,7 @@ locals {
       storage_dev     = var.vm_storage_dev
     })
 
-    m6 = merge(local.default_vm_config, {
+    m4 = merge(local.default_vm_config, {
       name            = "ns2"
       target_node     = "pve"
       template        = "Debian12CloudInitDNS2"
@@ -102,7 +102,7 @@ locals {
       storage_dev     = var.vm_storage_dev
     })
 
-    m7 = merge(local.default_vm_config, {
+    m5 = merge(local.default_vm_config, {
       name            = "nfs"
       target_node     = "pve"
       template        = "Debian12CloudInitNFS"
