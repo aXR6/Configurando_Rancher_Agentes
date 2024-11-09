@@ -1,0 +1,35 @@
+## deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transmission
+  labels:
+    app: transmission
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transmission
+  template:
+    metadata:
+      labels:
+        app: transmission
+    spec:
+      containers:
+      - name: transmission
+        image: linuxserver/transmission
+        ports:
+        - containerPort: 9091
+        - containerPort: 51413
+        volumeMounts:
+        - name: transmission-config
+          mountPath: /config
+        - name: transmission-downloads
+          mountPath: /downloads
+      volumes:
+      - name: transmission-config
+        emptyDir: {}
+      - name: transmission-downloads
+        nfs:
+          server: 192.168.3.100
+          path: /path/to/nfs/share
