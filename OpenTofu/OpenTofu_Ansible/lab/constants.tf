@@ -35,7 +35,25 @@ locals {
 
   # Definição de máquinas virtuais específicas
   machine_map = {
+
     m1 = merge(local.default_vm_config, {
+      name            = "nfs"
+      target_node     = "pve"
+      template        = "Debian12CloudInitNFS"
+      vmid            = 100
+      vcpus           = 1
+      cores           = 1
+      socket          = 1
+      memory          = 1024
+      balloon         = 512
+      storage         = "900G"
+      ip_address      = "192.168.3.100"
+      description     = "Máquina virtual - NFS."
+      mac_address     = "52:54:00:85:F2:BA"
+      storage_dev     = var.vm_storage_dev_3
+    })
+
+    m2 = merge(local.default_vm_config, {
       name            = "agente-vm1"
       target_node     = "pve"
       template        = "Debian12CloudInitAgente"
@@ -52,7 +70,7 @@ locals {
       storage_dev     = var.vm_storage_dev_2
     })
 
-    m2 = merge(local.default_vm_config, {
+    m3 = merge(local.default_vm_config, {
       name            = "agente-vm2"
       target_node     = "pve"
       template        = "Debian12CloudInitAgente"
@@ -69,7 +87,7 @@ locals {
       storage_dev     = var.vm_storage_dev_2
     })
 
-    m3 = merge(local.default_vm_config, {
+    m4 = merge(local.default_vm_config, {
       name            = "ns1"
       target_node     = "pve"
       template        = "Debian12CloudInitDNS1"
@@ -86,7 +104,7 @@ locals {
       storage_dev     = var.vm_storage_dev
     })
 
-    m4 = merge(local.default_vm_config, {
+    m5 = merge(local.default_vm_config, {
       name            = "ns2"
       target_node     = "pve"
       template        = "Debian12CloudInitDNS2"
@@ -101,23 +119,6 @@ locals {
       description     = "Máquina virtual - DNS Slave."
       mac_address     = "02:C0:10:09:A7:D0"
       storage_dev     = var.vm_storage_dev
-    })
-
-    m5 = merge(local.default_vm_config, {
-      name            = "nfs"
-      target_node     = "pve"
-      template        = "Debian12CloudInitNFS"
-      vmid            = 100
-      vcpus           = 1
-      cores           = 1
-      socket          = 1
-      memory          = 1024
-      balloon         = 512
-      storage         = "900G"
-      ip_address      = "192.168.3.100"
-      description     = "Máquina virtual - NFS."
-      mac_address     = "52:54:00:85:F2:BA"
-      storage_dev     = var.vm_storage_dev_3
     })
   }
 
