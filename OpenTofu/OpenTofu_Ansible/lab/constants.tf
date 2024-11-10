@@ -44,7 +44,7 @@ locals {
       cores           = 2
       socket          = 1
       memory          = 3072
-      balloon         = 3072
+      balloon         = 1024
       storage         = "35G"
       ip_address      = "192.168.3.11"
       description     = "Máquina virtual - agente-vm1 - para Rancher."
@@ -61,7 +61,7 @@ locals {
       cores           = 2
       socket          = 1
       memory          = 3072
-      balloon         = 3072
+      balloon         = 1024
       storage         = "35G"
       ip_address      = "192.168.3.12"
       description     = "Máquina virtual - agente-vm2 - para Rancher."

@@ -71,7 +71,7 @@ variable "vm_agent_enabled" {
 variable "vm_cpu_type" {
   description = "Tipo de CPU padrão para todas as máquinas virtuais (ex: kvm64 para compatibilidade)"
   type        = string
-  default     = "kvm64"
+  default     = "host"
 }
 
 variable "vm_numa" {

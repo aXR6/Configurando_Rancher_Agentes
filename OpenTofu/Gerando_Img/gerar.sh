@@ -38,37 +38,37 @@ configure_image_params() {
     1)
       VM_ID="300"
       TEMPLATE_NAME="Debian12CloudInitRancher"
-      CORES="2"
-      MEMORY="3500"
+      CORES="1"
+      MEMORY="1024"
       ;;
     2)
       VM_ID="301"
       TEMPLATE_NAME="Debian12CloudInitAgente"
-      CORES="2"
-      MEMORY="3500"
+      CORES="1"
+      MEMORY="1024"
       ;;
     3)
       VM_ID="302"
       TEMPLATE_NAME="Debian12CloudInitComum"
-      CORES="2"
-      MEMORY="3500"
+      CORES="1"
+      MEMORY="1024"
       ;;
     4)
       VM_ID="303"
       TEMPLATE_NAME="Debian12CloudInitDNS1"
       CORES="2"
-      MEMORY="3500"
+      MEMORY="1024"
       ;;
     5)
       VM_ID="304"
       TEMPLATE_NAME="Debian12CloudInitDNS2"
-      CORES="2"
-      MEMORY="3500"
+      CORES="1"
+      MEMORY="1024"
       ;;
     6)
       VM_ID="305"
       TEMPLATE_NAME="Debian12CloudInitNFS"
-      CORES="2"
+      CORES="1"
       MEMORY="1024"
       ;;
     *)
