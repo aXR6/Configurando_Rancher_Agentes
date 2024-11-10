@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Variáveis globais fixas
-IMAGE_NAME="debian-12-backports-nocloud-amd64-daily.qcow2"
+IMAGE_NAME="debian-12-backports-genericcloud-amd64-daily.qcow2"
 VOLUME_NAME="local-lvm"
 SSHD_CONFIG_FILE="sshd_config"      # Caminho do arquivo local do sshd_config
 PUBLIC_KEY_FILE="id_rsa.pub"        # Caminho do arquivo local da chave pública
@@ -398,7 +398,6 @@ create_template_dns2() {
   virt-customize -a "$IMAGE_NAME" --run-command 'systemctl enable custom-script.service' || error_exit "Falha ao habilitar o serviço no systemd."
 
   echo "Criando e copiando a pasta do sistema BIND para dentro da imagem"
-  #virt-customize -a "$IMAGE_NAME" --run-command "mkdir -p /etc/bind/"
   virt-customize -a "$IMAGE_NAME" --copy-in "${Dir_dnsns2}/.":/etc/bind
 
   echo "Criação da VM no Proxmox"

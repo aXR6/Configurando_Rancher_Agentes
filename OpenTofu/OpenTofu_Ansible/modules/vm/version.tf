@@ -3,21 +3,41 @@ terraform {
     proxmox = {
       source  = "telmate/proxmox"
       #version = "2.9.11"
+      #version = "2.9.14"  # Versão estável recomendada
       version = "3.0.1-rc4"
     }
     tls = {
       source  = "hashicorp/tls"
-      #version = "3.3.0"
-      version = "4.0.6"
+      version = "4.0.6"  # Versão estável
     }
   }
-  required_version = ">= 0.13"
+  required_version = ">= 1.0"  # Versão mais recente para compatibilidade
+}
+
+variable "pm_api_url" {
+  description = "Proxmox API URL"
+  type        = string
+  default     = "https://192.168.3.203:8006/api2/json"
+}
+
+variable "pm_api_token_id" {
+  description = "Proxmox API token ID"
+  type        = string
+  sensitive   = true
+  default     = "OpenTofu@pam!opentofu"
+}
+
+variable "pm_api_token_secret" {
+  description = "Proxmox API token secret"
+  type        = string
+  sensitive   = true
+  default     = "ada5bc72-de51-4832-b9f5-6b49a284d21b"
 }
 
 provider "proxmox" {
-  pm_api_url          = "https://192.168.3.203:8006/api2/json"
-  pm_api_token_id     = "OpenTofu@pam!opentofu"
-  pm_api_token_secret = "ada5bc72-de51-4832-b9f5-6b49a284d21b"
-  pm_tls_insecure     = true
-  pm_debug            = true
+  pm_api_url          = var.pm_api_url
+  pm_api_token_id     = var.pm_api_token_id
+  pm_api_token_secret = var.pm_api_token_secret
+  pm_tls_insecure     = true  # Certificado TLS deve ser válido em produção
+  pm_debug            = false  # Debug desativado para produção
 }
