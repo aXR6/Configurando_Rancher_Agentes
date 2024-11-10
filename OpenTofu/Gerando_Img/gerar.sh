@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Variáveis globais fixas
-IMAGE_NAME="debian-12-backports-genericcloud-amd64-daily.qcow2"
+IMAGE_NAME="debian-12-backports-nocloud-amd64-daily.qcow2"
 VOLUME_NAME="local-lvm"
 SSHD_CONFIG_FILE="sshd_config"      # Caminho do arquivo local do sshd_config
 PUBLIC_KEY_FILE="id_rsa.pub"        # Caminho do arquivo local da chave pública
@@ -205,8 +205,8 @@ create_template_agentes() {
   virt-customize -a "$IMAGE_NAME" --run-command "echo '192.168.3.100:/srv/nfs/torrent /mnt/nfs/torrent nfs defaults 0 0' >> /etc/fstab" || error_exit "Falha ao configurar /etc/fstab para montagem de torrent."
   virt-customize -a "$IMAGE_NAME" --run-command "echo '192.168.3.100:/srv/nfs/music /mnt/nfs/music nfs defaults 0 0' >> /etc/fstab" || error_exit "Falha ao configurar /etc/fstab para montagem de música."
 
-  echo "Montando os diretórios NFS..."
-  virt-customize -a "$IMAGE_NAME" --run-command 'mount -a' || error_exit "Falha ao montar os diretórios NFS."
+  #echo "Montando os diretórios NFS..."
+  #virt-customize -a "$IMAGE_NAME" --run-command 'mount -a' || error_exit "Falha ao montar os diretórios NFS."
 
   echo "Criação da VM no Proxmox"
   qm create "$VM_ID" --name "$TEMPLATE_NAME" --memory "$MEMORY" --cores "$CORES" --net0 virtio,bridge=vmbr0 || error_exit "Falha ao criar VM."

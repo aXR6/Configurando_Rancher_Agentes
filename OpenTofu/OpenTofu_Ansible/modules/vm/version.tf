@@ -16,8 +16,8 @@ terraform {
 
 provider "proxmox" {
   pm_api_url          = "https://192.168.3.203:8006/api2/json"
-  pm_api_token_id     = "tofukey@pam!opentofu"
-  pm_api_token_secret = "b8d60090-1368-41d7-9b15-1f499192b198"
+  pm_api_token_id     = "OpenTofu@pam!opentofu"
+  pm_api_token_secret = "ada5bc72-de51-4832-b9f5-6b49a284d21b"
   pm_tls_insecure     = true
   pm_debug            = true
 }
