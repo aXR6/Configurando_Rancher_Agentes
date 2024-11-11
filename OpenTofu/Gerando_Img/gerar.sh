@@ -11,7 +11,7 @@ SCRIPT_FILE_rancher="rancher.sh"    # Nome do arquivo de script a ser executado
 SCRIPT_FILE_agentes="agentes.sh"    # Nome do arquivo de script a ser executado
 SCRIPT_FILE="comum.sh"              # Nome do arquivo de script a ser executado
 SCRIPT_FILE_dns="dns.sh"            # Nome do arquivo de script a ser executado
-SCRIPT_FILE_nfs="nfs.sh"        # Nome do arquivo de script a ser executado
+SCRIPT_FILE_nfs="nfs.sh"            # Nome do arquivo de script a ser executado
 
 Dir_dnsns1="/home/img/dnsns1"
 Dir_dnsns2="/home/img/dnsns2"
@@ -195,15 +195,15 @@ create_template_agentes() {
   virt-customize -a "$IMAGE_NAME" --run-command 'curl https://releases.rancher.com/install-docker/27.2.sh | sh && apt-mark hold docker-ce docker-ce-cli docker-ce-rootless-extras' || error_exit "Falha ao instalar o Docker e prender a versão."
 
   # Configuração do cliente NFS
-  echo "Configurando cliente NFS..."
-  virt-customize -a "$IMAGE_NAME" --install nfs-common || error_exit "Falha ao instalar o cliente NFS."
+  #echo "Configurando cliente NFS..."
+  #virt-customize -a "$IMAGE_NAME" --install nfs-common || error_exit "Falha ao instalar o cliente NFS."
 
-  echo "Criando diretórios de montagem NFS..."
-  virt-customize -a "$IMAGE_NAME" --run-command 'mkdir -p /mnt/nfs/torrent /mnt/nfs/music && chmod 755 /mnt/nfs/torrent /mnt/nfs/music' || error_exit "Falha ao criar diretórios de montagem NFS."
+  #echo "Criando diretórios de montagem NFS..."
+  #virt-customize -a "$IMAGE_NAME" --run-command 'mkdir -p /mnt/nfs/torrent /mnt/nfs/music && chmod 755 /mnt/nfs/torrent /mnt/nfs/music' || error_exit "Falha ao criar diretórios de montagem NFS."
 
-  echo "Configurando montagem NFS em /etc/fstab..."
-  virt-customize -a "$IMAGE_NAME" --run-command "echo '192.168.3.100:/srv/nfs/torrent /mnt/nfs/torrent nfs defaults 0 0' >> /etc/fstab" || error_exit "Falha ao configurar /etc/fstab para montagem de torrent."
-  virt-customize -a "$IMAGE_NAME" --run-command "echo '192.168.3.100:/srv/nfs/music /mnt/nfs/music nfs defaults 0 0' >> /etc/fstab" || error_exit "Falha ao configurar /etc/fstab para montagem de música."
+  #echo "Configurando montagem NFS em /etc/fstab..."
+  #virt-customize -a "$IMAGE_NAME" --run-command "echo '192.168.3.100:/srv/nfs/torrent /mnt/nfs/torrent nfs defaults 0 0' >> /etc/fstab" || error_exit "Falha ao configurar /etc/fstab para montagem de torrent."
+  #virt-customize -a "$IMAGE_NAME" --run-command "echo '192.168.3.100:/srv/nfs/music /mnt/nfs/music nfs defaults 0 0' >> /etc/fstab" || error_exit "Falha ao configurar /etc/fstab para montagem de música."
 
   #echo "Montando os diretórios NFS..."
   #virt-customize -a "$IMAGE_NAME" --run-command 'mount -a' || error_exit "Falha ao montar os diretórios NFS."

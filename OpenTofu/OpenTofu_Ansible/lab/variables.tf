@@ -51,7 +51,7 @@ variable "vm_reboot" {
 variable "vm_ssh_user" {
   description = "Usuário SSH padrão para todas as máquinas virtuais"
   type        = string
-  default     = "notroot"
+  default     = "root"
 }
 
 variable "vm_cloud_init_password" {

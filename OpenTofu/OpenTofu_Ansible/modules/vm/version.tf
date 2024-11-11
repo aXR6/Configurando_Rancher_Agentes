@@ -2,16 +2,16 @@ terraform {
   required_providers {
     proxmox = {
       source  = "telmate/proxmox"
-      #version = "2.9.11"
-      #version = "2.9.14"  # Versão estável recomendada
-      version = "3.0.1-rc4"
+      #version = "2.9.11"     
+      #version = "2.9.14"     # Versão estável recomendada
+      version = "3.0.1-rc4"   # Versão mais recente. Funcionando com esse projeto. (Caso seja mudada a versão, ajustes precisam ser feito.)
     }
     tls = {
       source  = "hashicorp/tls"
-      version = "4.0.6"  # Versão estável
+      version = "4.0.6"       # Versão estável
     }
   }
-  required_version = ">= 1.0"  # Versão mais recente para compatibilidade
+  required_version = ">= 1.0" # Versão mais recente para compatibilidade
 }
 
 variable "pm_api_url" {
@@ -38,6 +38,6 @@ provider "proxmox" {
   pm_api_url          = var.pm_api_url
   pm_api_token_id     = var.pm_api_token_id
   pm_api_token_secret = var.pm_api_token_secret
-  pm_tls_insecure     = true  # Certificado TLS deve ser válido em produção
-  pm_debug            = false  # Debug desativado para produção
+  pm_tls_insecure     = true    # Certificado TLS deve ser válido em produção
+  pm_debug            = false   # Debug desativado para produção
 }

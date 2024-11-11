@@ -25,7 +25,7 @@ done
 
 # Lista pacotes que podem ser atualizados
 echo "Listando pacotes que podem ser atualizados..."
-apt list --upgradable
+apt list --upgradable && sudo systemctl daemon-reload
 
 # Instala pacotes quebrados
 echo "Corrigindo pacotes quebrados..."
@@ -64,8 +64,8 @@ fi
 echo "Configurando sudo sem senha para o grupo 'wheel'..."
 echo "%wheel ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/wheel-nopasswd > /dev/null || { echo "Erro ao configurar sudo sem senha para o grupo 'wheel'."; exit 1; }
 
-# Adicionar o usuário 'notroot' ao grupo 'wheel'
-USER_TO_ADD="notroot"
+# Adicionar o usuário 'root' ao grupo 'wheel'
+USER_TO_ADD="root"
 echo "Adicionando o usuário $USER_TO_ADD ao grupo 'wheel'..."
 sudo usermod -aG wheel "$USER_TO_ADD" || { echo "Erro ao adicionar o usuário $USER_TO_ADD ao grupo 'wheel'."; exit 1; }
 
