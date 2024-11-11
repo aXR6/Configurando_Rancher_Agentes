@@ -194,20 +194,6 @@ create_template_agentes() {
   echo "Instalando o Docker na sua versão 27.2"
   virt-customize -a "$IMAGE_NAME" --run-command 'curl https://releases.rancher.com/install-docker/27.2.sh | sh && apt-mark hold docker-ce docker-ce-cli docker-ce-rootless-extras' || error_exit "Falha ao instalar o Docker e prender a versão."
 
-  # Configuração do cliente NFS
-  #echo "Configurando cliente NFS..."
-  #virt-customize -a "$IMAGE_NAME" --install nfs-common || error_exit "Falha ao instalar o cliente NFS."
-
-  #echo "Criando diretórios de montagem NFS..."
-  #virt-customize -a "$IMAGE_NAME" --run-command 'mkdir -p /mnt/nfs/torrent /mnt/nfs/music && chmod 755 /mnt/nfs/torrent /mnt/nfs/music' || error_exit "Falha ao criar diretórios de montagem NFS."
-
-  #echo "Configurando montagem NFS em /etc/fstab..."
-  #virt-customize -a "$IMAGE_NAME" --run-command "echo '192.168.3.100:/srv/nfs/torrent /mnt/nfs/torrent nfs defaults 0 0' >> /etc/fstab" || error_exit "Falha ao configurar /etc/fstab para montagem de torrent."
-  #virt-customize -a "$IMAGE_NAME" --run-command "echo '192.168.3.100:/srv/nfs/music /mnt/nfs/music nfs defaults 0 0' >> /etc/fstab" || error_exit "Falha ao configurar /etc/fstab para montagem de música."
-
-  #echo "Montando os diretórios NFS..."
-  #virt-customize -a "$IMAGE_NAME" --run-command 'mount -a' || error_exit "Falha ao montar os diretórios NFS."
-
   echo "Criação da VM no Proxmox"
   qm create "$VM_ID" --name "$TEMPLATE_NAME" --memory "$MEMORY" --cores "$CORES" --net0 virtio,bridge=vmbr0 || error_exit "Falha ao criar VM."
   qm importdisk "$VM_ID" "$IMAGE_NAME" "$VOLUME_NAME" || error_exit "Falha ao importar disco."

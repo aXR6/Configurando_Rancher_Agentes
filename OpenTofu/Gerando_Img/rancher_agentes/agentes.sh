@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Lista de pacotes necessários
-PACKAGES=(bash grep mawk open-iscsi util-linux wget)
+PACKAGES=(bash grep mawk open-iscsi util-linux wget nfs-common)
 
 # Função para verificar se um pacote está instalado
 is_installed() {
@@ -72,5 +72,38 @@ sudo usermod -aG wheel "$USER_TO_ADD" || { echo "Erro ao adicionar o usuário $U
 # Configurar DNS no /etc/resolv.conf
 echo "Configurando DNS no /etc/resolv.conf..."
 echo -e "search pve.datacenter.tsc\nnameserver 192.168.3.200\nnameserver 192.168.3.201\nnameserver 192.168.3.1\nnameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null || { echo "Erro ao configurar o /etc/resolv.conf."; exit 1; }
+
+# Configuração do cliente NFS (executa apenas uma vez)
+NFS_SERVER_IP="192.168.1.100"  # Substitua pelo IP do servidor NFS
+NFS_TORRENT_DIR="/mnt/nfs/torrent"
+NFS_MUSIC_DIR="/mnt/nfs/music"
+
+# Verificação se o NFS já está configurado
+if ! mountpoint -q "$NFS_TORRENT_DIR" || ! mountpoint -q "$NFS_MUSIC_DIR"; then
+  echo "Configurando o cliente NFS..."
+
+  # Criando diretórios de montagem
+  echo "Criando diretórios de montagem NFS..."
+  sudo mkdir -p $NFS_TORRENT_DIR
+  sudo mkdir -p $NFS_MUSIC_DIR
+
+  # Montando os compartilhamentos NFS
+  echo "Montando compartilhamento NFS para torrents..."
+  sudo mount -t nfs "$NFS_SERVER_IP:/srv/nfs/torrent" $NFS_TORRENT_DIR || { echo "Erro ao montar o compartilhamento NFS de torrents"; exit 1; }
+
+  echo "Montando compartilhamento NFS para músicas..."
+  sudo mount -t nfs "$NFS_SERVER_IP:/srv/nfs/music" $NFS_MUSIC_DIR || { echo "Erro ao montar o compartilhamento NFS de músicas"; exit 1; }
+
+  # Configurando a montagem automática no /etc/fstab
+  echo "Configurando a montagem automática no /etc/fstab..."
+  {
+    echo "$NFS_SERVER_IP:/srv/nfs/torrent $NFS_TORRENT_DIR nfs defaults 0 0"
+    echo "$NFS_SERVER_IP:/srv/nfs/music $NFS_MUSIC_DIR nfs defaults 0 0"
+  } | sudo tee -a /etc/fstab
+
+  echo "Montagens NFS configuradas com sucesso."
+else
+  echo "Cliente NFS já configurado. Nenhuma ação necessária."
+fi
 
 echo "Processo concluído com sucesso."
