@@ -1,10 +1,14 @@
 ### Pasta contendo o projeto.
 
-### Entendendo (Pasta old/)
+### Pasta cluster/
+### Entendendo (Pasta Cluster/old/)
 * Projeto antigo;
 
-### Entendendo (Pasta yaml - Atualizados/)
+### Entendendo (Pasta Cluster/yaml - Atualizados/)
 * Projeto atualizado com os códigos para subir o projeto Transmission;
+
+### Pasta Docker/
+* Na pasta transmission/ contém o projeto para rodar apenas em 1 maquina local.
 
 ```
 Thalles Canela - TSC
