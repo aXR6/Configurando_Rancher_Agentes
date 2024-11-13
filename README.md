@@ -5,6 +5,7 @@
 * Configuração dos tamplates;
 * Criação das VM;
 * Cofiguração dos servidores DNS (Master e Slave);
+* Utilização do Rancher com k3s;
 
 ### Acesse
 ```
