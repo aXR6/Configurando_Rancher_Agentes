@@ -1,22 +1,16 @@
-### Para instalar o complemento do Proxmox no Terraform, você pode seguir os seguintes passos:
+### Pasta contendo o projeto.
 
-### Faça o download do plugin no repositório do Github:
-* git clone https://github.com/Telmate/terraform-provider-proxmox.git
+### Entendendo (Pastas lab/ e modules/)
+* A execução dos comandos pode ser feita na pasta: lab/
+* Primeiro: tofu init
+* Segundo: tofu plan
+* Terceiro: tofu apply -auto-approve
 
-### Entre no diretório onde você fez o download do plugin:
-* cd terraform-provider-proxmox
+### Entendendo (Pasta ansible)
+* Conjunto de instruções para a configuração das VM;
+* Obs.: Hoje tudo é configurado diretamente nos templates.
 
-### Compile o plugin:
-* make build
-
-### Crie o diretório do plugin em sua instalação do Terraform:
-* mkdir -p ~/.terraform.d/plugins/
-
-### Copie o plugin compilado para o diretório de plugins do Terraform:
-* cp terraform-provider-proxmox ~/.terraform.d/plugins/
-
-### Documentação:
-* https://registry.terraform.io/providers/krtnio/proxmox/latest/docs
+* Antes de executar os passos, é importante que você faça uma análise completa dos códigos e adapte os dados de acesso do Proxmox.
 
 ```
 Thalles Canela - TSC
