@@ -1,11 +1,10 @@
-### O Objetivo dos scripts é automatizar todo o processo de configuração do Rancher (servidor) e dos seus agentes.
+### O objetivo do projeto é subir VMs em um ambiente Proxmox
 
 ### Resumo do que é feito.
 
-* Preparação da VM principal para receber o Rancher;
-* Preparação das VMs secundárias para receber os agentes do Rancher;
-* Configuração das maquinas para acessar o servidor NFS;
-* Configuração de DNS nas máquinas (resolução de nomes interno);
+* Configuração dos tamplates;
+* Criação das VM;
+* Cofiguração dos servidores DNS (Master e Slave);
 
 ### Acesse
 ```
