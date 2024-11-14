@@ -1,5 +1,5 @@
 # Criar diretórios para os dados do Nextcloud:
-sudo mkdir -p /home/nextcloud/data /home/nextcloud/config /home/nextcloud/apps /home/nextcloud/db /home/nextcloud/redis /home/nextcloud/logs
+sudo mkdir -p data config apps db redis logs
 
 # Defina as permissões apropriadas para esses diretórios:
 sudo chown -R www-data:www-data /home/nextcloud

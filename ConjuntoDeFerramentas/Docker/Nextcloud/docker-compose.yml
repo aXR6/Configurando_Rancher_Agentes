@@ -12,10 +12,10 @@ services:
       - PHP_OPCACHE_MAX_ACCELERATED_FILES=10000
       - PHP_OPCACHE_VALIDATE_TIMESTAMPS=1
     volumes:
-      - /home/nextcloud/data:/var/www/html/data
-      - /home/nextcloud/config:/var/www/html/config
-      - /home/nextcloud/apps:/var/www/html/custom_apps
-      - /home/nextcloud/logs:/var/www/html/nextcloud.log
+      - /home/stream/nextcloud/data:/var/www/html/data
+      - /home/stream/nextcloud/config:/var/www/html/config
+      - /home/stream/nextcloud/apps:/var/www/html/custom_apps
+      - /home/stream/nextcloud/logs:/var/www/html/nextcloud.log
     depends_on:
       - db
       - redis
@@ -33,20 +33,20 @@ services:
       - POSTGRES_USER=nextcloud
       - POSTGRES_PASSWORD=senha_segura
     volumes:
-      - /home/nextcloud/db:/var/lib/postgresql/data
+      - /home/stream/nextcloud/db:/var/lib/postgresql/data
 
   redis:
     image: redis:alpine
     container_name: nextcloud_redis
     command: redis-server --requirepass senha_redis
     volumes:
-      - /home/nextcloud/redis:/data
+      - /home/stream/nextcloud/redis:/data
 
   web:
     image: nginx:alpine
     container_name: nextcloud_nginx
     volumes:
-      - /home/nextcloud/nginx.conf:/etc/nginx/nginx.conf
+      - /home/stream/nextcloud/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - "80:80"
       - "443:443"
