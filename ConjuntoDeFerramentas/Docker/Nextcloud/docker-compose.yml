@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   nextcloud:
     image: nextcloud:latest
@@ -21,11 +19,11 @@ services:
     depends_on:
       - db
       - redis
-    deploy:
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 1G
+    #deploy:
+      #resources:
+        #limits:
+          #cpus: '1.0'
+          #memory: 1G
 
   db:
     image: postgres:latest
