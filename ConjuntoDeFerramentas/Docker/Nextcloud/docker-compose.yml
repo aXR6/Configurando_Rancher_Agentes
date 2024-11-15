@@ -15,7 +15,7 @@ services:
       - MYSQL_HOST=nextcloud_db
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
-      - MYSQL_PASSWORD=abc123
+      - MYSQL_PASSWORD=36HBpD61l)Lj
       - PHP_OPCACHE_ENABLE=1
       - PHP_OPCACHE_MEMORY_CONSUMPTION=128
       - PHP_OPCACHE_MAX_ACCELERATED_FILES=10000
@@ -31,10 +31,10 @@ services:
     image: mariadb:latest
     container_name: nextcloud_db
     environment:
-      - MYSQL_ROOT_PASSWORD=root_password  # Senha para o usuário root do MariaDB
+      - MYSQL_ROOT_PASSWORD=36HBpD61l)Lj   # Senha para o usuário root do MariaDB
       - MYSQL_DATABASE=nextcloud           # Nome do banco de dados para o Nextcloud
       - MYSQL_USER=nextcloud               # Nome do usuário do banco de dados
-      - MYSQL_PASSWORD=abc123              # Senha para o usuário do banco de dados
+      - MYSQL_PASSWORD=36HBpD61l)Lj        # Senha para o usuário do banco de dados
     volumes:
       - /home/stream/nextcloud/db:/var/lib/mysql
     networks:
