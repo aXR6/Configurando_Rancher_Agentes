@@ -10,7 +10,7 @@ networks:
 volumes:
   mariadb:
   redis:
-  logs:  # Volume para armazenar os logs rotativos
+  logs:  # Volume para logs do Transmission
 
 services:
   transmission:
@@ -26,7 +26,7 @@ services:
       - /home/stream/transmission/config:/config:rw,async,noatime,nodiratime
       - /home/stream/transmission/downloads:/downloads:rw,async,noatime,nodiratime
       - /home/stream/transmission/incomplete:/incomplete:rw,async,noatime,nodiratime
-      - logs:/var/log/transmission  # Volume para os logs do Transmission
+      - logs:/var/log/transmission
     ports:
       - "9091:9091"
       - "51413:51413"
@@ -40,8 +40,8 @@ services:
     logging:
       driver: "json-file"
       options:
-        max-size: "5m"  # Tamanho máximo de cada arquivo de log
-        max-file: "3"   # Quantidade máxima de arquivos de log
+        max-size: "5m"
+        max-file: "2"
     networks:
       - torrent_network
 
@@ -60,6 +60,7 @@ services:
     volumes:
       - /home/stream/nextcloud/data:/var/www/html
       - /home/stream/nextcloud/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
+      - /home/stream/transmission/downloads/complete:/mnt/downloads/complete:ro # Montar como somente leitura
     networks:
       nextcloud_network:
         ipv4_address: 192.168.100.2
