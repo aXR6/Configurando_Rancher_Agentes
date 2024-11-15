@@ -1,3 +1,5 @@
+version: '3.8'
+
 networks:
   nextcloud_network:
     driver: bridge
@@ -19,10 +21,12 @@ services:
       - PHP_OPCACHE_MAX_ACCELERATED_FILES=10000
       - PHP_OPCACHE_VALIDATE_TIMESTAMPS=1
     volumes:
-      - /home/stream/nextcloud/data:/var/www/html           # Armazena todos os dados do Nextcloud
+      - /home/stream/nextcloud/data:/var/www/html
+      - /home/stream/nextcloud/php/php.ini:/usr/local/etc/php/conf.d/custom.ini # Montar o arquivo php.ini
     networks:
       nextcloud_network:
         ipv4_address: 192.168.100.2
+    restart: always   # Garantir que o contêiner reinicie automaticamente
     depends_on:
       - db
       - redis
@@ -40,16 +44,18 @@ services:
     networks:
       nextcloud_network:
         ipv4_address: 192.168.100.3
+    restart: always   # Garantir que o contêiner reinicie automaticamente
 
   redis:
     image: redis:alpine
     container_name: nextcloud_redis
-    command: redis-server --requirepass senha_redis
+    command: redis-server --requirepass 36HBpD61l)Lj
     volumes:
       - redis:/data
     networks:
       nextcloud_network:
         ipv4_address: 192.168.100.4
+    restart: always   # Garantir que o contêiner reinicie automaticamente
 
   web:
     image: nginx:alpine
@@ -58,11 +64,10 @@ services:
       - /home/stream/nextcloud/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
       - "192.168.3.202:80:80"
-    depends_on:
-      - nextcloud
     networks:
       nextcloud_network:
         ipv4_address: 192.168.100.5
+    restart: always   # Garantir que o contêiner reinicie automaticamente
 
 volumes:
   mariadb:

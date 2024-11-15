@@ -17,3 +17,6 @@ docker exec -u www-data nextcloud php occ maintenance:repair --include-expensive
 #6. Adicionar Índices Faltantes no Banco de Dados
 #Para adicionar os índices ausentes, execute:
 docker exec -u www-data nextcloud php occ db:add-missing-indices
+
+#No arquivo /config/config.php
+  'backgroundjobs_mode' => 'cron',
