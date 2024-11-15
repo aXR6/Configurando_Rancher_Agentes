@@ -23,5 +23,5 @@
 
 // Aqui está o trecho atualizado do settings.json com os dois links:
 "blocklist-enabled": true,
-"blocklist-url": "https://github.com/naoxink/Transmission-Blocklist/raw/main/blocklist.gz",
-"blocklist-url-backup": "http://www.iblocklist.com/lists.php",
+"blocklist-url": "http://www.iblocklist.com/lists.php",
+"blocklist-url-backup": "https://www.iblocklist.com/lists.php?category=peer",

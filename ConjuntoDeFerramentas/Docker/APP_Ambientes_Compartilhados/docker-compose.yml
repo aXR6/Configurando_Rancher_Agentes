@@ -32,14 +32,14 @@ services:
       - "51413:51413"
       - "51413:51413/udp"
     restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 512M
-        reservations:
-          cpus: "1.0"
-          memory: 256M
+    #deploy:
+      #resources:
+        #limits:
+          #cpus: "2.0"
+          #memory: 512M
+        #reservations:
+          #cpus: "1.0"
+          #memory: 256M
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:9091 || exit 1"]
       interval: 30s
