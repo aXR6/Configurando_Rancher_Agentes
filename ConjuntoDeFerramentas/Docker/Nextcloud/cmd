@@ -10,3 +10,10 @@ docker exec -u www-data nextcloud php occ maintenance:mode --on
 # Lembrando de desligar o modo após a manutenção:
 docker exec -u www-data nextcloud php occ maintenance:mode --off
 
+#Migrar os Tipos MIME (Mimetype)
+#Execute o comando sugerido para fazer a migração dos mimetypes:
+docker exec -u www-data nextcloud php occ maintenance:repair --include-expensive
+
+#6. Adicionar Índices Faltantes no Banco de Dados
+#Para adicionar os índices ausentes, execute:
+docker exec -u www-data nextcloud php occ db:add-missing-indices
