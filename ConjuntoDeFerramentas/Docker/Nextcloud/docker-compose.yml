@@ -1,9 +1,18 @@
+version: '3.8'
+
+networks:
+  nextcloud_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.100.0/24
+
 services:
   nextcloud:
     image: nextcloud:30.0.2
     container_name: nextcloud
     environment:
-      - POSTGRES_HOST=db
+      - POSTGRES_HOST=nextcloud_db
       - POSTGRES_DB=nextcloud
       - POSTGRES_USER=nextcloud
       - POSTGRES_PASSWORD=abc123
@@ -11,6 +20,9 @@ services:
       - PHP_OPCACHE_MEMORY_CONSUMPTION=128
       - PHP_OPCACHE_MAX_ACCELERATED_FILES=10000
       - PHP_OPCACHE_VALIDATE_TIMESTAMPS=1
+    networks:
+      nextcloud_network:
+        ipv4_address: 192.168.100.2
     depends_on:
       - db
       - redis
@@ -24,6 +36,9 @@ services:
       - POSTGRES_PASSWORD=abc123
     volumes:
       - /home/stream/nextcloud/db:/var/lib/postgresql/data
+    networks:
+      nextcloud_network:
+        ipv4_address: 192.168.100.3
 
   redis:
     image: redis:alpine
@@ -31,6 +46,9 @@ services:
     command: redis-server --requirepass senha_redis
     volumes:
       - /home/stream/nextcloud/redis:/data
+    networks:
+      nextcloud_network:
+        ipv4_address: 192.168.100.4
 
   web:
     image: nginx:alpine
@@ -41,3 +59,6 @@ services:
       - "192.168.3.202:80:80"
     depends_on:
       - nextcloud
+    networks:
+      nextcloud_network:
+        ipv4_address: 192.168.100.5
