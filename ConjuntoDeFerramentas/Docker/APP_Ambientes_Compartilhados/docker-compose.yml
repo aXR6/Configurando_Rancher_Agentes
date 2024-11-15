@@ -10,7 +10,6 @@ networks:
 volumes:
   mariadb:
   redis:
-  shared_downloads:  # Volume compartilhado para os downloads
 
 services:
   transmission:
@@ -87,7 +86,7 @@ services:
   redis:
     image: redis:alpine
     container_name: nextcloud_redis
-    command: redis-server --requirepass senha_redis
+    command: redis-server --requirepass 36HBpD61l)Lj
     volumes:
       - redis:/data
     networks:
