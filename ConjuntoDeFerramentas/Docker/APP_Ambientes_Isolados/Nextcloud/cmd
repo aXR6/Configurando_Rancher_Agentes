@@ -20,6 +20,9 @@ docker exec -u www-data nextcloud php occ db:add-missing-indices
 
 #No arquivo /config/config.php
   'backgroundjobs_mode' => 'cron',
+  'maintenance_window_start' => '15:00',
+  'default_phone_region' => 'BR',
+
 
 #Em caso de problemas com permissão na pasta config/
 sudo chown -R www-data:www-data /home/stream/nextcloud/data/config
