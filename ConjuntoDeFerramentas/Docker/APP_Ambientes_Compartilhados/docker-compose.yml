@@ -10,6 +10,7 @@ networks:
 volumes:
   mariadb:
   redis:
+  logs:  # Volume para armazenar os logs rotativos
 
 services:
   transmission:
@@ -25,19 +26,12 @@ services:
       - /home/stream/transmission/config:/config:rw,async,noatime,nodiratime
       - /home/stream/transmission/downloads:/downloads:rw,async,noatime,nodiratime
       - /home/stream/transmission/incomplete:/incomplete:rw,async,noatime,nodiratime
+      - logs:/var/log/transmission  # Volume para os logs do Transmission
     ports:
       - "9091:9091"
       - "51413:51413"
       - "51413:51413/udp"
     restart: unless-stopped
-    #deploy:
-      #resources:
-        #limits:
-          #cpus: "2.0"
-          #memory: 512M
-        #reservations:
-          #cpus: "1.0"
-          #memory: 256M
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:9091 || exit 1"]
       interval: 30s
@@ -46,8 +40,8 @@ services:
     logging:
       driver: "json-file"
       options:
-        max-size: "5m"
-        max-file: "2"
+        max-size: "5m"  # Tamanho máximo de cada arquivo de log
+        max-file: "3"   # Quantidade máxima de arquivos de log
     networks:
       - torrent_network
 
@@ -73,6 +67,7 @@ services:
     depends_on:
       - db
       - redis
+      - web
 
   db:
     image: mariadb:11.4
