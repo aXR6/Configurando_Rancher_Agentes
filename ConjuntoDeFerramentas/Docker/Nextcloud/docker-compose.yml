@@ -1,5 +1,3 @@
-version: '3.8'
-
 networks:
   nextcloud_network:
     driver: bridge
@@ -15,7 +13,7 @@ services:
       - POSTGRES_HOST=nextcloud_db
       - POSTGRES_DB=nextcloud
       - POSTGRES_USER=nextcloud
-      - POSTGRES_PASSWORD=abc123
+      - POSTGRES_PASSWORD=abc123  # senha para conexão com PostgreSQL
       - PHP_OPCACHE_ENABLE=1
       - PHP_OPCACHE_MEMORY_CONSUMPTION=128
       - PHP_OPCACHE_MAX_ACCELERATED_FILES=10000
@@ -33,7 +31,7 @@ services:
     environment:
       - POSTGRES_DB=nextcloud
       - POSTGRES_USER=nextcloud
-      - POSTGRES_PASSWORD=abc123
+      - POSTGRES_PASSWORD=abc123  # senha configurada para o banco de dados
     volumes:
       - /home/stream/nextcloud/db:/var/lib/postgresql/data
     networks:
