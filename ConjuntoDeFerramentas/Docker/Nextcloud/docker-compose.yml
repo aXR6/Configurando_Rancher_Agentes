@@ -1,6 +1,8 @@
+version: '3.8'
+
 services:
   nextcloud:
-    image: nextcloud:latest
+    image: nextcloud:30.0.2
     container_name: nextcloud
     environment:
       - POSTGRES_HOST=db
@@ -19,11 +21,6 @@ services:
     depends_on:
       - db
       - redis
-    #deploy:
-      #resources:
-        #limits:
-          #cpus: '1.0'
-          #memory: 1G
 
   db:
     image: postgres:latest
@@ -46,10 +43,9 @@ services:
     image: nginx:alpine
     container_name: nextcloud_nginx
     volumes:
-      - /home/stream/nextcloud/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - /home/stream/nextcloud/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
-      - "80:80"
-      - "443:443"
+      - "192.168.3.202:80:80"
     depends_on:
       - nextcloud
 
