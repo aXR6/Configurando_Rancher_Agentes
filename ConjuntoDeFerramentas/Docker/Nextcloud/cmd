@@ -2,7 +2,7 @@
 sudo mkdir -p data config apps db redis logs
 
 # Defina as permissões apropriadas para esses diretórios:
-sudo chown -R www-data:www-data /home/nextcloud
+sudo chown -R www-data:www-data /home/stream/nextcloud
 
 # Usar o modo de manutenção facilita o processo de atualização, garantindo que nenhuma modificação ocorra durante o upgrade do Nextcloud:
 docker exec -u www-data nextcloud php occ maintenance:mode --on
