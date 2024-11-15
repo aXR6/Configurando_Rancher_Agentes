@@ -12,9 +12,9 @@ services:
       - PHP_OPCACHE_MAX_ACCELERATED_FILES=10000
       - PHP_OPCACHE_VALIDATE_TIMESTAMPS=1
     volumes:
-      - /home/stream/nextcloud/data:/var/www/html/data
-      - /home/stream/nextcloud/config:/var/www/html/config
-      - /home/stream/nextcloud/apps:/var/www/html/custom_apps
+      #- /home/stream/nextcloud/data:/var/www/html/data
+      #- /home/stream/nextcloud/config:/var/www/html/config
+      #- /home/stream/nextcloud/apps:/var/www/html/custom_apps
       - /home/stream/nextcloud/logs:/var/www/html/nextcloud.log
     depends_on:
       - db
