@@ -1,0 +1,29 @@
+# Criar diretórios para os dados do Nextcloud:
+sudo mkdir -p data config apps db redis logs
+
+# Defina as permissões apropriadas para esses diretórios:
+sudo chown -R www-data:www-data /home/stream/nextcloud
+
+# Usar o modo de manutenção facilita o processo de atualização, garantindo que nenhuma modificação ocorra durante o upgrade do Nextcloud:
+docker exec -u www-data nextcloud php occ maintenance:mode --on
+
+# Lembrando de desligar o modo após a manutenção:
+docker exec -u www-data nextcloud php occ maintenance:mode --off
+
+#Migrar os Tipos MIME (Mimetype)
+#Execute o comando sugerido para fazer a migração dos mimetypes:
+docker exec -u www-data nextcloud php occ maintenance:repair --include-expensive
+
+#6. Adicionar Índices Faltantes no Banco de Dados
+#Para adicionar os índices ausentes, execute:
+docker exec -u www-data nextcloud php occ db:add-missing-indices
+
+#No arquivo /config/config.php
+  'backgroundjobs_mode' => 'cron',
+  'maintenance_window_start' => '15:00',
+  'default_phone_region' => 'BR',
+
+
+#Em caso de problemas com permissão na pasta config/
+sudo chown -R www-data:www-data /home/stream/nextcloud/data/config
+sudo chmod -R 750 /home/stream/nextcloud/data/config

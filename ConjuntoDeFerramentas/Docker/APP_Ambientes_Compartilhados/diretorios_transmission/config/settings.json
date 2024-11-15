@@ -1,0 +1,27 @@
+// Aumentar Conexões Máximas
+"peer-limit-global": 2000,
+"peer-limit-per-torrent": 200,
+
+// Habilitar DHT e PEX para Melhor Descoberta de Peers
+"dht-enabled": true,
+"pex-enabled": true,
+"utp-enabled": true,
+
+// Velocidade de Upload e Download Ajuste de acordo com a capacidade da sua conexão. Exemplo:
+"speed-limit-down": 10240,
+"speed-limit-down-enabled": true,
+"speed-limit-up": 1024,
+"speed-limit-up-enabled": true,
+
+// Configurar o Cache de Escrita para Evitar Gargalos em Discos Lentos
+"cache-size-mb": 64,
+
+// Configurar Diretórios Use diretórios dedicados para downloads em andamento e concluídos:
+"download-dir": "/downloads",
+"incomplete-dir": "/incomplete",
+"incomplete-dir-enabled": true,
+
+// Aqui está o trecho atualizado do settings.json com os dois links:
+"blocklist-enabled": true,
+"blocklist-url": "https://github.com/naoxink/Transmission-Blocklist/raw/main/blocklist.gz",
+"blocklist-url-backup": "http://www.iblocklist.com/lists.php",
