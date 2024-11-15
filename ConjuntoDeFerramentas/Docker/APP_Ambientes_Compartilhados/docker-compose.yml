@@ -79,7 +79,7 @@ services:
   db:
     image: mariadb:11.4
     container_name: nextcloud_db
-    environment:
+    environment: 
       - MYSQL_ROOT_PASSWORD=36HBpD61l)Lj
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
