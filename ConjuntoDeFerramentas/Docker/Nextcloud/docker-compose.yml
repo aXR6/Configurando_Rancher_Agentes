@@ -16,10 +16,8 @@ services:
     restart: always
 
   app:
-    image: nextcloud
+    image: nextcloud:fpm
     restart: always
-    ports:
-      - 8080:80
     depends_on:
       - redis
       - db
@@ -30,6 +28,18 @@ services:
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
       - MYSQL_HOST=db
+
+  web:
+    image: nginx
+    restart: always
+    ports:
+      - 8080:80
+    depends_on:
+      - app
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    volumes_from:
+      - app
 
 volumes:
   nextcloud:
