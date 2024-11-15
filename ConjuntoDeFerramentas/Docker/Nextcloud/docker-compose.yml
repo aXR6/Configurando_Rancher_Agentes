@@ -6,7 +6,7 @@ services:
       - POSTGRES_HOST=db
       - POSTGRES_DB=nextcloud
       - POSTGRES_USER=nextcloud
-      - POSTGRES_PASSWORD=senha_segura
+      - POSTGRES_PASSWORD=abc123
       - PHP_OPCACHE_ENABLE=1
       - PHP_OPCACHE_MEMORY_CONSUMPTION=128
       - PHP_OPCACHE_MAX_ACCELERATED_FILES=10000
@@ -31,7 +31,7 @@ services:
     environment:
       - POSTGRES_DB=nextcloud
       - POSTGRES_USER=nextcloud
-      - POSTGRES_PASSWORD=senha_segura
+      - POSTGRES_PASSWORD=abc123
     volumes:
       - /home/stream/nextcloud/db:/var/lib/postgresql/data
 
