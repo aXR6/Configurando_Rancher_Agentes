@@ -1,5 +1,3 @@
-version: '3.8'
-
 networks:
   torrent_network:
     driver: bridge
