@@ -11,11 +11,6 @@ services:
       - PHP_OPCACHE_MEMORY_CONSUMPTION=128
       - PHP_OPCACHE_MAX_ACCELERATED_FILES=10000
       - PHP_OPCACHE_VALIDATE_TIMESTAMPS=1
-    volumes:
-      #- /home/stream/nextcloud/data:/var/www/html/data
-      #- /home/stream/nextcloud/config:/var/www/html/config
-      #- /home/stream/nextcloud/apps:/var/www/html/custom_apps
-      - /home/stream/nextcloud/logs:/var/www/html/nextcloud.log
     depends_on:
       - db
       - redis
@@ -46,8 +41,3 @@ services:
       - "192.168.3.202:80:80"
     depends_on:
       - nextcloud
-
-volumes:
-  nextcloud_data:
-  nextcloud_db:
-  nextcloud_redis:
