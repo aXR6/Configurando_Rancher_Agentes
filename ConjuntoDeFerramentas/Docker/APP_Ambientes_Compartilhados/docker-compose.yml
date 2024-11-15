@@ -24,7 +24,7 @@ services:
       - USER=stream
       - PASS=123abc
     volumes:
-      - /home/stream/transmission/config:/config
+      - /home/stream/transmission/config:/config:rw,async,noatime,nodiratime
       - /home/stream/transmission/downloads:/downloads:rw,async,noatime,nodiratime
       - /home/stream/transmission/incomplete:/incomplete:rw,async,noatime,nodiratime
     ports:
