@@ -46,7 +46,7 @@ services:
     image: nginx:alpine
     container_name: nextcloud_nginx
     volumes:
-      - /home/stream/nextcloud/nginx.conf:/etc/nginx/nginx.conf
+      - /home/stream/nextcloud/nginx/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - "80:80"
       - "443:443"
