@@ -1,55 +1,36 @@
-version: '3.8'
-
 services:
-  nextcloud:
-    image: nextcloud:30.0.2
-    container_name: nextcloud
-    environment:
-      - POSTGRES_HOST=db
-      - POSTGRES_DB=nextcloud
-      - POSTGRES_USER=nextcloud
-      - POSTGRES_PASSWORD=abc123
-      - PHP_OPCACHE_ENABLE=1
-      - PHP_OPCACHE_MEMORY_CONSUMPTION=128
-      - PHP_OPCACHE_MAX_ACCELERATED_FILES=10000
-      - PHP_OPCACHE_VALIDATE_TIMESTAMPS=1
-    volumes:
-      - /home/stream/nextcloud/data:/var/www/html/data
-      - /home/stream/nextcloud/config:/var/www/html/config
-      - /home/stream/nextcloud/apps:/var/www/html/custom_apps
-      - /home/stream/nextcloud/logs:/var/www/html/nextcloud.log
-    depends_on:
-      - db
-      - redis
-
   db:
-    image: postgres:latest
-    container_name: nextcloud_db
-    environment:
-      - POSTGRES_DB=nextcloud
-      - POSTGRES_USER=nextcloud
-      - POSTGRES_PASSWORD=abc123
+    image: mariadb:10.11
+    restart: always
+    command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW
     volumes:
-      - /home/stream/nextcloud/db:/var/lib/postgresql/data
+      - db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_PASSWORD=
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
 
   redis:
     image: redis:alpine
-    container_name: nextcloud_redis
-    command: redis-server --requirepass senha_redis
-    volumes:
-      - /home/stream/nextcloud/redis:/data
+    restart: always
 
-  web:
-    image: nginx:alpine
-    container_name: nextcloud_nginx
-    volumes:
-      - /home/stream/nextcloud/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+  app:
+    image: nextcloud
+    restart: always
     ports:
-      - "192.168.3.202:80:80"
+      - 8080:80
     depends_on:
-      - nextcloud
+      - redis
+      - db
+    volumes:
+      - nextcloud:/var/www/html
+    environment:
+      - MYSQL_PASSWORD=
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_HOST=db
 
 volumes:
-  nextcloud_data:
-  nextcloud_db:
-  nextcloud_redis:
+  nextcloud:
+  db:
