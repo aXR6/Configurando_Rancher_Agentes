@@ -47,7 +47,7 @@ services:
   redis:
     image: redis:alpine
     container_name: nextcloud_redis
-    command: redis-server --requirepass 36HBpD61l)Lj
+    command: redis-server --requirepass senha_redis
     volumes:
       - redis:/data
     networks:
