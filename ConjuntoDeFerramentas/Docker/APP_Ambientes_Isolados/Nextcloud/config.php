@@ -3,5 +3,5 @@
 'redis' => array(
   'host' => 'redis',
   'port' => 6379,
-  'password' => '36HBpD61l)Lj',
+  'password' => '36HBpD',
 ),
