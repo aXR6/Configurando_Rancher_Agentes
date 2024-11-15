@@ -18,6 +18,8 @@ services:
       - PHP_OPCACHE_MEMORY_CONSUMPTION=128
       - PHP_OPCACHE_MAX_ACCELERATED_FILES=10000
       - PHP_OPCACHE_VALIDATE_TIMESTAMPS=1
+    volumes:
+      - /home/stream/nextcloud/data:/var/www/html           # Armazena todos os dados do Nextcloud
     networks:
       nextcloud_network:
         ipv4_address: 192.168.100.2
