@@ -28,7 +28,7 @@ services:
       - redis
 
   db:
-    image: mariadb:latest
+    image: mariadb:11.4
     container_name: nextcloud_db
     environment:
       - MYSQL_ROOT_PASSWORD=36HBpD61l)Lj
