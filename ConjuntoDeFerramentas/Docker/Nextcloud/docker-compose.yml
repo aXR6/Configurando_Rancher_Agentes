@@ -1,3 +1,5 @@
+version: '3.8'
+
 networks:
   nextcloud_network:
     driver: bridge
@@ -10,10 +12,10 @@ services:
     image: nextcloud:30.0.2
     container_name: nextcloud
     environment:
-      - MYSQL_HOST=nextcloud_db                  # Host do MariaDB
-      - MYSQL_DATABASE=nextcloud                 # Nome do banco de dados que será criado automaticamente
-      - MYSQL_USER=nextcloud                     # Nome do usuário do banco de dados que será criado automaticamente
-      - MYSQL_PASSWORD=36HBpD61l)Lj              # Senha do usuário do banco de dados
+      - MYSQL_HOST=nextcloud_db
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=36HBpD61l)Lj
       - PHP_OPCACHE_ENABLE=1
       - PHP_OPCACHE_MEMORY_CONSUMPTION=128
       - PHP_OPCACHE_MAX_ACCELERATED_FILES=10000
@@ -29,12 +31,12 @@ services:
     image: mariadb:latest
     container_name: nextcloud_db
     environment:
-      - MYSQL_ROOT_PASSWORD=36HBpD61l)Lj         # Senha para o usuário root do MariaDB
-      - MYSQL_DATABASE=nextcloud                 # Nome do banco de dados para o Nextcloud
-      - MYSQL_USER=nextcloud                     # Nome do usuário do banco de dados
-      - MYSQL_PASSWORD=36HBpD61l)Lj              # Senha para o usuário do banco de dados
+      - MYSQL_ROOT_PASSWORD=36HBpD61l)Lj
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=36HBpD61l)Lj
     volumes:
-      - /home/stream/nextcloud/db:/var/lib/mysql # Volume para persistência de dados do MariaDB
+      - mariadb:/var/lib/mysql
     networks:
       nextcloud_network:
         ipv4_address: 192.168.100.3
@@ -44,7 +46,7 @@ services:
     container_name: nextcloud_redis
     command: redis-server --requirepass senha_redis
     volumes:
-      - /home/stream/nextcloud/redis:/data       # Volume para persistência de dados do Redis
+      - redis:/data
     networks:
       nextcloud_network:
         ipv4_address: 192.168.100.4
@@ -55,9 +57,13 @@ services:
     volumes:
       - /home/stream/nextcloud/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
-      - "192.168.3.202:80:80"                    # Porta mapeada para acesso externo ao Nginx
+      - "192.168.3.202:80:80"
     depends_on:
       - nextcloud
     networks:
       nextcloud_network:
         ipv4_address: 192.168.100.5
+
+volumes:
+  mariadb:
+  redis:
