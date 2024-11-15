@@ -16,20 +16,20 @@ services:
     image: ghcr.io/linuxserver/transmission:latest
     container_name: transmission
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Sao_Paulo
-      - USER=stream
-      - PASS=123abc
+      - PUID=1000             # ID do usuário no host
+      - PGID=1000             # ID do grupo no host
+      - TZ=America/Sao_Paulo  # Fuso horário
+      - USER=stream           # (Opcional) Usuário para autenticação RPC
+      - PASS=123abc           # (Opcional) Senha para autenticação RPC
     volumes:
-      - /home/stream/transmission/config:/config
-      - /home/stream/transmission/downloads:/downloads  # Volume compartilhado
-      - /home/stream/transmission/watch:/watch
-      - /home/stream/transmission/incomplete:/incomplete
+      - /home/stream/transmission/config:/config                # Configurações do Transmission
+      - /home/stream/transmission/downloads:/downloads          # Diretório de downloads
+      - /home/stream/transmission/watch:/watch                  # Diretório para monitorar torrents
+      - /home/stream/transmission/incomplete:/incomplete        # Diretório para downloads incompletos
     ports:
-      - "9091:9091"
-      - "51413:51413"
-      - "51413:51413/udp"
+      - "9091:9091"           # Interface web do Transmission
+      - "51413:51413"         # Porta P2P TCP
+      - "51413:51413/udp"     # Porta P2P UDP
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9091"]
@@ -59,7 +59,6 @@ services:
     volumes:
       - /home/stream/nextcloud/data:/var/www/html
       - /home/stream/nextcloud/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
-      - /home/stream/transmission/downloads:/downloads  # Montar o volume compartilhado
     networks:
       nextcloud_network:
         ipv4_address: 192.168.100.2
