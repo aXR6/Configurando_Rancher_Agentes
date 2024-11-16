@@ -60,7 +60,7 @@ services:
     volumes:
       - /home/stream/nextcloud/data:/var/www/html
       - /home/stream/nextcloud/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
-      - /home/stream/transmission/downloads/complete:/mnt/downloads/complete:ro # Montar como somente leitura
+      - /home/stream/transmission/downloads/complete:/mnt/downloads/complete:rw # Montar como somente leitura
     networks:
       nextcloud_network:
         ipv4_address: 192.168.100.2
