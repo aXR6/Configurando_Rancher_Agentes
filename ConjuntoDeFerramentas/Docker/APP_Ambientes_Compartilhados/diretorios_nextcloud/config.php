@@ -24,9 +24,9 @@ $CONFIG = array (
     ),
   ),
   'upgrade.disable-web' => true,
-  'instanceid' => 'ocss15v3688k',
-  'passwordsalt' => 'eyir7LR+pIaNSITUt8EwRpx4y4z9WN',
-  'secret' => '6TmVk5lu5Qn/XAIPU0iyOAh2zwvhXCFIe3TYX1brD5uWxzQv',
+  'instanceid' => 'ocy0cs0e8kt5',
+  'passwordsalt' => 'f/jf00gfPGyyskbF8T0CksAUdl1jt+',
+  'secret' => '+m0v9rcpRFNlg9ET77BTONe2SwlSqCa/r+LmuxQbk298P6Qd',
   'trusted_domains' => 
   array (
     0 => '192.168.3.202',
