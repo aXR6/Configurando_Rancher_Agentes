@@ -9,11 +9,11 @@
 zone "pve.datacenter.tsc" {
     type master;
     file "/etc/bind/zones/db.pve.datacenter.tsc"; # zone file path
-    allow-transfer { 192.168.3.201; };            # ns2 private IP address - secondary
+    allow-transfer { 192.168.3.199; };            # ns2 private IP address - secondary
 };
 
 zone "168.192.in-addr.arpa" {
     type master;
     file "/etc/bind/zones/db.192.168";  # 168.192.3.0/24 subnet
-    allow-transfer { 192.168.3.201; };  # ns2 private IP address - secondary
+    allow-transfer { 192.168.3.199; };  # ns2 private IP address - secondary
 };

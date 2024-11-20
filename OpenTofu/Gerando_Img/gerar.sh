@@ -56,7 +56,7 @@ configure_image_params() {
     4)
       VM_ID="303"
       TEMPLATE_NAME="Debian12CloudInitDNS1"
-      CORES="2"
+      CORES="1"
       MEMORY="1024"
       ;;
     5)

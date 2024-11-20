@@ -15,7 +15,7 @@ $TTL    604800
       
 ; PTR Records
 200.3  IN      PTR     ns1.pve.datacenter.tsc.              ; 192.168.3.200
-201.3  IN      PTR     ns2.pve.datacenter.tsc.              ; 192.168.3.201
+199.3  IN      PTR     ns2.pve.datacenter.tsc.              ; 192.168.3.199
 10.3   IN      PTR     rancher-ks8.pve.datacenter.tsc.      ; 192.168.3.10
 11.3   IN      PTR     *.rancher-ks8.pve.datacenter.tsc.    ; 192.168.3.11
 12.3   IN      PTR     *.rancher-ks8.pve.datacenter.tsc.    ; 192.168.3.12

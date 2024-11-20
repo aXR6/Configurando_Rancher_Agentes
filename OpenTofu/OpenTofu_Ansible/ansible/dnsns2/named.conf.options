@@ -4,7 +4,7 @@ acl "trusted" {
 	192.168.3.12; # agente-vm2 - 82:57:68:61:12:DD
 	192.168.3.13; # agente-vm3 - 4E:C0:9E:89:A1:DD
 	192.168.3.200; # dns-ns1 - 6E:60:3D:9C:6E:60
-	192.168.3.201; # dns-ns2 - 02:C0:10:09:A7:D0
+	192.168.3.199; # dns-ns2 - 02:C0:10:09:A7:D0
 };
 
 options {
@@ -12,7 +12,7 @@ options {
 
         recursion yes;
         allow-recursion { trusted; };
-        listen-on { 192.168.3.201; };     # ns2 private IP address
+        listen-on { 192.168.3.199; };     # ns2 private IP address
         allow-transfer { none; };         # disable zone transfers by default
 
         forwarders {

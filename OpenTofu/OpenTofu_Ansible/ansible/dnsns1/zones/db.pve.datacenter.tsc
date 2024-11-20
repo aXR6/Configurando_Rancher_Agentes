@@ -15,7 +15,7 @@ $TTL    604800
     
 ; name servers - A records
 ns1.pve.datacenter.tsc.             IN      A     192.168.3.200
-ns2.pve.datacenter.tsc.             IN      A     192.168.3.201
+ns2.pve.datacenter.tsc.             IN      A     192.168.3.199
 
 ; 192.168.3.0/24 - A records
 rancher-ks8.pve.datacenter.tsc.         IN      A     192.168.3.10
