@@ -3,7 +3,7 @@
 #Script para desbloquear e apagar VM
 
 # Array of specific VM IDs to remove
-locked_vms=(100 102 200 201)
+locked_vms=(99 100 101 102 103 104 200 199)
 
 # Function to check and unlock VMs
 unlock_vm() {

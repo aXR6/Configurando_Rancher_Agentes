@@ -16,6 +16,24 @@ SCRIPT_FILE_nfs="nfs.sh"            # Nome do arquivo de script a ser executado
 Dir_dnsns1="/home/img/dnsns1"
 Dir_dnsns2="/home/img/dnsns2"
 
+# Mapear IPs para identificadores
+declare -A IP_IDENTIFIERS=(
+  ["192.168.3.201"]="Proxmox PVE 2"
+  ["192.168.3.203"]="Proxmox PVE"
+)
+
+# Função para obter o IP e verificar identificação
+get_machine_ip() {
+  IP=$(hostname -I | awk '{print $1}')
+  IDENTIFIER=${IP_IDENTIFIERS[$IP]}
+
+  if [ -z "$IDENTIFIER" ]; then
+    echo "IP não identificado: $IP"
+    IDENTIFIER="Desconhecido"
+  else
+    echo "IP identificado: $IP - $IDENTIFIER"
+  fi
+}
 
 # Função para exibir mensagens de erro e sair
 error_exit() {
@@ -49,24 +67,30 @@ configure_image_params() {
       ;;
     3)
       VM_ID="302"
-      TEMPLATE_NAME="Debian12CloudInitComum"
+      TEMPLATE_NAME="Debian12CloudInitAgentepve2"
       CORES="1"
       MEMORY="1024"
       ;;
     4)
       VM_ID="303"
-      TEMPLATE_NAME="Debian12CloudInitDNS1"
+      TEMPLATE_NAME="Debian12CloudInitComum"
       CORES="1"
       MEMORY="1024"
       ;;
     5)
       VM_ID="304"
-      TEMPLATE_NAME="Debian12CloudInitDNS2"
+      TEMPLATE_NAME="Debian12CloudInitDNS1"
       CORES="1"
       MEMORY="1024"
       ;;
     6)
       VM_ID="305"
+      TEMPLATE_NAME="Debian12CloudInitDNS2"
+      CORES="1"
+      MEMORY="1024"
+      ;;
+    7)
+      VM_ID="306"
       TEMPLATE_NAME="Debian12CloudInitNFS"
       CORES="1"
       MEMORY="1024"
@@ -480,15 +504,18 @@ create_template_nfs() {
 # Função principal
 main() {
   install_dependencies
+  get_machine_ip
+
 while true; do
     echo "\nMenu de Opções:"
     echo "1 - Criar imagem do Rancher"
     echo "2 - Criar imagem do Agente"
-    echo "3 - Criar imagem do Comum"
-    echo "4 - Criar imagem do DNS Master"
-    echo "5 - Criar imagem do DNS Slave"
-    echo "6 - Criar imagem do Servidor NFS"
-    echo "7. Sair"
+    echo "3 - Criar imagem do Agente PVE2"
+    echo "4 - Criar imagem do Comum"
+    echo "5 - Criar imagem do DNS Master"
+    echo "6 - Criar imagem do DNS Slave"
+    echo "7 - Criar imagem do Servidor NFS"
+    echo "8. Sair"
 
     read -p "Escolha uma opção: " opcao
 
@@ -503,21 +530,25 @@ while true; do
             ;;
         3)
             configure_image_params "$opcao"
-            create_template_comum
+            create_template_agentes
             ;;
         4)
             configure_image_params "$opcao"
-            create_template_dns1
+            create_template_comum
             ;;
         5)
             configure_image_params "$opcao"
-            create_template_dns2
+            create_template_dns1
             ;;
         6)
             configure_image_params "$opcao"
-            create_template_nfs
+            create_template_dns2
             ;;
         7)
+            configure_image_params "$opcao"
+            create_template_nfs
+            ;;
+        8)
             echo "Saindo..."
             exit 0
             ;;

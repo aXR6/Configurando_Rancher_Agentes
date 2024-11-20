@@ -24,14 +24,14 @@ variable "pm_api_token_id" {
   description = "Proxmox API token ID"
   type        = string
   sensitive   = true
-  default     = "OpenTofu@pam!opentofu"
+  default     = "tofuapi@pam!opentofu"
 }
 
 variable "pm_api_token_secret" {
   description = "Proxmox API token secret"
   type        = string
   sensitive   = true
-  default     = "ada5bc72-de51-4832-b9f5-6b49a284d21b"
+  default     = "c295c95f-4f99-4119-b8bc-73d83d91e5e2"
 }
 
 provider "proxmox" {

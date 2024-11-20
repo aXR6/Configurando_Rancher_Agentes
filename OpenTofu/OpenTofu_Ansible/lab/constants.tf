@@ -34,12 +34,12 @@ locals {
   }
 
   # Definição de máquinas virtuais específicas
-
+  machine_map = {
     m1 = merge(local.default_vm_config, {
       name            = "rancher-vm"
       target_node     = "pve2"
       template        = "Debian12CloudInitRancher"
-      vmid            = 99
+      vmid            = 100
       vcpus           = 2
       cores           = 2
       socket          = 1
@@ -51,18 +51,17 @@ locals {
       mac_address     = "52:54:00:61:FD:07"
       storage_dev     = var.vm_storage_dev_2
     })
-  machine_map = {
 
     m2 = merge(local.default_vm_config, {
       name            = "nfs"
       target_node     = "pve"
       template        = "Debian12CloudInitNFS"
-      vmid            = 100
+      vmid            = 101
       vcpus           = 1
       cores           = 1
       socket          = 1
       memory          = 1024
-      balloon         = 512
+      balloon         = 1024
       storage         = "900G"
       ip_address      = "192.168.3.100"
       description     = "Máquina virtual - NFS."
@@ -74,7 +73,7 @@ locals {
       name            = "agente-vm1"
       target_node     = "pve2"
       template        = "Debian12CloudInitAgente"
-      vmid            = 101
+      vmid            = 102
       vcpus           = 2
       cores           = 2
       socket          = 1
@@ -91,7 +90,7 @@ locals {
       name            = "agente-vm2"
       target_node     = "pve"
       template        = "Debian12CloudInitAgente"
-      vmid            = 102
+      vmid            = 103
       vcpus           = 2
       cores           = 2
       socket          = 1
@@ -108,7 +107,7 @@ locals {
       name            = "agente-vm3"
       target_node     = "pve"
       template        = "Debian12CloudInitAgente"
-      vmid            = 103
+      vmid            = 104
       vcpus           = 2
       cores           = 2
       socket          = 1
@@ -125,7 +124,7 @@ locals {
       name            = "agente-vm4"
       target_node     = "pve"
       template        = "Debian12CloudInitAgente"
-      vmid            = 104
+      vmid            = 105
       vcpus           = 2
       cores           = 2
       socket          = 1
@@ -152,7 +151,7 @@ locals {
       ip_address      = "192.168.3.200"
       description     = "Máquina virtual - DNS Master."
       mac_address     = "6E:60:3D:9C:6E:60"
-      storage_dev     = var.vm_storage_dev
+      storage_dev     = var.vm_storage_dev_2
     })
 
     m8 = merge(local.default_vm_config, {
@@ -169,7 +168,7 @@ locals {
       ip_address      = "192.168.3.199"
       description     = "Máquina virtual - DNS Slave."
       mac_address     = "02:C0:10:09:A7:D0"
-      storage_dev     = var.vm_storage_dev
+      storage_dev     = var.vm_storage_dev_2
     })
   }
 

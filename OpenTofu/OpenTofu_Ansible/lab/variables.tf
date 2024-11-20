@@ -86,13 +86,6 @@ variable "vm_hotplug_options" {
   default     = "network,disk,cpu,memory"
 }
 
-# Configuração de armazenamento padrão para máquinas virtuais - 01
-variable "vm_storage_dev" {
-  description = "Dispositivo de armazenamento padrão para as máquinas virtuais"
-  type        = string
-  default     = "DadosExtra"
-}
-
 # Configuração de armazenamento padrão para máquinas virtuais - 02
 variable "vm_storage_dev_2" {
   description = "Dispositivo de armazenamento padrão para as máquinas virtuais"
