@@ -3,15 +3,15 @@
 # Variáveis globais fixas
 IMAGE_NAME="debian-12-backports-genericcloud-amd64-daily.qcow2"
 VOLUME_NAME="local-lvm"
-SSHD_CONFIG_FILE="sshd_config"      # Caminho do arquivo local do sshd_config
-PUBLIC_KEY_FILE="id_rsa.pub"        # Caminho do arquivo local da chave pública
-PRIVATE_KEY_FILE="id_rsa"           # Caminho do arquivo local da chave privada
+SSHD_CONFIG_FILE="sshd_config"
+PUBLIC_KEY_FILE="id_rsa.pub"
+PRIVATE_KEY_FILE="id_rsa"
 
-SCRIPT_FILE_rancher="rancher.sh"    # Nome do arquivo de script a ser executado
-SCRIPT_FILE_agentes="agentes.sh"    # Nome do arquivo de script a ser executado
-SCRIPT_FILE="comum.sh"              # Nome do arquivo de script a ser executado
-SCRIPT_FILE_dns="dns.sh"            # Nome do arquivo de script a ser executado
-SCRIPT_FILE_nfs="nfs.sh"            # Nome do arquivo de script a ser executado
+SCRIPT_FILE_rancher="rancher.sh"
+SCRIPT_FILE_agentes="agentes.sh"
+SCRIPT_FILE="comum.sh"
+SCRIPT_FILE_dns="dns.sh"
+SCRIPT_FILE_nfs="nfs.sh"
 
 Dir_dnsns1="/home/img/dnsns1"
 Dir_dnsns2="/home/img/dnsns2"
@@ -22,32 +22,50 @@ declare -A IP_IDENTIFIERS=(
   ["192.168.3.203"]="Proxmox PVE"
 )
 
+# Verificação de pré-requisitos
+check_prerequisites() {
+    echo "Verificando dependências essenciais..."
+    command -v qm &>/dev/null || error_exit "Proxmox CLI (qm) não encontrada. Instale o Proxmox CLI."
+    command -v virt-customize &>/dev/null || error_exit "virt-customize não encontrado. Instale o libguestfs-tools."
+    command -v curl &>/dev/null || error_exit "curl não encontrado. Instale o pacote curl."
+    echo "Todas as dependências estão instaladas."
+}
+
+# Função para verificar existência de arquivos críticos
+check_files() {
+    echo "Verificando arquivos necessários..."
+    for file in "$SSHD_CONFIG_FILE" "$PUBLIC_KEY_FILE" "$PRIVATE_KEY_FILE" "$SCRIPT_FILE_rancher" "$SCRIPT_FILE_agentes" "$SCRIPT_FILE" "$SCRIPT_FILE_dns" "$SCRIPT_FILE_nfs"; do
+        [ ! -f "$file" ] && error_exit "Arquivo necessário não encontrado: $file"
+    done
+    echo "Todos os arquivos necessários estão disponíveis."
+}
+
 # Função para obter o IP e verificar identificação
 get_machine_ip() {
-  IP=$(hostname -I | awk '{print $1}')
-  IDENTIFIER=${IP_IDENTIFIERS[$IP]}
+    IP=$(hostname -I | awk '{print $1}')
+    IDENTIFIER=${IP_IDENTIFIERS[$IP]}
 
-  if [ -z "$IDENTIFIER" ]; then
-    echo "IP não identificado: $IP"
-    IDENTIFIER="Desconhecido"
-  else
-    echo "IP identificado: $IP - $IDENTIFIER"
-  fi
+    if [ -z "$IDENTIFIER" ]; then
+        echo "IP não identificado: $IP"
+        IDENTIFIER="Desconhecido"
+    else
+        echo "IP identificado: $IP - $IDENTIFIER"
+    fi
 }
 
 # Função para exibir mensagens de erro e sair
 error_exit() {
-  echo "Erro: $1" >&2
-  exit 1
+    echo "Erro: $1" >&2
+    exit 1
 }
 
 # Função para instalação das dependências
 install_dependencies() {
-  echo "Verificando e instalando dependências..."
-  if ! dpkg -s libguestfs-tools &> /dev/null; then
-    apt update || error_exit "Falha ao atualizar pacotes."
-    apt install -y libguestfs-tools || error_exit "Falha ao instalar libguestfs-tools."
-  fi
+    echo "Verificando e instalando dependências..."
+    if ! dpkg -s libguestfs-tools qemu-utils &>/dev/null; then
+        apt update || error_exit "Falha ao atualizar pacotes."
+        apt install -y libguestfs-tools qemu-utils || error_exit "Falha ao instalar libguestfs-tools e o qemu-utils."
+    fi
 }
 
 # Função para configurar os parâmetros da imagem
@@ -111,7 +129,7 @@ create_template_rancher() {
 
   # Instalação do qemu-guest-agent, SSH, configuração do sshd_config e cópia das chaves SSH
   echo "Instalando qemu-guest-agent, SSH e copiando configuração sshd_config e chaves SSH na imagem..."
-  virt-customize -a "$IMAGE_NAME" --install qemu-guest-agent,openssh-server,curl,sudo || error_exit "Falha ao instalar qemu-guest-agent e SSH."
+  virt-customize -a "$IMAGE_NAME" --install qemu-guest-agent,openssh-server,curl,sudo --debug &>> /var/log/virt-customize.log || error_exit "Falha ao instalar qemu-guest-agent e SSH."
   virt-customize -a "$IMAGE_NAME" --copy-in "$SSHD_CONFIG_FILE":/etc/ssh || error_exit "Falha ao copiar sshd_config."
 
   echo "Criação do diretório ~/.ssh"
@@ -125,8 +143,8 @@ create_template_rancher() {
   virt-customize -a "$IMAGE_NAME" --copy-in "$PRIVATE_KEY_FILE":/root/.ssh/ || error_exit "Falha ao copiar chave privada."
 
     echo "Ajuste de permissões das chaves - /root/.ssh/"
-    virt-customize -a "$IMAGE_NAME" --run-command 'chmod 600 /root/.ssh/id_rsa' || error_exit "Falha ao ajustar permissões das chaves SSH."
-    virt-customize -a "$IMAGE_NAME" --run-command 'chmod 644 /root/.ssh/id_rsa.pub' || error_exit "Falha ao ajustar permissões das chaves SSH."
+    virt-customize -a "$IMAGE_NAME" --chmod 600:/root/.ssh/id_rsa || error_exit "Falha ao ajustar permissões das chaves SSH."
+    virt-customize -a "$IMAGE_NAME" --chmod 644:/root/.ssh/id_rsa.pub || error_exit "Falha ao ajustar permissões das chaves SSH."
 
   echo "Cópia das chaves pública e privada - /home/notroot/.ssh/"
   virt-customize -a "$IMAGE_NAME" --copy-in "$PUBLIC_KEY_FILE":/home/notroot/.ssh/ || error_exit "Falha ao copiar chave pública."
@@ -146,8 +164,8 @@ create_template_rancher() {
   virt-customize -a "$IMAGE_NAME" --run-command "echo -e '[Unit]\nDescription=Executar script customizado no boot\n\n[Service]\nType=simple\nExecStart=/usr/local/bin/$SCRIPT_FILE\n\n[Install]\nWantedBy=multi-user.target' > /etc/systemd/system/custom-script.service" || error_exit "Falha ao criar o arquivo de serviço systemd."
 
   echo "Habilitar o serviço para iniciar no boot"
-  virt-customize -a "$IMAGE_NAME" --run-command 'systemctl enable custom-script.service' || error_exit "Falha ao habilitar o serviço no systemd."
-
+  virt-customize -a "$IMAGE_NAME" --firstboot 'systemctl enable custom-script.service' || error_exit "Falha ao habilitar o serviço no systemd."
+  
   echo "Instalando o Docker na sua versão 27.2"
   virt-customize -a "$IMAGE_NAME" --run-command 'curl https://releases.rancher.com/install-docker/27.2.sh | sh && apt-mark hold docker-ce docker-ce-cli docker-ce-rootless-extras' || error_exit "Falha ao instalar o Docker e prender a versão."
 
@@ -178,7 +196,7 @@ create_template_agentes() {
 
   # Instalação do qemu-guest-agent, SSH, configuração do sshd_config e cópia das chaves SSH
   echo "Instalando qemu-guest-agent, SSH e copiando configuração sshd_config e chaves SSH na imagem..."
-  virt-customize -a "$IMAGE_NAME" --install qemu-guest-agent,openssh-server || error_exit "Falha ao instalar qemu-guest-agent e SSH."
+  virt-customize -a "$IMAGE_NAME" --install qemu-guest-agent,openssh-server --debug &>> /var/log/virt-customize.log || error_exit "Falha ao instalar qemu-guest-agent e SSH."
   virt-customize -a "$IMAGE_NAME" --copy-in "$SSHD_CONFIG_FILE":/etc/ssh || error_exit "Falha ao copiar sshd_config."
 
   echo "Criação do diretório ~/.ssh"
@@ -192,8 +210,8 @@ create_template_agentes() {
   virt-customize -a "$IMAGE_NAME" --copy-in "$PRIVATE_KEY_FILE":/root/.ssh/ || error_exit "Falha ao copiar chave privada."
 
   echo "Ajuste de permissões das chaves - /root/.ssh/"
-  virt-customize -a "$IMAGE_NAME" --run-command 'chmod 600 /root/.ssh/id_rsa' || error_exit "Falha ao ajustar permissões das chaves SSH."
-  virt-customize -a "$IMAGE_NAME" --run-command 'chmod 644 /root/.ssh/id_rsa.pub' || error_exit "Falha ao ajustar permissões das chaves SSH."
+  virt-customize -a "$IMAGE_NAME" --chmod 600:/root/.ssh/id_rsa || error_exit "Falha ao ajustar permissões das chaves SSH."
+  virt-customize -a "$IMAGE_NAME" --chmod 644:/root/.ssh/id_rsa.pub || error_exit "Falha ao ajustar permissões das chaves SSH."
 
   echo "Cópia das chaves pública e privada - /home/notroot/.ssh/"
   virt-customize -a "$IMAGE_NAME" --copy-in "$PUBLIC_KEY_FILE":/home/notroot/.ssh/ || error_exit "Falha ao copiar chave pública."
@@ -213,8 +231,8 @@ create_template_agentes() {
   virt-customize -a "$IMAGE_NAME" --run-command "echo -e '[Unit]\nDescription=Executar script customizado no boot\n\n[Service]\nType=simple\nExecStart=/usr/local/bin/$SCRIPT_FILE_agentes\n\n[Install]\nWantedBy=multi-user.target' > /etc/systemd/system/custom-script.service" || error_exit "Falha ao criar o arquivo de serviço systemd."
 
   echo "Habilitar o serviço para iniciar no boot"
-  virt-customize -a "$IMAGE_NAME" --run-command 'systemctl enable custom-script.service' || error_exit "Falha ao habilitar o serviço no systemd."
-
+  virt-customize -a "$IMAGE_NAME" --firstboot 'systemctl enable custom-script.service' || error_exit "Falha ao habilitar o serviço no systemd."
+  
   echo "Instalando o Docker na sua versão 27.2"
   virt-customize -a "$IMAGE_NAME" --run-command 'curl https://releases.rancher.com/install-docker/27.2.sh | sh && apt-mark hold docker-ce docker-ce-cli docker-ce-rootless-extras' || error_exit "Falha ao instalar o Docker e prender a versão."
 
@@ -245,7 +263,7 @@ create_template_comum() {
 
   # Instalação do qemu-guest-agent, SSH, configuração do sshd_config e cópia das chaves SSH
   echo "Instalando qemu-guest-agent, SSH e copiando configuração sshd_config e chaves SSH na imagem..."
-  virt-customize -a "$IMAGE_NAME" --install qemu-guest-agent,openssh-server || error_exit "Falha ao instalar qemu-guest-agent e SSH."
+  virt-customize -a "$IMAGE_NAME" --install qemu-guest-agent,openssh-server --debug &>> /var/log/virt-customize.log || error_exit "Falha ao instalar qemu-guest-agent e SSH."
   virt-customize -a "$IMAGE_NAME" --copy-in "$SSHD_CONFIG_FILE":/etc/ssh || error_exit "Falha ao copiar sshd_config."
 
   echo "Criação do diretório ~/.ssh"
@@ -259,8 +277,8 @@ create_template_comum() {
   virt-customize -a "$IMAGE_NAME" --copy-in "$PRIVATE_KEY_FILE":/root/.ssh/ || error_exit "Falha ao copiar chave privada."
 
     echo "Ajuste de permissões das chaves - /root/.ssh/"
-    virt-customize -a "$IMAGE_NAME" --run-command 'chmod 600 /root/.ssh/id_rsa' || error_exit "Falha ao ajustar permissões das chaves SSH."
-    virt-customize -a "$IMAGE_NAME" --run-command 'chmod 644 /root/.ssh/id_rsa.pub' || error_exit "Falha ao ajustar permissões das chaves SSH."
+    virt-customize -a "$IMAGE_NAME" --chmod 600:/root/.ssh/id_rsa || error_exit "Falha ao ajustar permissões das chaves SSH."
+    virt-customize -a "$IMAGE_NAME" --chmod 644:/root/.ssh/id_rsa.pub || error_exit "Falha ao ajustar permissões das chaves SSH."
 
   echo "Cópia das chaves pública e privada - /home/notroot/.ssh/"
   virt-customize -a "$IMAGE_NAME" --copy-in "$PUBLIC_KEY_FILE":/home/notroot/.ssh/ || error_exit "Falha ao copiar chave pública."
@@ -280,8 +298,8 @@ create_template_comum() {
   virt-customize -a "$IMAGE_NAME" --run-command "echo -e '[Unit]\nDescription=Executar script customizado no boot\n\n[Service]\nType=simple\nExecStart=/usr/local/bin/$SCRIPT_FILE\n\n[Install]\nWantedBy=multi-user.target' > /etc/systemd/system/custom-script.service" || error_exit "Falha ao criar o arquivo de serviço systemd."
 
   echo "Habilitar o serviço para iniciar no boot"
-  virt-customize -a "$IMAGE_NAME" --run-command 'systemctl enable custom-script.service' || error_exit "Falha ao habilitar o serviço no systemd."
-
+  virt-customize -a "$IMAGE_NAME" --firstboot 'systemctl enable custom-script.service' || error_exit "Falha ao habilitar o serviço no systemd."
+  
   echo "Criação da VM no Proxmox"
   qm create "$VM_ID" --name "$TEMPLATE_NAME" --memory "$MEMORY" --cores "$CORES" --net0 virtio,bridge=vmbr0 || error_exit "Falha ao criar VM."
   qm importdisk "$VM_ID" "$IMAGE_NAME" "$VOLUME_NAME" || error_exit "Falha ao importar disco."
@@ -309,7 +327,7 @@ create_template_dns1() {
 
   # Instalação do qemu-guest-agent, SSH, configuração do sshd_config e cópia das chaves SSH
   echo "Instalando qemu-guest-agent, SSH e copiando configuração sshd_config e chaves SSH na imagem..."
-  virt-customize -a "$IMAGE_NAME" --install qemu-guest-agent,openssh-server,bind9,bind9utils,bind9-doc,sudo || error_exit "Falha ao instalar qemu-guest-agent, SSH e Bind."
+  virt-customize -a "$IMAGE_NAME" --install qemu-guest-agent,openssh-server,bind9,bind9utils,bind9-doc,sudo --debug &>> /var/log/virt-customize.log || error_exit "Falha ao instalar qemu-guest-agent, SSH e Bind."
   virt-customize -a "$IMAGE_NAME" --copy-in "$SSHD_CONFIG_FILE":/etc/ssh || error_exit "Falha ao copiar sshd_config."
 
   echo "Criação do diretório ~/.ssh"
@@ -323,8 +341,8 @@ create_template_dns1() {
   virt-customize -a "$IMAGE_NAME" --copy-in "$PRIVATE_KEY_FILE":/root/.ssh/ || error_exit "Falha ao copiar chave privada."
 
     echo "Ajuste de permissões das chaves - /root/.ssh/"
-    virt-customize -a "$IMAGE_NAME" --run-command 'chmod 600 /root/.ssh/id_rsa' || error_exit "Falha ao ajustar permissões das chaves SSH."
-    virt-customize -a "$IMAGE_NAME" --run-command 'chmod 644 /root/.ssh/id_rsa.pub' || error_exit "Falha ao ajustar permissões das chaves SSH."
+    virt-customize -a "$IMAGE_NAME" --chmod 600:/root/.ssh/id_rsa || error_exit "Falha ao ajustar permissões das chaves SSH."
+    virt-customize -a "$IMAGE_NAME" --chmod 644:/root/.ssh/id_rsa.pub || error_exit "Falha ao ajustar permissões das chaves SSH."
 
   echo "Cópia das chaves pública e privada - /home/notroot/.ssh/"
   virt-customize -a "$IMAGE_NAME" --copy-in "$PUBLIC_KEY_FILE":/home/notroot/.ssh/ || error_exit "Falha ao copiar chave pública."
@@ -341,8 +359,8 @@ create_template_dns1() {
   echo "Criar o arquivo de serviço systemd"
   virt-customize -a "$IMAGE_NAME" --run-command "echo -e '[Unit]\nDescription=Executar script customizado no boot\n\n[Service]\nType=simple\nExecStart=/usr/local/bin/$SCRIPT_FILE_dns\n\n[Install]\nWantedBy=multi-user.target' > /etc/systemd/system/custom-script.service" || error_exit "Falha ao criar o arquivo de serviço systemd."
   echo "Habilitar o serviço para iniciar no boot"
-  virt-customize -a "$IMAGE_NAME" --run-command 'systemctl enable custom-script.service' || error_exit "Falha ao habilitar o serviço no systemd."
-
+  virt-customize -a "$IMAGE_NAME" --firstboot 'systemctl enable custom-script.service' || error_exit "Falha ao habilitar o serviço no systemd."
+  
   echo "Criando e copiando a pasta do sistema BIND para dentro da imagem"
   virt-customize -a "$IMAGE_NAME" --copy-in "${Dir_dnsns1}/.":/etc/bind
 
@@ -373,7 +391,7 @@ create_template_dns2() {
 
   # Instalação do qemu-guest-agent, SSH, configuração do sshd_config e cópia das chaves SSH
   echo "Instalando qemu-guest-agent, SSH e copiando configuração sshd_config e chaves SSH na imagem..."
-  virt-customize -a "$IMAGE_NAME" --install qemu-guest-agent,openssh-server,bind9,bind9utils,bind9-doc,sudo || error_exit "Falha ao instalar qemu-guest-agent, SSH e Bind."
+  virt-customize -a "$IMAGE_NAME" --install qemu-guest-agent,openssh-server,bind9,bind9utils,bind9-doc,sudo --debug &>> /var/log/virt-customize.log || error_exit "Falha ao instalar qemu-guest-agent, SSH e Bind."
   virt-customize -a "$IMAGE_NAME" --copy-in "$SSHD_CONFIG_FILE":/etc/ssh || error_exit "Falha ao copiar sshd_config."
 
   echo "Criação do diretório ~/.ssh"
@@ -387,8 +405,8 @@ create_template_dns2() {
   virt-customize -a "$IMAGE_NAME" --copy-in "$PRIVATE_KEY_FILE":/root/.ssh/ || error_exit "Falha ao copiar chave privada."
 
     echo "Ajuste de permissões das chaves - /root/.ssh/"
-    virt-customize -a "$IMAGE_NAME" --run-command 'chmod 600 /root/.ssh/id_rsa' || error_exit "Falha ao ajustar permissões das chaves SSH."
-    virt-customize -a "$IMAGE_NAME" --run-command 'chmod 644 /root/.ssh/id_rsa.pub' || error_exit "Falha ao ajustar permissões das chaves SSH."
+    virt-customize -a "$IMAGE_NAME" --chmod 600:/root/.ssh/id_rsa || error_exit "Falha ao ajustar permissões das chaves SSH."
+    virt-customize -a "$IMAGE_NAME" --chmod 644:/root/.ssh/id_rsa.pub || error_exit "Falha ao ajustar permissões das chaves SSH."
 
   echo "Cópia das chaves pública e privada - /home/notroot/.ssh/"
   virt-customize -a "$IMAGE_NAME" --copy-in "$PUBLIC_KEY_FILE":/home/notroot/.ssh/ || error_exit "Falha ao copiar chave pública."
@@ -405,8 +423,8 @@ create_template_dns2() {
   echo "Criar o arquivo de serviço systemd"
   virt-customize -a "$IMAGE_NAME" --run-command "echo -e '[Unit]\nDescription=Executar script customizado no boot\n\n[Service]\nType=simple\nExecStart=/usr/local/bin/$SCRIPT_FILE_dns\n\n[Install]\nWantedBy=multi-user.target' > /etc/systemd/system/custom-script.service" || error_exit "Falha ao criar o arquivo de serviço systemd."
   echo "Habilitar o serviço para iniciar no boot"
-  virt-customize -a "$IMAGE_NAME" --run-command 'systemctl enable custom-script.service' || error_exit "Falha ao habilitar o serviço no systemd."
-
+  virt-customize -a "$IMAGE_NAME" --firstboot 'systemctl enable custom-script.service' || error_exit "Falha ao habilitar o serviço no systemd."
+  
   echo "Criando e copiando a pasta do sistema BIND para dentro da imagem"
   virt-customize -a "$IMAGE_NAME" --copy-in "${Dir_dnsns2}/.":/etc/bind
 
@@ -437,7 +455,7 @@ create_template_nfs() {
 
   # Instalação do qemu-guest-agent, SSH, configuração do sshd_config e cópia das chaves SSH
   echo "Instalando qemu-guest-agent, SSH e copiando configuração sshd_config e chaves SSH na imagem..."
-  virt-customize -a "$IMAGE_NAME" --install qemu-guest-agent,openssh-server || error_exit "Falha ao instalar qemu-guest-agent e SSH."
+  virt-customize -a "$IMAGE_NAME" --install qemu-guest-agent,openssh-server --debug &>> /var/log/virt-customize.log || error_exit "Falha ao instalar qemu-guest-agent e SSH."
   virt-customize -a "$IMAGE_NAME" --copy-in "$SSHD_CONFIG_FILE":/etc/ssh || error_exit "Falha ao copiar sshd_config."
 
   echo "Criação do diretório ~/.ssh"
@@ -451,8 +469,8 @@ create_template_nfs() {
   virt-customize -a "$IMAGE_NAME" --copy-in "$PRIVATE_KEY_FILE":/root/.ssh/ || error_exit "Falha ao copiar chave privada."
 
   echo "Ajuste de permissões das chaves - /root/.ssh/"
-  virt-customize -a "$IMAGE_NAME" --run-command 'chmod 600 /root/.ssh/id_rsa' || error_exit "Falha ao ajustar permissões das chaves SSH."
-  virt-customize -a "$IMAGE_NAME" --run-command 'chmod 644 /root/.ssh/id_rsa.pub' || error_exit "Falha ao ajustar permissões das chaves SSH."
+  virt-customize -a "$IMAGE_NAME" --chmod 600:/root/.ssh/id_rsa || error_exit "Falha ao ajustar permissões das chaves SSH."
+  virt-customize -a "$IMAGE_NAME" --chmod 644:/root/.ssh/id_rsa.pub || error_exit "Falha ao ajustar permissões das chaves SSH."
 
   echo "Cópia das chaves pública e privada - /home/notroot/.ssh/"
   virt-customize -a "$IMAGE_NAME" --copy-in "$PUBLIC_KEY_FILE":/home/notroot/.ssh/ || error_exit "Falha ao copiar chave pública."
@@ -472,7 +490,7 @@ create_template_nfs() {
   virt-customize -a "$IMAGE_NAME" --run-command "echo -e '[Unit]\nDescription=Executar script customizado no boot\n\n[Service]\nType=simple\nExecStart=/usr/local/bin/$SCRIPT_FILE_nfs\n\n[Install]\nWantedBy=multi-user.target' > /etc/systemd/system/custom-script.service" || error_exit "Falha ao criar o arquivo de serviço systemd."
 
   echo "Habilitar o serviço para iniciar no boot"
-  virt-customize -a "$IMAGE_NAME" --run-command 'systemctl enable custom-script.service' || error_exit "Falha ao habilitar o serviço no systemd."
+  virt-customize -a "$IMAGE_NAME" --firstboot 'systemctl enable custom-script.service' || error_exit "Falha ao habilitar o serviço no systemd."
 
   # Instalação e configuração do servidor NFS
   echo "Instalando e configurando servidor NFS na imagem..."
@@ -503,8 +521,10 @@ create_template_nfs() {
 
 # Função principal
 main() {
-  install_dependencies
-  get_machine_ip
+    check_prerequisites
+    check_files
+    install_dependencies
+    get_machine_ip
 
 while true; do
     echo "\nMenu de Opções:"
