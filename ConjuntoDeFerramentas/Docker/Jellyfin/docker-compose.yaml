@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    restart: unless-stopped
+    ports:
+      - "8096:8096"    # Porta para a interface web
+      - "8920:8920"    # Porta HTTPS, se configurada
+    environment:
+      - PUID=1000       # ID do usuário no host
+      - PGID=1000       # ID do grupo no host
+      - TZ=Europe/Moscow # Ajuste o fuso horário
+    volumes:
+      - /home/stream/jellyfin/config:/config   # Persistência das configurações
+      - /home/stream/jellyfin/cache:/cache     # Cache para melhorar o desempenho
+      - /home/stream/transmission/downloads/complete:/media     # Biblioteca de mídia
+    networks:
+      - jellyfin_network
+    devices:
+      - /dev/dri:/dev/dri # Permitir acesso a hardware de decodificação/encodificação de vídeo (opcional)
+
+networks:
+  jellyfin_network:
+    driver: bridge
