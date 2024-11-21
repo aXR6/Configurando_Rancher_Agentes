@@ -1,0 +1,14 @@
+services:
+  pyload:
+    image: lscr.io/linuxserver/pyload:latest
+    container_name: pyload
+    ports:
+      - "8000:8000" # Porta padrão da interface web do PyLoad
+    volumes:
+      - /home/thallestsc/Downloads/pyload/pyload-config:/config # Diretório para os arquivos de configuração
+      - /home/thallestsc/Downloads/pyload/pyload-downloads:/downloads # Diretório onde os downloads serão armazenados
+    environment:
+      - PUID=1000 # ID do usuário para permissões (altere conforme necessário)
+      - PGID=1000 # ID do grupo para permissões (altere conforme necessário)
+      - TZ=America/Sao_Paulo # Fuso horário (ajuste para sua região)
+    restart: unless-stopped
