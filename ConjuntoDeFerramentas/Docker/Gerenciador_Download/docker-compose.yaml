@@ -1,6 +1,6 @@
 services:
   pyload:
-    image: ghcr.io/pyload/pyload:latest
+    image: linuxserver/pyload:latest
     container_name: pyload
     ports:
       - "8000:8000" # Porta padrão da interface web do PyLoad
