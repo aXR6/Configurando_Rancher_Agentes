@@ -11,6 +11,4 @@ services:
       - PUID=1000 # ID do usuário para permissões (altere conforme necessário)
       - PGID=1000 # ID do grupo para permissões (altere conforme necessário)
       - TZ=America/Sao_Paulo # Fuso horário (ajuste para sua região)
-      - PYLOAD_USER=admin # Nome de usuário para o PyLoad
-      - PYLOAD_PASSWORD=admin123 # Senha para o PyLoad (altere para algo seguro)
     restart: unless-stopped
