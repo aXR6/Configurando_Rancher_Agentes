@@ -7,8 +7,8 @@ services:
     ports:
       - "8000:8000" # Porta padrão da interface web do PyLoad
     volumes:
-      - ./pyload-config:/config # Diretório para os arquivos de configuração
-      - ./pyload-downloads:/downloads # Diretório onde os downloads serão armazenados
+      - /home/stream/pyload/pyload-config:/config # Diretório para os arquivos de configuração
+      - /home/stream/pyload/pyload-downloads:/downloads # Diretório onde os downloads serão armazenados
     environment:
       - PUID=1000 # ID do usuário para permissões (altere conforme necessário)
       - PGID=1000 # ID do grupo para permissões (altere conforme necessário)
