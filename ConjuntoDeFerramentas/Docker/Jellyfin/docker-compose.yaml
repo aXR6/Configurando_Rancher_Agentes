@@ -28,7 +28,6 @@ services:
         max-file: "3"
     extra_hosts:
       - "host.docker.internal:host-gateway" # Permitir acesso ao host para serviços externos
-
 networks:
   jellyfin_network:
     driver: bridge
