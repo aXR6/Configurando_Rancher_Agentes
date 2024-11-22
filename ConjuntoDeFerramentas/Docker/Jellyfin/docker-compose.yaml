@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   jellyfin:
     image: jellyfin/jellyfin:latest
@@ -9,7 +11,8 @@ services:
     environment:
       - PUID=1000       # ID do usuário no host
       - PGID=1000       # ID do grupo no host
-      - TZ=Europe/Moscow # Ajuste o fuso horário
+      - TZ=America/Sao_Paulo # Fuso horário do Brasil
+      - JELLYFIN_PublishedServerUrl=http://192.168.3.202:8096 # Ajuste o URL externo
     volumes:
       - /home/stream/jellyfin/config:/config   # Persistência das configurações
       - /home/stream/jellyfin/cache:/cache     # Cache para melhorar o desempenho
@@ -17,8 +20,17 @@ services:
     networks:
       - jellyfin_network
     devices:
-      - /dev/dri:/dev/dri # Permitir acesso a hardware de decodificação/encodificação de vídeo (opcional)
+      - /dev/dri:/dev/dri # Acesso à aceleração de hardware
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # Permitir acesso ao host para serviços externos
 
 networks:
   jellyfin_network:
     driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1500 # Ajuste MTU para evitar fragmentação
