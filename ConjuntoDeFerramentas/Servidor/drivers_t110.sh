@@ -25,6 +25,10 @@ echo "Instalando drivers para o chipset Intel..."
 install_package "firmware-misc-nonfree"
 install_package "firmware-linux-nonfree"
 
+# Codec de vídeo
+echo "Instalando CODEC de vídeo"
+install_package "ffmpeg intel-media-va-driver i965-va-driver"
+
 # Drivers para Ethernet Broadcom NetXtreme BCM5722
 echo "Instalando drivers para Ethernet Broadcom NetXtreme BCM5722..."
 install_package "firmware-bnx2"
