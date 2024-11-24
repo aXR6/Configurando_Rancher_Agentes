@@ -1,15 +1,15 @@
+version: "3.8"
+
 services:
   jellyfin:
     image: jellyfin/jellyfin:latest
     container_name: jellyfin
     restart: unless-stopped
-    ports:
-      - "8096:8096"    # Porta para a interface web
-      - "8920:8920"    # Porta HTTPS, se configurada
+    network_mode: host                           # Modo de rede host
     environment:
-      - PUID=1000       # ID do usuário no host
-      - PGID=1000       # ID do grupo no host
-      - TZ=America/Sao_Paulo # Fuso horário do Brasil
+      - PUID=1000                                # ID do usuário no host
+      - PGID=1000                                # ID do grupo no host
+      - TZ=America/Sao_Paulo                     # Fuso horário do Brasil
       - JELLYFIN_PublishedServerUrl=http://192.168.3.202:8096 # Ajuste o URL externo
     volumes:
       - /home/stream/jellyfin/config:/config         # Persistência das configurações
@@ -23,8 +23,6 @@ services:
         target: /home/stream/jellyfin/cache/thumbnails
         tmpfs:
           size: 256m                                 # Tamanho máximo do cache de thumbnails
-    networks:
-      - jellyfin_network
     devices:
       - /dev/dri:/dev/dri                            # Acesso à aceleração de hardware
     logging:
@@ -41,9 +39,3 @@ services:
           memory: 2G                                 # Garantir 2GB de memória para caching e desempenho
     extra_hosts:
       - "host.docker.internal:host-gateway"          # Permitir acesso ao host para serviços externos
-
-networks:
-  jellyfin_network:
-    driver: bridge
-    driver_opts:
-      com.docker.network.driver.mtu: 1500            # Ajuste MTU para evitar fragmentação
