@@ -1,16 +1,29 @@
+version: '3.9'
+
 networks:
   torrent_network:
     driver: bridge
-  nextcloud_network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 192.168.100.0/24
 
 volumes:
   logs:  # Volume para logs do Transmission
+  redis_data:  # Volume para persistência de dados do Redis
 
 services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - cache_middleware
+      - transmission
+    networks:
+      - torrent_network
+    restart: unless-stopped
+
   transmission:
     image: ghcr.io/linuxserver/transmission:latest
     container_name: transmission
@@ -26,7 +39,6 @@ services:
       - /home/stream/transmission/incomplete:/incomplete:rw,async,noatime,nodiratime
       - logs:/var/log/transmission
     ports:
-      - "9091:9091"
       - "51413:51413"
       - "51413:51413/udp"
     restart: unless-stopped
@@ -35,10 +47,28 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "5m"
-        max-file: "2"
     networks:
       - torrent_network
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes", "--appendfsync", "always", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lfu"]
+    networks:
+      - torrent_network
+    restart: unless-stopped
+
+  cache_middleware:
+    build:
+      context: ./cache_middleware
+    container_name: cache_middleware
+    depends_on:
+      - redis
+      - transmission
+    networks:
+      - torrent_network
+    restart: unless-stopped

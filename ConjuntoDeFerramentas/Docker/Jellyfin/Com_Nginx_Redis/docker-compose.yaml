@@ -1,0 +1,90 @@
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    restart: unless-stopped
+    network_mode: host                           # Modo de rede host para melhor desempenho
+    environment:
+      - PUID=1000                                # ID do usuário no host
+      - PGID=1000                                # ID do grupo no host
+      - TZ=America/Sao_Paulo                     # Fuso horário do Brasil
+      - JELLYFIN_PublishedServerUrl=http://localhost:8096 # URL externo
+    volumes:
+      - /home/stream/jellyfin/config:/config         # Persistência das configurações
+      - /home/stream/jellyfin/cache:/cache           # Cache persistente
+      - /home/stream/transmission/downloads/complete:/media  # Biblioteca de mídia
+      - type: tmpfs                                  # Cache temporário na memória
+        target: /home/stream/jellyfin/cache
+        tmpfs:
+          size: 512m                                 # Cache na memória (512 MB)
+      - type: tmpfs                                  # Cache de thumbnails na memória
+        target: /home/stream/jellyfin/cache/thumbnails
+        tmpfs:
+          size: 256m                                 # Cache de thumbnails (256 MB)
+    devices:
+      - /dev/dri:/dev/dri                            # Acesso à aceleração de hardware
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 4G                                 # Limitar memória
+          cpus: "2.0"                                # Limitar uso de CPU
+        reservations:
+          memory: 2G                                 # Garantir 2GB de memória para caching e desempenho
+
+  nginx:
+    image: nginx:latest
+    container_name: jellyfin_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"                                     # Porta HTTP
+      - "443:443"                                   # Porta HTTPS
+    volumes:
+      - /home/stream/nginx/conf:/etc/nginx/conf.d   # Configurações do NGINX
+      - /home/stream/nginx/logs:/var/log/nginx      # Logs do NGINX
+      - /home/stream/nginx/ssl:/etc/nginx/ssl       # Certificados SSL
+      - /var/cache/nginx:/var/cache/nginx           # Cache do NGINX
+    depends_on:
+      - redis                                       # Certifica que o Redis será iniciado antes
+    environment:
+      - NGINX_WORKER_PROCESSES=auto                 # Ajusta automaticamente os processos do NGINX
+    networks:
+      - jellyfin_network
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"                               # Limitar uso de CPU
+          memory: 512M                              # Limitar uso de memória
+        reservations:
+          cpus: "0.5"                               # Reservar 0.5 CPUs para o NGINX
+
+  redis:
+    image: redis:latest
+    container_name: jellyfin_redis
+    restart: unless-stopped
+    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+    volumes:
+      - /home/stream/redis/data:/data               # Persistência dos dados do Redis
+    ports:
+      - "6379:6379"                                 # Porta padrão do Redis
+    environment:
+      - REDIS_PASSWORD=sua_senha_segura             # Senha para acesso seguro ao Redis
+    networks:
+      - jellyfin_network
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"                               # Limitar uso de CPU
+          memory: 256M                              # Limitar uso de memória
+        reservations:
+          memory: 128M                              # Reservar 128 MB para o Redis
+
+networks:
+  jellyfin_network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1500           # Ajuste do MTU para evitar fragmentação
