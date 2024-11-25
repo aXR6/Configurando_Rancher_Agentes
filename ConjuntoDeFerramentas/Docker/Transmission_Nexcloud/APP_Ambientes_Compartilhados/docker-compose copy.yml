@@ -8,8 +8,6 @@ networks:
         - subnet: 192.168.100.0/24
 
 volumes:
-  mariadb:
-  redis:
   logs:  # Volume para logs do Transmission
 
 services:
@@ -44,67 +42,3 @@ services:
         max-file: "2"
     networks:
       - torrent_network
-
-  nextcloud:
-    image: nextcloud:30.0.2
-    container_name: nextcloud
-    environment:
-      - MYSQL_HOST=nextcloud_db
-      - MYSQL_DATABASE=nextcloud
-      - MYSQL_USER=nextcloud
-      - MYSQL_PASSWORD=36HBpD61l)Lj
-      - PHP_OPCACHE_ENABLE=1
-      - PHP_OPCACHE_MEMORY_CONSUMPTION=128
-      - PHP_OPCACHE_MAX_ACCELERATED_FILES=10000
-      - PHP_OPCACHE_VALIDATE_TIMESTAMPS=1
-    volumes:
-      - /home/stream/nextcloud/data:/var/www/html
-      - /home/stream/nextcloud/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
-      - /home/stream/transmission/downloads/complete:/mnt/downloads/complete:rw
-      #- /home/stream/musicas:/mnt/musicas:rw
-    networks:
-      nextcloud_network:
-        ipv4_address: 192.168.100.2
-    restart: always
-    depends_on:
-      - db
-      - redis
-      - web
-
-  db:
-    image: mariadb:11.4
-    container_name: nextcloud_db
-    environment: 
-      - MYSQL_ROOT_PASSWORD=36HBpD61l)Lj
-      - MYSQL_DATABASE=nextcloud
-      - MYSQL_USER=nextcloud
-      - MYSQL_PASSWORD=36HBpD61l)Lj
-    volumes:
-      - mariadb:/var/lib/mysql
-    networks:
-      nextcloud_network:
-        ipv4_address: 192.168.100.3
-    restart: always
-
-  redis:
-    image: redis:alpine
-    container_name: nextcloud_redis
-    command: redis-server --requirepass 36HBpD
-    volumes:
-      - redis:/data
-    networks:
-      nextcloud_network:
-        ipv4_address: 192.168.100.4
-    restart: always
-
-  web:
-    image: nginx:alpine
-    container_name: nextcloud_nginx
-    volumes:
-      - /home/stream/nextcloud/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
-    ports:
-      - "192.168.3.202:80:80"
-    networks:
-      nextcloud_network:
-        ipv4_address: 192.168.100.5
-    restart: always
