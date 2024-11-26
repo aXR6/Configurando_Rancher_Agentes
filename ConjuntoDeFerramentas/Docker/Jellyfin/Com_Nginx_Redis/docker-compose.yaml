@@ -38,7 +38,7 @@ services:
           memory: 2G
 
   nginx:
-    image: nginx:latest
+    image: nginx-with-redis
     container_name: jellyfin_nginx
     restart: unless-stopped
     ports:
