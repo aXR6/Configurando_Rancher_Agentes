@@ -31,7 +31,7 @@ setup_directories() {
   for dir in "${directories[@]}"; do
     if [ ! -d "$dir" ]; then
       echo "Criando diretório: $dir"
-      mkdir -p "$dir"
+      mkdir -p "$dir" || { echo "Erro ao criar diretório: $dir"; exit 1; }
     else
       echo "Diretório já existe: $dir"
     fi
@@ -44,16 +44,17 @@ apply_permissions() {
     IFS=":" read -r path user group perms <<< "$perm"
     if [ -d "$path" ]; then
       echo "Ajustando permissões para $path: dono=$user, grupo=$group, permissões=$perms"
-      chown "$user":"$group" "$path"
-      chmod "$perms" "$path"
+      chown "$user":"$group" "$path" || { echo "Erro ao alterar dono/grupo para $path"; exit 1; }
+      chmod "$perms" "$path" || { echo "Erro ao aplicar permissões para $path"; exit 1; }
     else
       echo "Diretório não encontrado para aplicar permissões: $path"
     fi
   done
 }
 
-# Executar as funções
+# Executar as funções com segurança
+echo "Iniciando configuração de diretórios e permissões..."
 setup_directories
 apply_permissions
 
-echo "Configuração concluída."
+echo "Configuração concluída com sucesso."

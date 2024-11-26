@@ -14,11 +14,11 @@ services:
       - /home/stream/jellyfin/cache:/cache
       - /home/stream/transmission/downloads/complete:/media
       - type: tmpfs
-        target: /home/stream/jellyfin/cache
+        target: /tmp/cache
         tmpfs:
           size: 512m
       - type: tmpfs
-        target: /home/stream/jellyfin/cache/thumbnails
+        target: /tmp/cache/thumbnails
         tmpfs:
           size: 256m
     devices:
@@ -35,6 +35,8 @@ services:
           cpus: "2.0"
         reservations:
           memory: 2G
+    depends_on:
+      - nginx
 
   nginx:
     image: nginx:latest
@@ -50,11 +52,16 @@ services:
       - /var/cache/nginx:/var/cache/nginx
     depends_on:
       - redis
+      - jellyfin
     environment:
       - NGINX_WORKER_PROCESSES=auto
       - NGINX_WORKER_CONNECTIONS=2048
     networks:
       - jellyfin_network
+    logging:
+      driver: "syslog"
+      options:
+        syslog-address: "tcp://localhost:514"
     deploy:
       resources:
         limits:
@@ -70,8 +77,14 @@ services:
     command: ["redis-server", "--save", "60", "1", "--loglevel", "warning", "--requirepass", "sua_senha_segura", "--maxmemory-policy", "allkeys-lru"]
     volumes:
       - /home/stream/redis/data:/data
+    ports:
+      - "127.0.0.1:6379:6379"  # Porta apenas para acesso local
     networks:
       - jellyfin_network
+    logging:
+      driver: "syslog"
+      options:
+        syslog-address: "tcp://localhost:514"
     deploy:
       resources:
         limits:
