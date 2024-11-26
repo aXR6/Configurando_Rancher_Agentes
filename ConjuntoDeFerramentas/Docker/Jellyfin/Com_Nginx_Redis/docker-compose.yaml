@@ -53,6 +53,7 @@ services:
     environment:
       - NGINX_WORKER_PROCESSES=auto
       - NGINX_WORKER_CONNECTIONS=2048
+      - NGINX_LISTEN_IPV6=off # Desativa o IPv6
     networks:
       - jellyfin_network
     deploy:
