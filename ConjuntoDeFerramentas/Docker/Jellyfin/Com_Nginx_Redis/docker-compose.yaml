@@ -1,3 +1,5 @@
+version: "3.9"
+
 networks:
   app_network:
     driver: bridge
@@ -10,14 +12,36 @@ services:
     networks:
       - app_network
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Sao_Paulo
-      - JELLYFIN_PublishedServerUrl=http://192.168.3.202:8096
+      - PUID=1000                                # ID do usuário no host
+      - PGID=1000                                # ID do grupo no host
+      - TZ=America/Sao_Paulo                     # Fuso horário do Brasil
+      - JELLYFIN_PublishedServerUrl=http://192.168.3.202:8096 # Ajuste o URL externo
     volumes:
-      - /home/stream/jellyfin/config:/config
-      - /home/stream/jellyfin/cache:/cache
-      - /home/stream/transmission/downloads/complete:/media
+      - /home/stream/jellyfin/config:/config         # Persistência das configurações
+      - /home/stream/jellyfin/cache:/cache           # Cache persistente
+      - /home/stream/transmission/downloads/complete:/media  # Biblioteca de mídia
+      - type: tmpfs                                  # Cache temporário na memória
+        target: /home/stream/jellyfin/cache
+        tmpfs:
+          size: 512m                                 # Tamanho máximo do cache na memória
+      - type: tmpfs                                  # Cache de thumbnails na memória
+        target: /home/stream/jellyfin/cache/thumbnails
+        tmpfs:
+          size: 256m                                 # Tamanho máximo do cache de thumbnails
+    devices:
+      - /dev/dri:/dev/dri                            # Acesso à aceleração de hardware
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 4G                                 # Limitar memória para o contêiner
+          cpus: "2.0"                                # Limitar uso de CPU
+        reservations:
+          memory: 2G                                 # Garantir 2GB de memória para caching e desempenho
 
   nginx:
     build:
@@ -30,15 +54,29 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    volumes:
+      - /home/stream/nginx/conf.d:/etc/nginx/conf.d # Configurações personalizadas
+      - /home/stream/nginx/certs:/etc/nginx/certs   # Certificados SSL
+      - /home/stream/nginx/logs:/var/log/nginx      # Logs do Nginx
     depends_on:
-      - jellyfin
-      - redis
+      - memcached
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
-  redis:
-    image: redis:latest
-    container_name: redis_cache
+  memcached:
+    image: memcached:latest
+    container_name: memcached_cache
     restart: unless-stopped
     networks:
       - app_network
     ports:
-      - "6379:6379"
+      - "11211:11211"
+    command: ["memcached", "-m", "256", "-c", "1024", "-v"]
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
