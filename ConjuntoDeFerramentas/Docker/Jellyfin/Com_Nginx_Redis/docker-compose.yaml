@@ -1,3 +1,5 @@
+version: "3.9"
+
 networks:
   app_network:
     driver: bridge
@@ -42,7 +44,9 @@ services:
           memory: 2G                                 # Garantir 2GB de memória para caching e desempenho
 
   nginx:
-    image: nginx:latest
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
     container_name: nginx_proxy
     restart: unless-stopped
     networks:
@@ -55,7 +59,7 @@ services:
       - /home/stream/nginx/certs:/etc/nginx/certs   # Certificados SSL
       - /home/stream/nginx/logs:/var/log/nginx      # Logs do Nginx
     depends_on:
-      - jellyfin
+      - redis
     logging:
       driver: "json-file"
       options:
