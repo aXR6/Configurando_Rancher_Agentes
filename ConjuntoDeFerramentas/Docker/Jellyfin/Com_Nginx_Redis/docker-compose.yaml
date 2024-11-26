@@ -81,11 +81,6 @@ services:
           memory: 512M
         reservations:
           memory: 256M
-    cap_add:
-      - SYS_ADMIN
-    sysctls:
-      - net.core.somaxconn=511
-      - vm.overcommit_memory=1
 
 networks:
   jellyfin_network:
