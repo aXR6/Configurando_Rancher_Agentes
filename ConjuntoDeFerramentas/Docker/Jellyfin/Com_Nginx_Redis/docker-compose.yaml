@@ -38,9 +38,9 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./nginx/certs:/etc/nginx/certs
-      - ./nginx/logs:/var/log/nginx
+      - /home/stream/nginx/conf.d:/etc/nginx/conf.d
+      - /home/stream/nginx/certs:/etc/nginx/certs
+      - /home/stream/nginx/logs:/var/log/nginx
     depends_on:
       - memcached
     logging:
