@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   jellyfin:
     image: jellyfin/jellyfin:latest
@@ -38,7 +40,7 @@ services:
           memory: 2G
 
   nginx:
-    image: nginx-with-redis
+    image: nginx:latest
     container_name: jellyfin_nginx
     restart: unless-stopped
     ports:
@@ -50,8 +52,6 @@ services:
       - /home/stream/nginx/logs:/var/log/nginx
       - /home/stream/nginx/ssl:/etc/nginx/ssl
       - /var/cache/nginx:/var/cache/nginx
-    depends_on:
-      - redis
     environment:
       - NGINX_WORKER_PROCESSES=auto
       - NGINX_WORKER_CONNECTIONS=2048
@@ -64,23 +64,6 @@ services:
           memory: 512M
         reservations:
           cpus: "0.5"
-
-  redis:
-    image: redis:latest
-    container_name: jellyfin_redis
-    restart: unless-stopped
-    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning", "--requirepass", "sua_senha_segura", "--maxmemory-policy", "allkeys-lru"]
-    volumes:
-      - /home/stream/redis/data:/data
-    networks:
-      - jellyfin_network
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 512M
-        reservations:
-          memory: 256M
 
 networks:
   jellyfin_network:
