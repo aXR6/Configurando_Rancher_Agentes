@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   jellyfin:
     image: jellyfin/jellyfin:latest
@@ -9,7 +11,6 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=America/Sao_Paulo
-      - JELLYFIN_PublishedServerUrl=http://localhost:8096
     volumes:
       - /home/stream/jellyfin/config:/config
       - /home/stream/jellyfin/cache:/cache
@@ -46,7 +47,6 @@ services:
       - "443:443"
     volumes:
       - /home/stream/nginx/conf.d:/etc/nginx/conf.d
-      #- /home/stream/nginx/conf:/etc/nginx/conf
       - /home/stream/nginx/logs:/var/log/nginx
       - /home/stream/nginx/ssl:/etc/nginx/ssl
       - /var/cache/nginx:/var/cache/nginx
