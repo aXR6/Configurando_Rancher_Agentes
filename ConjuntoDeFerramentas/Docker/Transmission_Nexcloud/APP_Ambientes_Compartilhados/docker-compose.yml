@@ -1,15 +1,3 @@
-networks:
-  torrent_network:
-    driver: bridge
-  nextcloud_network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 192.168.100.0/24
-
-volumes:
-  logs:  # Volume para logs do Transmission
-
 services:
   transmission:
     image: ghcr.io/linuxserver/transmission:latest
@@ -21,10 +9,10 @@ services:
       - USER=stream
       - PASS=123abc
     volumes:
-      - /home/stream/transmission/config:/config:rw,async,noatime,nodiratime
-      - /home/stream/transmission/downloads:/downloads:rw,async,noatime,nodiratime
-      - /home/stream/transmission/incomplete:/incomplete:rw,async,noatime,nodiratime
-      - logs:/var/log/transmission
+      - transmission_data:/config:rw,async,noatime,nodiratime
+      - transmission_data:/downloads:rw,async,noatime,nodiratime
+      - transmission_data:/incomplete:rw,async,noatime,nodiratime
+      - transmission_data:/var/log/transmission:rw,async,noatime,nodiratime
     ports:
       - "9091:9091"
       - "51413:51413"
@@ -35,10 +23,5 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "5m"
-        max-file: "2"
     networks:
-      - torrent_network
+      - app_network

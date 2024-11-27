@@ -35,6 +35,7 @@ services:
     restart: unless-stopped
     networks:
       - app_network
+      - torrent_network
     ports:
       - "80:80"
       - "443:443"
