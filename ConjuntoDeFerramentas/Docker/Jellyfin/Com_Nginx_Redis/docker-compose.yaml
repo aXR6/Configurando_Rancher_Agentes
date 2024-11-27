@@ -21,13 +21,30 @@ services:
       - /home/stream/jellyfin/config:/config
       - /home/stream/jellyfin/cache:/cache
       - /home/stream/transmission/downloads/complete:/media
+      - type: tmpfs                                  # Cache temporário na memória
+        target: /home/stream/jellyfin/cache
+        tmpfs:
+          size: 512m                                 # Tamanho máximo do cache na memória
+      - type: tmpfs                                  # Cache de thumbnails na memória
+        target: /home/stream/jellyfin/cache/thumbnails
+        tmpfs:
+          size: 256m                                 # Tamanho máximo do cache de thumbnails
     devices:
-      - /dev/dri:/dev/dri
+      - /dev/dri:/dev/dri                            # Acesso à aceleração de hardware
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 4G                                 # Limitar memória para o contêiner
+          cpus: "2.0"                                # Limitar uso de CPU
+        reservations:
+          memory: 2G                                 # Garantir 2GB de memória para caching e desempenho
+    extra_hosts:
+      - "host.docker.internal:host-gateway"          # Permitir acesso ao host para serviços externos
 
   nginx:
     image: nginx:latest
