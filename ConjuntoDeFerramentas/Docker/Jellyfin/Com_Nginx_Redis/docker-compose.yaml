@@ -19,14 +19,14 @@ services:
       - JELLYFIN_PublishedServerUrl=https://canela-stream.com.br
     volumes:
       - /home/stream/jellyfin/config:/config
-      - /home/stream/jellyfin/cache:/cache
+      - /opt/stream/jellyfin/cache:/cache
       - /home/stream/transmission/downloads/complete:/media
       - type: tmpfs                                  # Cache temporário na memória
-        target: /home/stream/jellyfin/cache
+        target: /opt/stream/jellyfin/cache
         tmpfs:
           size: 5024m                                # Tamanho máximo do cache na memória
       - type: tmpfs                                  # Cache de thumbnails na memória
-        target: /home/stream/jellyfin/cache/thumbnails
+        target: /opt/stream/jellyfin/cache/thumbnails
         tmpfs:
           size: 512m                                 # Tamanho máximo do cache de thumbnails
     devices:
@@ -59,7 +59,7 @@ services:
       - /home/stream/nginx/conf.d:/etc/nginx/conf.d
       - /home/stream/nginx/certs:/etc/nginx/certs
       - /home/stream/nginx/logs:/var/log/nginx
-      - /home/stream/nginx/cache:/var/cache/nginx  # Cache persistente
+      - /opt/stream/nginx/cache:/var/cache/nginx  # Cache persistente
     depends_on:
       - memcached
     logging:
