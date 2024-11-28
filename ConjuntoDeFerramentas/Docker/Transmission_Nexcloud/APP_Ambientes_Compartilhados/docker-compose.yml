@@ -21,11 +21,6 @@ services:
       - "51413:51413"
       - "51413:51413/udp"
     restart: unless-stopped
-    command:
-      - /bin/sh
-      - -c
-      - |
-        find /config -type l -exec rm -f {} \; && exec /init
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:9091 || exit 1"]
       interval: 30s
