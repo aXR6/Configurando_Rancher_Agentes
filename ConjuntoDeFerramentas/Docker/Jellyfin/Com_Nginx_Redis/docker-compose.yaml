@@ -1,6 +1,7 @@
 networks:
   app_network:
     driver: bridge
+    internal: true  # Rede privada, sem exposição desnecessária
 
 services:
   jellyfin:
@@ -24,7 +25,7 @@ services:
       - type: tmpfs                                  # Cache temporário na memória
         target: /home/stream/jellyfin/cache
         tmpfs:
-          size: 5024m                                 # Tamanho máximo do cache na memória
+          size: 5024m                                # Tamanho máximo do cache na memória
       - type: tmpfs                                  # Cache de thumbnails na memória
         target: /home/stream/jellyfin/cache/thumbnails
         tmpfs:
@@ -47,7 +48,7 @@ services:
       - "host.docker.internal:host-gateway"          # Permitir acesso ao host para serviços externos
 
   nginx:
-    image: nginx:latest
+    image: nginx:1.25-alpine
     container_name: nginx_proxy
     restart: unless-stopped
     networks:
@@ -59,6 +60,7 @@ services:
       - /home/stream/nginx/conf.d:/etc/nginx/conf.d
       - /home/stream/nginx/certs:/etc/nginx/certs
       - /home/stream/nginx/logs:/var/log/nginx
+      - /home/stream/nginx/cache:/var/cache/nginx  # Cache persistente
     depends_on:
       - memcached
     logging:
@@ -66,9 +68,16 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+          cpus: "0.5"
+        reservations:
+          memory: 256m
 
   memcached:
-    image: memcached:latest
+    image: memcached:1.6
     container_name: memcached_cache
     restart: unless-stopped
     networks:
@@ -76,8 +85,17 @@ services:
     ports:
       - "11211:11211"
     command: ["memcached", "-m", "256", "-c", "1024", "-v"]
+    volumes:
+      - /home/stream/memcached/logs:/var/log/memcached  # Persistir logs
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+          cpus: "0.2"
+        reservations:
+          memory: 128m
