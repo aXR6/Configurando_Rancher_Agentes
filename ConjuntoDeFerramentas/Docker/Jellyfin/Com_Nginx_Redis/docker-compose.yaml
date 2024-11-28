@@ -18,7 +18,7 @@ services:
       - TZ=America/Sao_Paulo
       - JELLYFIN_PublishedServerUrl=https://canela-stream.com.br
     volumes:
-      - /opt/stream/jellyfin/config:/config
+      - /home/stream/jellyfin/config:/config
       - /opt/stream/jellyfin/cache:/cache
       - /home/stream/transmission/downloads/complete:/media
       - type: tmpfs                                  # Cache temporário na memória
