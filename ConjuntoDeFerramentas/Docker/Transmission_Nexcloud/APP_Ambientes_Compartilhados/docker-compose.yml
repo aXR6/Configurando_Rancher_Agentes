@@ -15,7 +15,7 @@ services:
       - /home/stream/transmission/config:/config:rw,async,noatime,nodiratime
       - /home/stream/transmission/downloads:/downloads:rw,async,noatime,nodiratime
       - /home/stream/transmission/incomplete:/incomplete:rw,async,noatime,nodiratime
-      - logs:/var/log/transmission
+      - /opt/stream/transmission/logs:/var/log/transmission
     ports:
       - "9091:9091"
       - "51413:51413"
