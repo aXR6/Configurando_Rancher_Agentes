@@ -31,10 +31,3 @@ services:
     networks:
       app_network:
         ipv4_address: 192.168.100.13  # IP fixo para Transmission
-
-networks:
-  app_network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 192.168.100.0/24  # Sub-rede para IPs fixos
