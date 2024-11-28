@@ -1,7 +1,6 @@
 networks:
   app_network:
     driver: bridge
-    internal: true  # Rede privada, sem exposição desnecessária
 
 services:
   jellyfin:
