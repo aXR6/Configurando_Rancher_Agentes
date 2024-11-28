@@ -18,7 +18,7 @@ services:
       - TZ=America/Sao_Paulo
       - JELLYFIN_PublishedServerUrl=https://canela-stream.com.br
     volumes:
-      - /home/stream/jellyfin/config:/config
+      - /opt/stream/jellyfin/config:/config
       - /opt/stream/jellyfin/cache:/cache
       - /home/stream/transmission/downloads/complete:/media
       - type: tmpfs                                  # Cache temporário na memória
@@ -58,7 +58,7 @@ services:
     volumes:
       - /home/stream/nginx/conf.d:/etc/nginx/conf.d
       - /home/stream/nginx/certs:/etc/nginx/certs
-      - /home/stream/nginx/logs:/var/log/nginx
+      - /opt/stream/nginx/logs:/var/log/nginx
       - /opt/stream/nginx/cache:/var/cache/nginx  # Cache persistente
     depends_on:
       - memcached
@@ -85,7 +85,7 @@ services:
       - "11211:11211"
     command: ["memcached", "-m", "256", "-c", "1024", "-v"]
     volumes:
-      - /home/stream/memcached/logs:/var/log/memcached  # Persistir logs
+      - /opt/stream/memcached/logs:/var/log/memcached  # Persistir logs
     logging:
       driver: "json-file"
       options:
