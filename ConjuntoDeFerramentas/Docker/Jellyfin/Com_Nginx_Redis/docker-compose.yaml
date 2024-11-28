@@ -104,3 +104,36 @@ services:
           cpus: "0.2"
         reservations:
           memory: 128m
+
+  transmission:
+    image: ghcr.io/linuxserver/transmission:latest
+    container_name: transmission
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Sao_Paulo
+      - USER=stream
+      - PASS=123abc
+    volumes:
+      - /home/stream/transmission/config:/config:rw,async,noatime,nodiratime
+      - /home/stream/transmission/downloads:/downloads:rw,async,noatime,nodiratime
+      - /home/stream/transmission/incomplete:/incomplete:rw,async,noatime,nodiratime
+      - /opt/stream/transmission/logs:/var/log/transmission
+    ports:
+      - "9091:9091"
+      - "51413:51413"
+      - "51413:51413/udp"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9091 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+    networks:
+      app_network:
+        ipv4_address: 192.168.100.13  # IP fixo para Transmission
