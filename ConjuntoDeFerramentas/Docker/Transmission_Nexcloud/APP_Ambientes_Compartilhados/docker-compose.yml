@@ -1,6 +1,3 @@
-volumes:
-  logs:  # Volume para logs do Transmission
-
 services:
   transmission:
     image: ghcr.io/linuxserver/transmission:latest
