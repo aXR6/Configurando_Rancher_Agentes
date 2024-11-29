@@ -7,8 +7,7 @@ networks:
 
 services:
   jellyfin:
-    build:
-      context: .  # Usar o Dockerfile no diretório atual
+    image: jellyfin/jellyfin:latest
     container_name: jellyfin
     restart: unless-stopped
     networks:
