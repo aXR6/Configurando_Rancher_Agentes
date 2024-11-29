@@ -1,3 +1,5 @@
+version: "3.8"
+
 networks:
   app_network:
     driver: bridge
@@ -102,18 +104,15 @@ services:
         reservations:
           memory: 128m
 
-  transmission-vpn:
-    image: haugene/transmission-openvpn:latest
-    container_name: transmission-vpn
-    cap_add:
-      - NET_ADMIN  # Permissão para manipular configurações de rede
+  transmission:
+    image: ghcr.io/linuxserver/transmission:latest
+    container_name: transmission
     environment:
-      - OPENVPN_PROVIDER=YOUR_VPN_PROVIDER
-      - OPENVPN_USERNAME=YOUR_VPN_USERNAME
-      - OPENVPN_PASSWORD=YOUR_VPN_PASSWORD
-      - LOCAL_NETWORK=192.168.100.0/24  # Permitir tráfego na rede local
       - PUID=1000
       - PGID=1000
+      - TZ=America/Sao_Paulo
+      - USER=stream
+      - PASS=123abc
       - TRANSMISSION_WEB_UI=combustion  # Interface customizada para melhor visualização
       - TRANSMISSION_RPC_WHITELIST=192.168.100.*  # Permitir acesso da sub-rede local
       - TRANSMISSION_PEER_LIMIT_GLOBAL=2000  # Aumentar limite global de peers
@@ -123,8 +122,12 @@ services:
       - /home/stream/transmission/incomplete:/incomplete:rw,async,noatime,nodiratime
       - /opt/stream/transmission/logs:/var/log/transmission
     ports:
-      - "9091:9091"  # Web UI
+      - "9091:9091"
+      - "51413:51413"
+      - "51413:51413/udp"
     restart: unless-stopped
+    depends_on:
+      - openvpn
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:9091 || exit 1"]
       interval: 30s
