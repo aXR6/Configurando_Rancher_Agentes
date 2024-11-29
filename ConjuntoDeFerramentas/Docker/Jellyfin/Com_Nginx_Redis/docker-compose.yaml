@@ -124,8 +124,6 @@ services:
       - "51413:51413"
       - "51413:51413/udp"
     restart: unless-stopped
-    depends_on:
-      - openvpn
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:9091 || exit 1"]
       interval: 30s
