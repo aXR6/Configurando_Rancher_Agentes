@@ -1,0 +1,184 @@
+version: "3.8"
+
+networks:
+  app_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.100.0/24  # Sub-rede para IPs fixos
+
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    restart: unless-stopped
+    networks:
+      app_network:
+        ipv4_address: 192.168.100.10  # IP fixo para Jellyfin
+    ports:
+      - "8096:8096"
+      - "8920:8920"  # Para HTTPS opcional
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Sao_Paulo
+      - JELLYFIN_PublishedServerUrl=https://canela-stream.com.br
+    volumes:
+      - /home/stream/jellyfin/config:/config
+      - /opt/stream/jellyfin/cache:/cache
+      - /home/stream/transmission/downloads/complete:/media
+      - type: tmpfs                               # Cache temporário na memória
+        target: /opt/stream/jellyfin/cache
+        tmpfs:
+          size: 10G                               # Tamanho máximo do cache na memória
+    devices:
+      - /dev/dri:/dev/dri                         # Acesso à aceleração de hardware
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 4G                                 # Limitar memória para o contêiner
+          cpus: "2.0"                                # Limitar uso de CPU
+        reservations:
+          memory: 2G                                 # Garantir 2GB de memória para caching e desempenho
+    extra_hosts:
+      - "host.docker.internal:host-gateway"          # Permitir acesso ao host para serviços externos
+
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: nginx_proxy
+    restart: unless-stopped
+    networks:
+      app_network:
+        ipv4_address: 192.168.100.11  # IP fixo para NGINX
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /home/stream/nginx/conf.d:/etc/nginx/conf.d
+      - /home/stream/nginx/certs:/etc/nginx/certs
+      - /opt/stream/nginx/logs:/var/log/nginx
+      - /opt/stream/nginx/cache:/var/cache/nginx  # Cache persistente
+      - /home/stream/nginx/nginx.conf:/etc/nginx/nginx.conf:ro  # Arquivo nginx.conf montado
+    depends_on:
+      - memcached
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+          cpus: "0.5"
+        reservations:
+          memory: 256m
+
+  memcached:
+    image: memcached:1.6
+    container_name: memcached_cache
+    restart: unless-stopped
+    networks:
+      app_network:
+        ipv4_address: 192.168.100.12  # IP fixo para Memcached
+    ports:
+      - "11211:11211"
+    command: ["memcached", "-m", "256", "-c", "1024", "-v"]
+    volumes:
+      - /opt/stream/memcached/logs:/var/log/memcached  # Persistir logs
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+          cpus: "0.2"
+        reservations:
+          memory: 128m
+
+  transmission:
+    image: ghcr.io/linuxserver/transmission:latest
+    container_name: transmission
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Sao_Paulo
+      - USER=stream
+      - PASS=123abc
+      - TRANSMISSION_WEB_UI=combustion  # Interface customizada para melhor visualização
+      - TRANSMISSION_RPC_WHITELIST=192.168.100.*  # Permitir acesso da sub-rede local
+      - TRANSMISSION_PEER_LIMIT_GLOBAL=2000  # Aumentar limite global de peers
+    volumes:
+      - /home/stream/transmission/config:/config:rw,async,noatime,nodiratime
+      - /home/stream/transmission/downloads:/downloads:rw,async,noatime,nodiratime
+      - /home/stream/transmission/incomplete:/incomplete:rw,async,noatime,nodiratime
+      - /opt/stream/transmission/logs:/var/log/transmission
+    ports:
+      - "9091:9091"
+      - "51413:51413"
+      - "51413:51413/udp"
+    restart: unless-stopped
+    depends_on:
+      - openvpn
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9091 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+    networks:
+      app_network:
+        ipv4_address: 192.168.100.13  # IP fixo para Transmission
+
+  openvpn:
+    image: openvpn/openvpn-as:latest
+    container_name: openvpn
+    restart: unless-stopped
+    ports:
+      - "943:943"       # Interface web de administração
+      - "9443:9443"     # Interface web para usuários
+      - "1194:1194/udp" # Porta UDP para conexões VPN
+    volumes:
+      - /home/stream/openvpn/config:/config
+      - /home/stream/openvpn/logs:/var/log/openvpn
+    environment:
+      - TZ=America/Sao_Paulo
+      - ADMIN_USER=admin      # Usuário admin padrão
+      - ADMIN_PASS=senha123   # Senha para o usuário admin
+    networks:
+      app_network:
+        ipv4_address: 192.168.100.14  # IP fixo para OpenVPN
+
+  jackett:
+    image: ghcr.io/linuxserver/jackett:latest
+    container_name: jackett
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Sao_Paulo
+    volumes:
+      - /home/stream/jackett/config:/config
+      - /opt/stream/jackett/logs:/var/log/jackett
+    ports:
+      - "9117:9117"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      app_network:
+        ipv4_address: 192.168.100.15  # IP fixo para Jackett
