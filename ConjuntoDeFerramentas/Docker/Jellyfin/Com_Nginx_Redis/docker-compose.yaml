@@ -140,24 +140,30 @@ services:
       app_network:
         ipv4_address: 192.168.100.13  # IP fixo para Transmission
 
-  openvpn:
-    image: openvpn/openvpn-as:latest
-    container_name: openvpn
+  sonarr:
+    image: ghcr.io/linuxserver/sonarr:latest
+    container_name: sonarr
     restart: unless-stopped
-    ports:
-      - "943:943"       # Interface web de administração
-      - "9443:9443"     # Interface web para usuários
-      - "1194:1194/udp" # Porta UDP para conexões VPN
-    volumes:
-      - /home/stream/openvpn/config:/config
-      - /home/stream/openvpn/logs:/var/log/openvpn
     environment:
+      - PUID=1000
+      - PGID=1000
       - TZ=America/Sao_Paulo
-      - ADMIN_USER=admin      # Usuário admin padrão
-      - ADMIN_PASS=senha123   # Senha para o usuário admin
+    volumes:
+      - /home/stream/sonarr/config:/config
+      - /home/stream/sonarr/tv:/tv  # Diretório de mídia para séries
+      - /home/stream/transmission/downloads:/downloads  # Diretório de downloads do Transmission
+    ports:
+      - "8989:8989"  # Porta para Web UI
     networks:
       app_network:
-        ipv4_address: 192.168.100.14  # IP fixo para OpenVPN
+        ipv4_address: 192.168.100.16  # IP fixo para Sonarr
+    depends_on:
+      - transmission-vpn
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   jackett:
     image: ghcr.io/linuxserver/jackett:latest
@@ -180,39 +186,3 @@ services:
     networks:
       app_network:
         ipv4_address: 192.168.100.15  # IP fixo para Jackett
-
-  sonarr:
-    image: ghcr.io/linuxserver/sonarr:latest
-    container_name: sonarr
-    restart: unless-stopped
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Sao_Paulo
-    volumes:
-      - /home/stream/sonarr/config:/config
-      - /home/stream/transmission/downloads:/downloads
-      - /home/stream/series:/tv  # Pasta para organizar séries
-    ports:
-      - "8989:8989"
-    networks:
-      app_network:
-        ipv4_address: 192.168.100.16
-
-  radarr:
-    image: ghcr.io/linuxserver/radarr:latest
-    container_name: radarr
-    restart: unless-stopped
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Sao_Paulo
-    volumes:
-      - /home/stream/radarr/config:/config
-      - /home/stream/transmission/downloads:/downloads
-      - /home/stream/movies:/movies  # Pasta para organizar filmes
-    ports:
-      - "7878:7878"
-    networks:
-      app_network:
-        ipv4_address: 192.168.100.17
