@@ -29,10 +29,6 @@ services:
         target: /opt/stream/jellyfin/cache
         tmpfs:
           size: 10G                               # Tamanho máximo do cache na memória
-      - type: tmpfs                               # Cache de thumbnails na memória
-        target: /opt/stream/jellyfin/cache/thumbnails
-        tmpfs:
-          size: 10G                               # Tamanho máximo do cache de thumbnails
     devices:
       - /dev/dri:/dev/dri                         # Acesso à aceleração de hardware
     logging:
