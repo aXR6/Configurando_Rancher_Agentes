@@ -1,3 +1,5 @@
+version: "3.8"
+
 networks:
   app_network:
     driver: bridge
@@ -111,6 +113,9 @@ services:
       - TZ=America/Sao_Paulo
       - USER=stream
       - PASS=123abc
+      - TRANSMISSION_WEB_UI=combustion  # Interface customizada para melhor visualização
+      - TRANSMISSION_RPC_WHITELIST=192.168.100.*  # Permitir acesso da sub-rede local
+      - TRANSMISSION_PEER_LIMIT_GLOBAL=2000  # Aumentar limite global de peers
     volumes:
       - /home/stream/transmission/config:/config:rw,async,noatime,nodiratime
       - /home/stream/transmission/downloads:/downloads:rw,async,noatime,nodiratime
@@ -121,6 +126,8 @@ services:
       - "51413:51413"
       - "51413:51413/udp"
     restart: unless-stopped
+    depends_on:
+      - openvpn
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:9091 || exit 1"]
       interval: 30s
@@ -134,3 +141,44 @@ services:
     networks:
       app_network:
         ipv4_address: 192.168.100.13  # IP fixo para Transmission
+
+  openvpn:
+    image: openvpn/openvpn-as:latest
+    container_name: openvpn
+    restart: unless-stopped
+    ports:
+      - "943:943"       # Interface web de administração
+      - "9443:9443"     # Interface web para usuários
+      - "1194:1194/udp" # Porta UDP para conexões VPN
+    volumes:
+      - /home/stream/openvpn/config:/config
+      - /home/stream/openvpn/logs:/var/log/openvpn
+    environment:
+      - TZ=America/Sao_Paulo
+      - ADMIN_USER=admin      # Usuário admin padrão
+      - ADMIN_PASS=senha123   # Senha para o usuário admin
+    networks:
+      app_network:
+        ipv4_address: 192.168.100.14  # IP fixo para OpenVPN
+
+  jackett:
+    image: ghcr.io/linuxserver/jackett:latest
+    container_name: jackett
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Sao_Paulo
+    volumes:
+      - /home/stream/jackett/config:/config
+      - /opt/stream/jackett/logs:/var/log/jackett
+    ports:
+      - "9117:9117"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      app_network:
+        ipv4_address: 192.168.100.15  # IP fixo para Jackett
