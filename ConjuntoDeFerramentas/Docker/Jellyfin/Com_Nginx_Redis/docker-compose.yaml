@@ -1,3 +1,5 @@
+version: "3.8"
+
 networks:
   app_network:
     driver: bridge
@@ -180,3 +182,39 @@ services:
     networks:
       app_network:
         ipv4_address: 192.168.100.15  # IP fixo para Jackett
+
+  sonarr:
+    image: ghcr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Sao_Paulo
+    volumes:
+      - /home/stream/sonarr/config:/config
+      - /home/stream/transmission/downloads:/downloads
+      - /home/stream/series:/tv  # Pasta para organizar séries
+    ports:
+      - "8989:8989"
+    networks:
+      app_network:
+        ipv4_address: 192.168.100.16
+
+  radarr:
+    image: ghcr.io/linuxserver/radarr:latest
+    container_name: radarr
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Sao_Paulo
+    volumes:
+      - /home/stream/radarr/config:/config
+      - /home/stream/transmission/downloads:/downloads
+      - /home/stream/movies:/movies  # Pasta para organizar filmes
+    ports:
+      - "7878:7878"
+    networks:
+      app_network:
+        ipv4_address: 192.168.100.17
