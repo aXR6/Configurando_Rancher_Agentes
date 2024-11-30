@@ -111,9 +111,6 @@ services:
       - TZ=America/Sao_Paulo
       - USER=stream
       - PASS=123abc
-      - TRANSMISSION_WEB_UI=combustion  # Interface customizada para melhor visualização
-      - TRANSMISSION_RPC_WHITELIST=192.168.100.*  # Permitir acesso da sub-rede local
-      - TRANSMISSION_PEER_LIMIT_GLOBAL=2000  # Aumentar limite global de peers
     volumes:
       - /home/stream/transmission/config:/config:rw,async,noatime,nodiratime
       - /home/stream/transmission/downloads:/downloads:rw,async,noatime,nodiratime
@@ -136,4 +133,4 @@ services:
         max-file: "2"
     networks:
       app_network:
-        ipv4_address: 192.168.100.13  # IP fixo para Transmissio
+        ipv4_address: 192.168.100.13  # IP fixo para Transmission
