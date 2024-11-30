@@ -7,7 +7,7 @@ networks:
 
 services:
   jellyfin:
-    image: jellyfin/jellyfin:latest
+    image: jellyfin/jellyfin
     container_name: jellyfin
     restart: unless-stopped
     networks:
@@ -22,9 +22,9 @@ services:
       - TZ=${TZ}
       - JELLYFIN_PublishedServerUrl=https://canela-stream.com.br
     volumes:
-      - /home/stream/jellyfin/config:/config
-      - /opt/stream/jellyfin/cache:/cache
-      - /home/stream/transmission/downloads/complete:/media
+      - /home/stream/jellyfin/config:/config:ro
+      - /opt/stream/jellyfin/cache:/cache:rw
+      - /home/stream/transmission/downloads/complete:/media:ro
       - type: tmpfs
         target: /opt/stream/jellyfin/cache
         tmpfs:
@@ -43,6 +43,11 @@ services:
           cpus: "2.0"
         reservations:
           memory: 2G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8096 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   nginx:
     image: nginx:latest
