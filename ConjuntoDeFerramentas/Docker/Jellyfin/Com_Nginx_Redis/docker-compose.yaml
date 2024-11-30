@@ -21,12 +21,12 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
       - JELLYFIN_PublishedServerUrl=https://canela-stream.com.br
+      - JELLYFIN_PersistentHttp=True
+      - JELLYFIN_HWACCEL_VAAPI=True # Ativar aceleração VAAPI
     volumes:
       - /home/stream/jellyfin/config:/config:rw
       - /opt/stream/jellyfin/cache:/cache:rw
       - /home/stream/transmission/downloads/complete:/media:ro
-      - JELLYFIN_PersistentHttp=True
-      - JELLYFIN_HWACCEL_VAAPI=True # Ativar aceleração VAAPI
       - type: tmpfs
         target: /opt/stream/jellyfin/cache
         tmpfs:
