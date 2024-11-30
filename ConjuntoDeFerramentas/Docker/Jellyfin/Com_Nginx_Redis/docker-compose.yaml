@@ -22,9 +22,11 @@ services:
       - TZ=${TZ}
       - JELLYFIN_PublishedServerUrl=https://canela-stream.com.br
     volumes:
-      - /home/stream/jellyfin/config:/config:ro
+      - /home/stream/jellyfin/config:/config:rw
       - /opt/stream/jellyfin/cache:/cache:rw
       - /home/stream/transmission/downloads/complete:/media:ro
+      - JELLYFIN_PersistentHttp=True
+      - JELLYFIN_HWACCEL_VAAPI=True # Ativar aceleração VAAPI
       - type: tmpfs
         target: /opt/stream/jellyfin/cache
         tmpfs:
@@ -35,7 +37,12 @@ services:
       driver: "local"
       options:
         max-size: "10m"
-        max-file: "3"
+        max-file: "5"            # Ajustado para reter mais logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8096 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     deploy:
       resources:
         limits:
