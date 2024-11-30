@@ -50,7 +50,7 @@ services:
       retries: 3
 
   nginx:
-    image: nginx:1.25-alpine
+    image: nginx:latest
     container_name: nginx_proxy
     restart: unless-stopped
     networks:
