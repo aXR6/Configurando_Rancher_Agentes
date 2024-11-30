@@ -1,9 +1,10 @@
+version: "3.9"
 networks:
   app_network:
     driver: bridge
     ipam:
       config:
-        - subnet: 192.168.100.0/24  # Sub-rede para IPs fixos
+        - subnet: 192.168.100.0/24
 
 services:
   jellyfin:
@@ -12,39 +13,42 @@ services:
     restart: unless-stopped
     networks:
       app_network:
-        ipv4_address: 192.168.100.10  # IP fixo para Jellyfin
+        ipv4_address: 192.168.100.10
     ports:
       - "8096:8096"
-      - "8920:8920"  # Para HTTPS opcional
+      - "8920:8920"
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Sao_Paulo
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
       - JELLYFIN_PublishedServerUrl=https://canela-stream.com.br
     volumes:
       - /home/stream/jellyfin/config:/config
       - /opt/stream/jellyfin/cache:/cache
       - /home/stream/transmission/downloads/complete:/media
-      - type: tmpfs                               # Cache temporário na memória
+      - type: tmpfs
         target: /opt/stream/jellyfin/cache
         tmpfs:
-          size: 10G                               # Tamanho máximo do cache na memória
+          size: 10G
     devices:
-      - /dev/dri:/dev/dri                         # Acesso à aceleração de hardware
+      - /dev/dri:/dev/dri
     logging:
-      driver: "json-file"
+      driver: "local"
       options:
         max-size: "10m"
         max-file: "3"
     deploy:
       resources:
         limits:
-          memory: 4G                                 # Limitar memória para o contêiner
-          cpus: "2.0"                                # Limitar uso de CPU
+          memory: 4G
+          cpus: "2.0"
         reservations:
-          memory: 2G                                 # Garantir 2GB de memória para caching e desempenho
-    extra_hosts:
-      - "host.docker.internal:host-gateway"          # Permitir acesso ao host para serviços externos
+          memory: 2G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8096 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   nginx:
     image: nginx:1.25-alpine
@@ -52,7 +56,7 @@ services:
     restart: unless-stopped
     networks:
       app_network:
-        ipv4_address: 192.168.100.11  # IP fixo para NGINX
+        ipv4_address: 192.168.100.11
     ports:
       - "80:80"
       - "443:443"
@@ -60,12 +64,12 @@ services:
       - /home/stream/nginx/conf.d:/etc/nginx/conf.d
       - /home/stream/nginx/certs:/etc/nginx/certs
       - /opt/stream/nginx/logs:/var/log/nginx
-      - /opt/stream/nginx/cache:/var/cache/nginx  # Cache persistente
-      - /home/stream/nginx/nginx.conf:/etc/nginx/nginx.conf:ro  # Arquivo nginx.conf montado
+      - /opt/stream/nginx/cache:/var/cache/nginx
+      - /home/stream/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - memcached
     logging:
-      driver: "json-file"
+      driver: "local"
       options:
         max-size: "10m"
         max-file: "3"
@@ -83,14 +87,14 @@ services:
     restart: unless-stopped
     networks:
       app_network:
-        ipv4_address: 192.168.100.12  # IP fixo para Memcached
+        ipv4_address: 192.168.100.12
     ports:
       - "11211:11211"
-    command: ["memcached", "-m", "256", "-c", "1024", "-v"]
+    command: ["memcached", "-m", "512", "-c", "2048", "-v"]
     volumes:
-      - /opt/stream/memcached/logs:/var/log/memcached  # Persistir logs
+      - /opt/stream/memcached/logs:/var/log/memcached
     logging:
-      driver: "json-file"
+      driver: "local"
       options:
         max-size: "10m"
         max-file: "3"
@@ -106,13 +110,13 @@ services:
     image: ghcr.io/linuxserver/transmission:latest
     container_name: transmission
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Sao_Paulo
-      - USER=stream
-      - PASS=123abc
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - USER=${USER}
+      - PASS=${PASS}
     volumes:
-      - /home/stream/transmission/config:/config:rw,async,noatime,nodiratime
+      - /home/stream/transmission/config:/config:ro
       - /home/stream/transmission/downloads:/downloads:rw,async,noatime,nodiratime
       - /home/stream/transmission/incomplete:/incomplete:rw,async,noatime,nodiratime
       - /opt/stream/transmission/logs:/var/log/transmission
@@ -127,10 +131,10 @@ services:
       timeout: 10s
       retries: 5
     logging:
-      driver: "json-file"
+      driver: "local"
       options:
         max-size: "5m"
         max-file: "2"
     networks:
       app_network:
-        ipv4_address: 192.168.100.13  # IP fixo para Transmission
+        ipv4_address: 192.168.100.13
