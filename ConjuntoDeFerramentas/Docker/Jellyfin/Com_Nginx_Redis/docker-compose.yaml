@@ -60,11 +60,11 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - /home/stream/nginx/conf.d:/etc/nginx/conf.d:rw
+      - /home/stream/nginx/conf.d:/etc/nginx/conf.d:ro
       - /home/stream/nginx/certs:/etc/nginx/certs:rw
       - /opt/stream/nginx/logs:/var/log/nginx:rw
       - /opt/stream/nginx/cache:/var/cache/nginx:rw
-      - /home/stream/nginx/nginx.conf:/etc/nginx/nginx.conf:rw
+      - /home/stream/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - memcached
     logging:
@@ -91,7 +91,7 @@ services:
       - "11211:11211"
     command: ["memcached", "-m", "512", "-c", "2048", "-v"]
     volumes:
-      - /opt/stream/memcached/logs:/var/log/memcached
+      - /opt/stream/memcached/logs:/var/log/memcached:rw
     logging:
       driver: "local"
       options:
