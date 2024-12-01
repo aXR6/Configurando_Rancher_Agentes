@@ -31,7 +31,7 @@ RUN apk add --no-cache \
 
 # Copiar o nginx.conf padrão e incluir o módulo Redis
 COPY nginx.conf /home/stream/Configurando_Rancher_Agentes/ConjuntoDeFerramentas/Docker/Jellyfin/Com_Nginx_Redis/nginx/nginx.conf
-COPY conf.d ./nginx/conf.d
+COPY conf.d /home/stream/Configurando_Rancher_Agentes/ConjuntoDeFerramentas/Docker/Jellyfin/Com_Nginx_Redis/nginx/conf.d
 
 # Expor as portas HTTP e HTTPS
 EXPOSE 80 443
