@@ -1,3 +1,5 @@
+version: '3.8'
+
 networks:
   app_network:
     driver: bridge
@@ -18,7 +20,6 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.acme.tlschallenge=true"
-      - "--certificatesresolvers.acme.email=${TRAEFIK_ACME_EMAIL}"
       - "--certificatesresolvers.acme.storage=/acme.json"
       - "--serverstransport.insecureskipverify=true"
     networks:
@@ -30,8 +31,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /home/stream/traefik/acme.json:/acme.json
-    environment:
-      - TRAEFIK_ACME_EMAIL=${TRAEFIK_ACME_EMAIL}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api.rule=Host(\"traefik.canela-stream.com.br\")"
