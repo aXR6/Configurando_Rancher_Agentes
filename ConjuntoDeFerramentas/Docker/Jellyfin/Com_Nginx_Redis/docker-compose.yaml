@@ -19,7 +19,8 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.cloudflare.acme.tlschallenge=true"
+      - "--certificatesresolvers.cloudflare.acme.dnschallenge=true"
+      - "--certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare"
       - "--certificatesresolvers.cloudflare.acme.email=${CLOUDFLARE_EMAIL}"
       - "--certificatesresolvers.cloudflare.acme.storage=/acme.json"
       - "--serverstransport.insecureskipverify=true"
@@ -34,9 +35,10 @@ services:
       - /home/stream/traefik/acme.json:/acme.json
     environment:
       - CLOUDFLARE_EMAIL=${CLOUDFLARE_EMAIL}
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=Host('traefik.canela-stream.com.br')"
+      - "traefik.http.routers.api.rule=Host(\"traefik.canela-stream.com.br\")"
       - "traefik.http.routers.api.service=api@internal"
       - "traefik.http.routers.api.tls.certresolver=cloudflare"
 
@@ -69,7 +71,7 @@ services:
         max-file: "5"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.jellyfin.rule=Host('canela-stream.com.br')"
+      - "traefik.http.routers.jellyfin.rule=Host(\"canela-stream.com.br\")"
       - "traefik.http.routers.jellyfin.entrypoints=websecure"
       - "traefik.http.routers.jellyfin.tls.certresolver=cloudflare"
       - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
@@ -80,35 +82,5 @@ services:
       - "traefik.http.middlewares.jellyfin-secure-headers.headers.contentTypeNosniff=true"
       - "traefik.http.middlewares.jellyfin-secure-headers.headers.browserXssFilter=true"
       - "traefik.http.middlewares.jellyfin-secure-headers.headers.referrerPolicy=no-referrer"
-      - "traefik.http.middlewares.jellyfin-secure-headers.headers.featurePolicy=accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
+      - "traefik.http.middlewares.jellyfin-secure-headers.headers.permissionsPolicy=accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
       - "traefik.http.routers.jellyfin.middlewares=jellyfin-secure-headers"
-
-  transmission:
-    image: ghcr.io/linuxserver/transmission:latest
-    container_name: transmission
-    restart: unless-stopped
-    networks:
-      app_network:
-        ipv4_address: 192.168.100.13
-    volumes:
-      - /home/stream/transmission/config:/config:rw
-      - /home/stream/transmission/downloads:/downloads:rw,async,noatime,nodiratime
-      - /home/stream/transmission/incomplete:/incomplete:rw,async,noatime,nodiratime
-      - /opt/stream/transmission/logs:/var/log/transmission:rw
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-      - USER=${USER}
-      - PASS=${PASS}
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9091 || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.transmission.rule=Host('torrent.canela-stream.com.br')"
-      - "traefik.http.routers.transmission.entrypoints=websecure"
-      - "traefik.http.routers.transmission.tls.certresolver=cloudflare"
-      - "traefik.http.services.transmission.loadbalancer.server.port=9091"
