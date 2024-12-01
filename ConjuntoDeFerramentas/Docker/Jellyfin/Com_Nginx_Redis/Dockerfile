@@ -30,8 +30,8 @@ RUN apk add --no-cache \
     && apk del gcc g++ make libc-dev pcre-dev zlib-dev openssl-dev linux-headers libxslt-dev gd-dev geoip-dev perl-dev wget curl git
 
 # Copiar o nginx.conf padrão e incluir o módulo Redis
-COPY nginx.conf /home/stream/Configurando_Rancher_Agentes/ConjuntoDeFerramentas/Docker/Jellyfin/Com_Nginx_Redis/nginx/nginx.conf
-COPY conf.d /home/stream/Configurando_Rancher_Agentes/ConjuntoDeFerramentas/Docker/Jellyfin/Com_Nginx_Redis/nginx/conf.d
+COPY nginx.conf ./nginx/nginx.conf
+COPY conf.d ./nginx/conf.d
 
 # Expor as portas HTTP e HTTPS
 EXPOSE 80 443
