@@ -12,12 +12,6 @@ x-logging:
     max-size: "10m"
     max-file: "5"
 
-x-traefik-middlewares:
-  &rate-limit
-  traefik.http.middlewares.rate-limit.redis.address=redis:6379
-  traefik.http.middlewares.rate-limit.rateLimit.average=10
-  traefik.http.middlewares.rate-limit.rateLimit.burst=20
-
 services:
   traefik:
     image: traefik:v2.10
@@ -54,25 +48,6 @@ services:
       CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN}
     logging: *default-logging
 
-  redis:
-    image: redis:alpine
-    container_name: redis
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    networks:
-      app_network:
-        ipv4_address: 192.168.100.3
-    ports:
-      - "6379:6379"
-    volumes:
-      - /opt/stream/redis/data:/data:rw
-    command: ["redis-server", "--appendonly", "yes"]
-    logging: *default-logging
-
   jellyfin:
     image: jellyfin/jellyfin
     container_name: jellyfin
@@ -85,16 +60,16 @@ services:
       - /opt/stream/jellyfin/cache:/cache:rw
       - /home/stream/transmission/downloads/complete:/media:ro
       - type: tmpfs
-        target: /opt/stream/jellyfin/cache
+        target: /cache
         tmpfs:
           size: 10G
     devices:
-      - /dev/dri:/dev/dri
+      - /dev/dri:/dev/dri # Para suporte a hardware transcoding
     environment:
-      PUID: ${PUID}
-      PGID: ${PGID}
-      TZ: ${TZ}
-      JELLYFIN_PublishedServerUrl: https://canela-stream.com.br
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - JELLYFIN_PublishedServerUrl=https://canela-stream.com.br
     logging: *default-logging
     labels:
       - "traefik.enable=true"
@@ -102,7 +77,6 @@ services:
       - "traefik.http.routers.jellyfin.entrypoints=websecure"
       - "traefik.http.routers.jellyfin.tls.certresolver=cloudflare"
       - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
-      - *rate-limit
 
   transmission:
     image: ghcr.io/linuxserver/transmission:latest
@@ -122,11 +96,11 @@ services:
       - /home/stream/transmission/incomplete:/incomplete:rw,async,noatime,nodiratime
       - /opt/stream/transmission/logs:/var/log/transmission:rw
     environment:
-      PUID: ${PUID}
-      PGID: ${PGID}
-      TZ: ${TZ}
-      USER: ${USER}
-      PASS: ${PASS}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - USER=${USER}
+      - PASS=${PASS}
     logging: *default-logging
     labels:
       - "traefik.enable=true"
@@ -134,4 +108,3 @@ services:
       - "traefik.http.routers.transmission.entrypoints=websecure"
       - "traefik.http.routers.transmission.tls.certresolver=cloudflare"
       - "traefik.http.services.transmission.loadbalancer.server.port=9091"
-      - *rate-limit
