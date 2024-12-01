@@ -4,6 +4,8 @@ networks:
     ipam:
       config:
         - subnet: 192.168.100.0/24 # Define a faixa de IP da rede
+    driver_opts:
+      com.docker.network.host_binding_ipv4: "0.0.0.0" # Melhor desempenho na rede
 
 x-logging:
   &default-logging
@@ -52,9 +54,9 @@ services:
       app_network:
         ipv4_address: 192.168.100.10
     volumes:
-      - /home/stream/jellyfin/config:/config
-      - /opt/stream/jellyfin/cache:/cache
-      - /home/stream/transmission/downloads/complete:/media
+      - /mnt/ssd/jellyfin/config:/config:rw
+      - /mnt/ssd/jellyfin/cache:/cache:rw
+      - /mnt/media:/media:ro
       - type: tmpfs
         target: /cache
         tmpfs:
@@ -73,6 +75,14 @@ services:
       - "traefik.http.routers.jellyfin.entrypoints=websecure"
       - "traefik.http.routers.jellyfin.tls.certresolver=cloudflare"
       - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
+      - "traefik.http.middlewares.compress.compress=true" # Compressão HTTP
+      - "traefik.http.middlewares.secure-headers.headers.stsSeconds=31536000"
+      - "traefik.http.middlewares.secure-headers.headers.stsIncludeSubdomains=true"
+      - "traefik.http.middlewares.secure-headers.headers.forceSTSHeader=true"
+      - "traefik.http.middlewares.secure-headers.headers.contentTypeNosniff=true"
+      - "traefik.http.middlewares.secure-headers.headers.browserXssFilter=true"
+      - "traefik.http.middlewares.secure-headers.headers.referrerPolicy=no-referrer"
+      - "traefik.http.middlewares.secure-headers.headers.permissionsPolicy=accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
 
   transmission:
     image: ghcr.io/linuxserver/transmission:latest
