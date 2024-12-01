@@ -9,8 +9,8 @@ x-logging:
   &default-logging
   driver: "local"
   options:
-    max-size: "10m"
-    max-file: "5"
+    max-size: "5m"
+    max-file: "3"
 
 services:
   traefik:
@@ -52,15 +52,15 @@ services:
       app_network:
         ipv4_address: 192.168.100.10
     volumes:
-      - /home/stream/jellyfin/config:/config:rw
-      - /home/stream/jellyfin/cache:/cache:rw
-      - /home/stream/transmission/downloads/complete:/media:ro
+      - /mnt/ssd/jellyfin/config:/config:rw
+      - /mnt/ssd/jellyfin/cache:/cache:rw
+      - /mnt/media:/media:ro
       - type: tmpfs
         target: /cache
         tmpfs:
           size: 10G
     devices:
-      - /dev/dri:/dev/dri # Para suporte a hardware transcoding
+      - /dev/dri:/dev/dri # Intel Quick Sync para transcodificação
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
