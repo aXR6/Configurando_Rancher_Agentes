@@ -31,7 +31,6 @@ services:
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.cloudflare.acme.dnschallenge=true"
       - "--certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare"
-      - "--certificatesresolvers.cloudflare.acme.email=${CLOUDFLARE_EMAIL}"
       - "--certificatesresolvers.cloudflare.acme.storage=/acme.json"
       - "--serverstransport.insecureskipverify=true"
     networks:
@@ -43,9 +42,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /home/stream/traefik/acme.json:/acme.json
-    environment:
-      CLOUDFLARE_EMAIL: ${CLOUDFLARE_EMAIL}
-      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN}
     logging: *default-logging
 
   jellyfin:
@@ -57,7 +53,7 @@ services:
         ipv4_address: 192.168.100.10
     volumes:
       - /home/stream/jellyfin/config:/config:rw
-      - /opt/stream/jellyfin/cache:/cache:rw
+      - /home/stream/jellyfin/cache:/cache:rw
       - /home/stream/transmission/downloads/complete:/media:ro
       - type: tmpfs
         target: /cache
