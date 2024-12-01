@@ -5,7 +5,7 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 192.168.100.0/24 # Define a faixa de IP da rede
+        - subnet: 192.168.100.0/24
 
 x-logging:
   &default-logging
@@ -18,7 +18,7 @@ x-traefik-middlewares:
   &rate-limit
   traefik.http.middlewares.rate-limit.redis.address=redis:6379
   traefik.http.middlewares.rate-limit.rateLimit.average=10
-  traefik.http.middlewares.rateLimit.burst=20
+  traefik.http.middlewares.rateLimit.rateLimit.burst=20
 
 services:
   traefik:
