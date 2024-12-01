@@ -45,7 +45,9 @@ services:
   nginx:
     # Para a solução 1 (cache indireto), use nginx:alpine
     # Para a solução 2 (redis_pass), altere para nginx-custom:latest (veja o Dockerfile abaixo)
-    image: nginx-custom:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: nginx_proxy
     restart: unless-stopped
     networks:
@@ -85,7 +87,6 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-
 
   transmission:
     image: ghcr.io/linuxserver/transmission:latest

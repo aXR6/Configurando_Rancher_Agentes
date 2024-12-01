@@ -1,6 +1,6 @@
 FROM nginx:alpine
 
-# Instalar dependências necessárias e criar o diretório para os builds
+# Instalar dependências e compilar o NGINX com o módulo Redis
 RUN apk add --no-cache \
     gcc \
     libc-dev \
@@ -15,7 +15,7 @@ RUN apk add --no-cache \
     git clone https://github.com/openresty/redis2-nginx-module.git && \
     git clone https://github.com/nginx/nginx.git && \
     cd nginx && \
-    ./auto/configure --add-module=/usr/local/src/redis2-nginx-module --with-http_ssl_module && \
+    ./auto/configure --add-module=/usr/local/src/redis2-nginx-module --with-http_ssl_module --with-http_v2_module && \
     make && \
     make install
 
