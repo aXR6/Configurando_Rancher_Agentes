@@ -59,11 +59,6 @@ services:
       options:
         max-size: "10m"
         max-file: "5"
-    labels:
-      - "traefik.http.middlewares.rate-limit.redis.address=redis:6379"
-      - "traefik.http.middlewares.rate-limit.rateLimit.average=10"
-      - "traefik.http.middlewares.rate-limit.rateLimit.burst=20"
-      - "traefik.http.routers.jellyfin.middlewares=rate-limit"
 
   jellyfin:
     image: jellyfin/jellyfin
@@ -105,35 +100,11 @@ services:
       - "traefik.http.middlewares.jellyfin-secure-headers.headers.contentTypeNosniff=true"
       - "traefik.http.middlewares.jellyfin-secure-headers.headers.browserXssFilter=true"
       - "traefik.http.middlewares.jellyfin-secure-headers.headers.referrerPolicy=no-referrer"
-      - "traefik.http.middlewares.jellyfin-secure-headers.headers.permissionsPolicy=accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
-      - "traefik.http.routers.jellyfin.middlewares=jellyfin-secure-headers"
-
-  transmission:
-    image: ghcr.io/linuxserver/transmission:latest
-    container_name: transmission
-    restart: unless-stopped
-    networks:
-      app_network:
-        ipv4_address: 192.168.100.13
-    volumes:
-      - /home/stream/transmission/config:/config:rw
-      - /home/stream/transmission/downloads:/downloads:rw,async,noatime,nodiratime
-      - /home/stream/transmission/incomplete:/incomplete:rw,async,noatime,nodiratime
-      - /opt/stream/transmission/logs:/var/log/transmission:rw
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-      - USER=${USER}
-      - PASS=${PASS}
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9091 || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.transmission.rule=Host(\"torrent.canela-stream.com.br\")"
-      - "traefik.http.routers.transmission.entrypoints=websecure"
-      - "traefik.http.routers.transmission.tls.certresolver=cloudflare"
-      - "traefik.http.services.transmission.loadbalancer.server.port=9091"
+      - "traefik.http.middlewares.jellyfin-stream-headers.headers.customFrameOptionsValue=allow-from https://canela-stream.com.br"
+      - "traefik.http.middlewares.jellyfin-stream-headers.headers.contentSecurityPolicy=default-src 'self'; media-src 'self'; img-src 'self' data:"
+      - "traefik.http.middlewares.jellyfin-stream-headers.headers.permissionsPolicy=accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
+      - "traefik.http.middlewares.jellyfin-stream-headers.headers.cacheControl=public, max-age=3600, must-revalidate"
+      - "traefik.http.middlewares.jellyfin-stream-headers.headers.customResponseHeaders.Cache-Control=no-transform"
+      - "traefik.http.middlewares.jellyfin-stream-headers.headers.customResponseHeaders.Accept-Ranges=bytes"
+      - "traefik.http.middlewares.jellyfin-stream-headers.headers.customResponseHeaders.Timing-Allow-Origin=*"
+      - "traefik.http.routers.jellyfin.middlewares=jellyfin-secure-headers,jellyfin-stream-headers"
