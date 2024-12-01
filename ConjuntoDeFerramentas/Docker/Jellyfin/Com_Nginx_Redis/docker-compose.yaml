@@ -1,3 +1,5 @@
+version: '3.8'
+
 networks:
   app_network:
     driver: bridge
@@ -108,31 +110,31 @@ services:
       - "traefik.http.routers.jellyfin.middlewares=jellyfin-secure-headers,jellyfin-stream-headers"
 
   transmission:
-      image: ghcr.io/linuxserver/transmission:latest
-      container_name: transmission
-      restart: unless-stopped
-      networks:
-        app_network:
-          ipv4_address: 192.168.100.13
-      volumes:
-        - /home/stream/transmission/config:/config:rw
-        - /home/stream/transmission/downloads:/downloads:rw,async,noatime,nodiratime
-        - /home/stream/transmission/incomplete:/incomplete:rw,async,noatime,nodiratime
-        - /opt/stream/transmission/logs:/var/log/transmission:rw
-      environment:
-        - PUID=${PUID}
-        - PGID=${PGID}
-        - TZ=${TZ}
-        - USER=${USER}
-        - PASS=${PASS}
-      healthcheck:
-        test: ["CMD-SHELL", "curl -f http://localhost:9091 || exit 1"]
-        interval: 30s
-        timeout: 10s
-        retries: 5
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.transmission.rule=Host(\"torrent.canela-stream.com.br\")"
-        - "traefik.http.routers.transmission.entrypoints=websecure"
-        - "traefik.http.routers.transmission.tls.certresolver=cloudflare"
-        - "traefik.http.services.transmission.loadbalancer.server.port=9091"
+    image: ghcr.io/linuxserver/transmission:latest
+    container_name: transmission
+    restart: unless-stopped
+    networks:
+      app_network:
+        ipv4_address: 192.168.100.13
+    volumes:
+      - /home/stream/transmission/config:/config:rw
+      - /home/stream/transmission/downloads:/downloads:rw,async,noatime,nodiratime
+      - /home/stream/transmission/incomplete:/incomplete:rw,async,noatime,nodiratime
+      - /opt/stream/transmission/logs:/var/log/transmission:rw
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - USER=${USER}
+      - PASS=${PASS}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9091 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.transmission.rule=Host(\"torrent.canela-stream.com.br\")"
+      - "traefik.http.routers.transmission.entrypoints=websecure"
+      - "traefik.http.routers.transmission.tls.certresolver=cloudflare"
+      - "traefik.http.services.transmission.loadbalancer.server.port=9091"
