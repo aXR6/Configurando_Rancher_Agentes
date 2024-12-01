@@ -1,3 +1,5 @@
+version: '3.8'
+
 networks:
   app_network:
     driver: bridge
@@ -12,14 +14,15 @@ services:
     restart: unless-stopped
     command:
       - "--log.level=INFO"
+      - "--api.dashboard=true"
       - "--providers.docker=true"
-      - "--providers.redis.endpoints=redis:6379"
-      - "--providers.redis.password=${REDIS_PASSWORD}" # Opcional, se necessário
+      - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.cloudflare.acme.tlschallenge=true"
       - "--certificatesresolvers.cloudflare.acme.email=${CLOUDFLARE_EMAIL}"
       - "--certificatesresolvers.cloudflare.acme.storage=/acme.json"
+      - "--serverstransport.insecureskipverify=true"
     networks:
       app_network:
         ipv4_address: 192.168.100.2
@@ -31,24 +34,11 @@ services:
       - /home/stream/traefik/acme.json:/acme.json
     environment:
       - CLOUDFLARE_EMAIL=${CLOUDFLARE_EMAIL}
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=Host(`traefik.canela-stream.com.br`)"
+      - "traefik.http.routers.api.rule=Host('traefik.canela-stream.com.br')"
       - "traefik.http.routers.api.service=api@internal"
       - "traefik.http.routers.api.tls.certresolver=cloudflare"
-
-  redis:
-    image: redis:alpine
-    container_name: redis
-    networks:
-      app_network:
-        ipv4_address: 192.168.100.3
-    ports:
-      - "6379:6379"
-    volumes:
-      - /opt/stream/redis/data:/data:rw
-    command: ["redis-server", "--appendonly", "yes"]
 
   jellyfin:
     image: jellyfin/jellyfin
@@ -79,12 +69,19 @@ services:
         max-file: "5"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.jellyfin.rule=Host(`canela-stream.com.br`)"
+      - "traefik.http.routers.jellyfin.rule=Host('canela-stream.com.br')"
       - "traefik.http.routers.jellyfin.entrypoints=websecure"
       - "traefik.http.routers.jellyfin.tls.certresolver=cloudflare"
-      - "traefik.http.middlewares.jellyfin-rate-limit.rateLimit.average=10"
-      - "traefik.http.middlewares.jellyfin-rate-limit.rateLimit.burst=20"
-      - "traefik.http.middlewares.jellyfin-rate-limit.redis.address=redis:6379"
+      - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
+      - "traefik.http.middlewares.jellyfin-secure-headers.headers.stsSeconds=31536000"
+      - "traefik.http.middlewares.jellyfin-secure-headers.headers.stsIncludeSubdomains=true"
+      - "traefik.http.middlewares.jellyfin-secure-headers.headers.stsPreload=true"
+      - "traefik.http.middlewares.jellyfin-secure-headers.headers.forceSTSHeader=true"
+      - "traefik.http.middlewares.jellyfin-secure-headers.headers.contentTypeNosniff=true"
+      - "traefik.http.middlewares.jellyfin-secure-headers.headers.browserXssFilter=true"
+      - "traefik.http.middlewares.jellyfin-secure-headers.headers.referrerPolicy=no-referrer"
+      - "traefik.http.middlewares.jellyfin-secure-headers.headers.featurePolicy=accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
+      - "traefik.http.routers.jellyfin.middlewares=jellyfin-secure-headers"
 
   transmission:
     image: ghcr.io/linuxserver/transmission:latest
@@ -111,9 +108,7 @@ services:
       retries: 5
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.transmission.rule=Host(`torrent.canela-stream.com.br`)"
+      - "traefik.http.routers.transmission.rule=Host('torrent.canela-stream.com.br')"
       - "traefik.http.routers.transmission.entrypoints=websecure"
       - "traefik.http.routers.transmission.tls.certresolver=cloudflare"
-      - "traefik.http.middlewares.transmission-rate-limit.rateLimit.average=5"
-      - "traefik.http.middlewares.transmission-rate-limit.rateLimit.burst=10"
-      - "traefik.http.middlewares.transmission-rate-limit.redis.address=redis:6379"
+      - "traefik.http.services.transmission.loadbalancer.server.port=9091"
