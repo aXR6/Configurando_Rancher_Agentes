@@ -54,9 +54,9 @@ services:
       app_network:
         ipv4_address: 192.168.100.10
     volumes:
-      - /mnt/ssd/jellyfin/config:/config:rw
-      - /mnt/ssd/jellyfin/cache:/cache:rw
-      - /mnt/media:/media:ro
+      - /home/stream/jellyfin/config:/config:rw # Dados de configuração persistentes
+      - /opt/stream/jellyfin/cache:/cache:rw # Cache temporário usado pela aplicação
+      - /home/stream/transmission/downloads/complete:/media:ro # Biblioteca de mídia
       - type: tmpfs
         target: /cache
         tmpfs:
