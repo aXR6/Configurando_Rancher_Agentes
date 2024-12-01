@@ -60,10 +60,10 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - /home/stream/nginx/conf.d:/etc/nginx/conf.d
-      - /home/stream/nginx/certs:/etc/nginx/certs
-      - /opt/stream/nginx/logs:/var/log/nginx
-      - /opt/stream/nginx/cache:/var/cache/nginx
+      - /home/stream/nginx/conf.d:/etc/nginx/conf.d:rw
+      - /home/stream/nginx/certs:/etc/nginx/certs:rw
+      - /opt/stream/nginx/logs:/var/log/nginx:rw
+      - /opt/stream/nginx/cache:/var/cache/nginx:rw
       - /home/stream/nginx/nginx.conf:/etc/nginx/nginx.conf:rw
     depends_on:
       - memcached
@@ -115,10 +115,10 @@ services:
       - USER=${USER}
       - PASS=${PASS}
     volumes:
-      - /home/stream/transmission/config:/config:ro
+      - /home/stream/transmission/config:/config:rw
       - /home/stream/transmission/downloads:/downloads:rw,async,noatime,nodiratime
       - /home/stream/transmission/incomplete:/incomplete:rw,async,noatime,nodiratime
-      - /opt/stream/transmission/logs:/var/log/transmission
+      - /opt/stream/transmission/logs:/var/log/transmission:rw
     ports:
       - "9091:9091"
       - "51413:51413"
