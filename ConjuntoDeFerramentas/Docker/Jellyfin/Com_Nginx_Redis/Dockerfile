@@ -1,6 +1,5 @@
 FROM nginx:alpine
 
-# Instalar dependências e compilar o NGINX com o módulo Redis
 RUN apk add --no-cache \
     gcc \
     libc-dev \
