@@ -1,5 +1,6 @@
 FROM nginx:alpine
 
+# Instalar dependências necessárias
 RUN apk add --no-cache \
     gcc \
     libc-dev \
@@ -7,7 +8,6 @@ RUN apk add --no-cache \
     pcre-dev \
     zlib-dev \
     openssl-dev \
-    redis \
     git && \
     mkdir -p /usr/local/src && \
     cd /usr/local/src && \
