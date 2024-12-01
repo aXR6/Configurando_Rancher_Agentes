@@ -18,7 +18,7 @@ x-traefik-middlewares:
   &rate-limit
   traefik.http.middlewares.rate-limit.redis.address=redis:6379
   traefik.http.middlewares.rate-limit.rateLimit.average=10
-  traefik.http.middlewares.rate-limit.rateLimit.burst=20
+  traefik.http.middlewares.rateLimit.burst=20
 
 services:
   traefik:
@@ -70,6 +70,8 @@ services:
       - /opt/stream/redis/data:/data:rw
     command: ["redis-server", "--appendonly", "yes"]
     logging: *default-logging
+    labels:
+      - "traefik.enable=false" # Desativa o gerenciamento pelo Traefik
 
   jellyfin:
     image: jellyfin/jellyfin
