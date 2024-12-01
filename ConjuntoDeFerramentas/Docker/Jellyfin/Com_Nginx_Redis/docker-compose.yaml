@@ -1,3 +1,4 @@
+version: "3.9"
 networks:
   app_network:
     driver: bridge
@@ -41,16 +42,11 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    deploy:
-      resources:
-        limits:
-          memory: 4G
-          cpus: "2.0"
-        reservations:
-          memory: 2G
 
   nginx:
-    image: nginx:alpine
+    # Para a solução 1 (cache indireto), use nginx:alpine
+    # Para a solução 2 (redis_pass), altere para nginx-custom:latest (veja o Dockerfile abaixo)
+    image: nginx-custom:latest
     container_name: nginx_proxy
     restart: unless-stopped
     networks:
@@ -72,13 +68,6 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-    deploy:
-      resources:
-        limits:
-          memory: 512m
-          cpus: "0.5"
-        reservations:
-          memory: 256m
 
   redis:
     image: redis:alpine
@@ -97,13 +86,6 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-    deploy:
-      resources:
-        limits:
-          memory: 256m
-          cpus: "0.2"
-        reservations:
-          memory: 128m
 
   transmission:
     image: ghcr.io/linuxserver/transmission:latest
@@ -129,11 +111,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-    logging:
-      driver: "local"
-      options:
-        max-size: "5m"
-        max-file: "2"
     networks:
       app_network:
         ipv4_address: 192.168.100.13

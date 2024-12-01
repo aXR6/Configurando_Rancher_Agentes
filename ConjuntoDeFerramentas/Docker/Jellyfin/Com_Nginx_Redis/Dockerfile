@@ -1,18 +1,20 @@
-# Usar a imagem oficial como base
-FROM jellyfin/jellyfin:latest
+FROM nginx:alpine
 
-# Atualizar pacotes e instalar o jellyfin-ffmpeg versão 7
-RUN apt-get update && apt-get install -y \
-    jellyfin-ffmpeg7 libavcodec-extra \
-    --no-install-recommends && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache \
+    gcc \
+    libc-dev \
+    make \
+    pcre-dev \
+    zlib-dev \
+    openssl-dev \
+    redis \
+    git && \
+    cd /usr/local/src && \
+    git clone https://github.com/openresty/redis2-nginx-module.git && \
+    git clone https://github.com/nginx/nginx.git && \
+    cd nginx && \
+    ./auto/configure --add-module=/usr/local/src/redis2-nginx-module --with-http_ssl_module && \
+    make && \
+    make install
 
-# Definir a variável de ambiente para usar o ffmpeg correto
-ENV JELLYFIN_FFMPEG=/usr/lib/jellyfin-ffmpeg/ffmpeg
-
-# Expor as portas usadas pelo Jellyfin
-EXPOSE 8096 8920
-
-# Configurar o ponto de entrada (mantém o padrão da imagem oficial)
-CMD ["/jellyfin/jellyfin.dll"]
+CMD ["nginx", "-g", "daemon off;"]
