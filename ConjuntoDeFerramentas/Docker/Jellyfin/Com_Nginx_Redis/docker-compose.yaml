@@ -99,7 +99,7 @@ services:
     volumes:
       - /home/stream/transmission/config:/config:rw
       - /home/stream/transmission/downloads:/downloads:rw,async,noatime,nodiratime
-      - /home/stream/transmission/incomplete:/incomplete:rw,async,noatime,nodiratime
+      - /home/stream/transmission/downloads/incomplete/:/incomplete:rw,async,noatime,nodiratime
       - /opt/stream/transmission/logs:/var/log/transmission:rw
     environment:
       - PUID=${PUID}
