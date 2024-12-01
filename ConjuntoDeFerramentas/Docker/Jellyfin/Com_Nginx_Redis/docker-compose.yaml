@@ -105,16 +105,6 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
-      - TRANSMISSION_DOWNLOAD_DIR=/downloads
-      - TRANSMISSION_INCOMPLETE_DIR=/incomplete
-      - TRANSMISSION_WATCH_DIR=/downloads/watch
-      - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true
-      - TRANSMISSION_RPC_USERNAME=${USER}
-      - TRANSMISSION_RPC_PASSWORD=${PASS}
-      - TRANSMISSION_RATIO_LIMIT=1.0
-      - TRANSMISSION_RATIO_LIMIT_ENABLED=true
-      - TRANSMISSION_IDLE_SEEDING_LIMIT=30
-      - TRANSMISSION_IDLE_SEEDING_LIMIT_ENABLED=true
     logging:
       driver: "local"
       options:
