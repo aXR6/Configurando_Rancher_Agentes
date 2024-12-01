@@ -1,11 +1,9 @@
-version: '3.9'
-
 networks:
   app_network:
     driver: bridge
     ipam:
       config:
-        - subnet: 192.168.100.0/24
+        - subnet: 192.168.100.0/24 # Define a faixa de IP da rede
 
 x-logging:
   &default-logging
@@ -18,7 +16,7 @@ x-traefik-middlewares:
   &rate-limit
   traefik.http.middlewares.rate-limit.redis.address=redis:6379
   traefik.http.middlewares.rate-limit.rateLimit.average=10
-  traefik.http.middlewares.rateLimit.rateLimit.burst=20
+  traefik.http.middlewares.rate-limit.rateLimit.burst=20
 
 services:
   traefik:
@@ -39,6 +37,7 @@ services:
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.cloudflare.acme.dnschallenge=true"
       - "--certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare"
+      - "--certificatesresolvers.cloudflare.acme.email=${CLOUDFLARE_EMAIL}"
       - "--certificatesresolvers.cloudflare.acme.storage=/acme.json"
       - "--serverstransport.insecureskipverify=true"
     networks:
@@ -50,88 +49,89 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /home/stream/traefik/acme.json:/acme.json
-    logging: *default-logging
-
-  redis:
-    image: redis:alpine
-    container_name: redis
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    networks:
-      app_network:
-        ipv4_address: 192.168.100.3
-    ports:
-      - "6379:6379"
-    volumes:
-      - /opt/stream/redis/data:/data:rw
-    command: ["redis-server", "--appendonly", "yes"]
-    logging: *default-logging
-    labels:
-      - "traefik.enable=false" # Desativa o gerenciamento pelo Traefik
-
-  jellyfin:
-    image: jellyfin/jellyfin
-    container_name: jellyfin
-    restart: unless-stopped
-    networks:
-      app_network:
-        ipv4_address: 192.168.100.10
-    volumes:
-      - /home/stream/jellyfin/config:/config:rw
-      - /opt/stream/jellyfin/cache:/cache:rw
-      - /home/stream/transmission/downloads/complete:/media:ro
-      - type: tmpfs
-        target: /opt/stream/jellyfin/cache
-        tmpfs:
-          size: 10G
-    devices:
-      - /dev/dri:/dev/dri
     environment:
-      PUID: ${PUID}
-      PGID: ${PGID}
-      TZ: ${TZ}
-      JELLYFIN_PublishedServerUrl: https://canela-stream.com.br
+      CLOUDFLARE_EMAIL: ${CLOUDFLARE_EMAIL}
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN}
     logging: *default-logging
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.jellyfin.rule=Host(`canela-stream.com.br`)"
-      - "traefik.http.routers.jellyfin.entrypoints=websecure"
-      - "traefik.http.routers.jellyfin.tls.certresolver=cloudflare"
-      - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
-      - *rate-limit
 
-  transmission:
-    image: ghcr.io/linuxserver/transmission:latest
-    container_name: transmission
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9091 || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-    networks:
-      app_network:
-        ipv4_address: 192.168.100.13
-    volumes:
-      - /home/stream/transmission/config:/config:rw
-      - /home/stream/transmission/downloads:/downloads:rw,async,noatime,nodiratime
-      - /home/stream/transmission/incomplete:/incomplete:rw,async,noatime,nodiratime
-      - /opt/stream/transmission/logs:/var/log/transmission:rw
-    environment:
-      PUID: ${PUID}
-      PGID: ${PGID}
-      TZ: ${TZ}
-      USER: ${USER}
-      PASS: ${PASS}
-    logging: *default-logging
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.transmission.rule=Host(`torrent.canela-stream.com.br`)"
-      - "traefik.http.routers.transmission.entrypoints=websecure"
-      - "traefik.http.routers.transmission.tls.certresolver=cloudflare"
-      - "traefik.http.services.transmission.loadbalancer.server.port=9091"
-      - *rate-limit
+    redis:
+      image: redis:alpine
+      container_name: redis
+      restart: unless-stopped
+      healthcheck:
+        test: ["CMD", "redis-cli", "ping"]
+        interval: 10s
+        timeout: 5s
+        retries: 3
+      networks:
+        app_network:
+          ipv4_address: 192.168.100.3
+      ports:
+        - "6379:6379"
+      volumes:
+        - /opt/stream/redis/data:/data:rw
+      command: ["redis-server", "--appendonly", "yes"]
+      logging: *default-logging
+
+      jellyfin:
+        image: jellyfin/jellyfin
+        container_name: jellyfin
+        restart: unless-stopped
+        networks:
+          app_network:
+            ipv4_address: 192.168.100.10
+        volumes:
+          - /home/stream/jellyfin/config:/config:rw
+          - /opt/stream/jellyfin/cache:/cache:rw
+          - /home/stream/transmission/downloads/complete:/media:ro
+          - type: tmpfs
+            target: /opt/stream/jellyfin/cache
+            tmpfs:
+              size: 10G
+        devices:
+          - /dev/dri:/dev/dri
+        environment:
+          PUID: ${PUID}
+          PGID: ${PGID}
+          TZ: ${TZ}
+          JELLYFIN_PublishedServerUrl: https://canela-stream.com.br
+        logging: *default-logging
+        labels:
+          - "traefik.enable=true"
+          - "traefik.http.routers.jellyfin.rule=Host(`canela-stream.com.br`)"
+          - "traefik.http.routers.jellyfin.entrypoints=websecure"
+          - "traefik.http.routers.jellyfin.tls.certresolver=cloudflare"
+          - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
+          - *rate-limit
+
+          transmission:
+            image: ghcr.io/linuxserver/transmission:latest
+            container_name: transmission
+            restart: unless-stopped
+            healthcheck:
+              test: ["CMD-SHELL", "curl -f http://localhost:9091 || exit 1"]
+              interval: 30s
+              timeout: 10s
+              retries: 5
+            networks:
+              app_network:
+                ipv4_address: 192.168.100.13
+            volumes:
+              - /home/stream/transmission/config:/config:rw
+              - /home/stream/transmission/downloads:/downloads:rw,async,noatime,nodiratime
+              - /home/stream/transmission/incomplete:/incomplete:rw,async,noatime,nodiratime
+              - /opt/stream/transmission/logs:/var/log/transmission:rw
+            environment:
+              PUID: ${PUID}
+              PGID: ${PGID}
+              TZ: ${TZ}
+              USER: ${USER}
+              PASS: ${PASS}
+            logging: *default-logging
+            labels:
+              - "traefik.enable=true"
+              - "traefik.http.routers.transmission.rule=Host(`torrent.canela-stream.com.br`)"
+              - "traefik.http.routers.transmission.entrypoints=websecure"
+              - "traefik.http.routers.transmission.tls.certresolver=cloudflare"
+              - "traefik.http.services.transmission.loadbalancer.server.port=9091"
+              - *rate-limit
