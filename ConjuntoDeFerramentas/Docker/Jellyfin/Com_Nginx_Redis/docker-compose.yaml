@@ -104,3 +104,4 @@ services:
       - "traefik.http.routers.transmission.entrypoints=websecure"
       - "traefik.http.routers.transmission.tls.certresolver=cloudflare"
       - "traefik.http.services.transmission.loadbalancer.server.port=9091"
+      
