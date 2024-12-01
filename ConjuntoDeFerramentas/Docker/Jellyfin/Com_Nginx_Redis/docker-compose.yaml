@@ -101,11 +101,6 @@ services:
       - "traefik.http.middlewares.jellyfin-secure-headers.headers.permissionsPolicy=accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
       - "traefik.http.routers.jellyfin.middlewares=jellyfin-secure-headers"
 
-      - "traefik.http.middlewares.rate-limit.redis.address=redis:6379"
-      - "traefik.http.middlewares.rate-limit.rateLimit.average=10"
-      - "traefik.http.middlewares.rate-limit.rateLimit.burst=20"
-      - "traefik.http.routers.jellyfin.middlewares=rate-limit"
-
   transmission:
     image: ghcr.io/linuxserver/transmission:latest
     container_name: transmission
@@ -135,8 +130,3 @@ services:
       - "traefik.http.routers.transmission.entrypoints=websecure"
       - "traefik.http.routers.transmission.tls.certresolver=cloudflare"
       - "traefik.http.services.transmission.loadbalancer.server.port=9091"
-
-      - "traefik.http.middlewares.rate-limit.redis.address=redis:6379"
-      - "traefik.http.middlewares.rate-limit.rateLimit.average=10"
-      - "traefik.http.middlewares.rate-limit.rateLimit.burst=20"
-      - "traefik.http.routers.jellyfin.middlewares=rate-limit"
