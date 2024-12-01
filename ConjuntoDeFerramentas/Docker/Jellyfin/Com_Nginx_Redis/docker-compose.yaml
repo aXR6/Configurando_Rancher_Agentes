@@ -19,8 +19,8 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.acme.tlschallenge=true"
-      - "--certificatesresolvers.acme.storage=/acme.json"
+      - "--certificatesresolvers.default.tlschallenge=true"
+      - "--certificatesresolvers.default.storage=/acme.json"
       - "--serverstransport.insecureskipverify=true"
     networks:
       app_network:
@@ -35,7 +35,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.api.rule=Host(\"traefik.canela-stream.com.br\")"
       - "traefik.http.routers.api.service=api@internal"
-      - "traefik.http.routers.api.tls.certresolver=acme"
+      - "traefik.http.routers.api.tls.certresolver=default"
 
   redis:
     image: redis:alpine
