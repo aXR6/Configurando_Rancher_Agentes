@@ -1,3 +1,5 @@
+version: '3.8'
+
 networks:
   app_network:
     driver: bridge
@@ -39,6 +41,29 @@ services:
       - "traefik.http.routers.api.rule=Host(\"traefik.canela-stream.com.br\")"
       - "traefik.http.routers.api.service=api@internal"
       - "traefik.http.routers.api.tls.certresolver=cloudflare"
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: unless-stopped
+    networks:
+      app_network:
+        ipv4_address: 192.168.100.3
+    ports:
+      - "6379:6379"
+    volumes:
+      - /opt/stream/redis/data:/data:rw
+    command: ["redis-server", "--appendonly", "yes"]
+    logging:
+      driver: "local"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    labels:
+      - "traefik.http.middlewares.rate-limit.redis.address=redis:6379"
+      - "traefik.http.middlewares.rate-limit.rateLimit.average=10"
+      - "traefik.http.middlewares.rate-limit.rateLimit.burst=20"
+      - "traefik.http.routers.jellyfin.middlewares=rate-limit"
 
   jellyfin:
     image: jellyfin/jellyfin
