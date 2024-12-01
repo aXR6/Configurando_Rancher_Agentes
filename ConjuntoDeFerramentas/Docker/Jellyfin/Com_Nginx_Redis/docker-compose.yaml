@@ -19,8 +19,9 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.default.tlschallenge=true"
-      - "--certificatesresolvers.default.storage=/acme.json"
+      - "--certificatesresolvers.default.acme.tlschallenge=true"
+      - "--certificatesresolvers.default.acme.email=thalles_tsc@hotmail.com" # Substitua pelo seu email
+      - "--certificatesresolvers.default.acme.storage=/acme.json"
       - "--serverstransport.insecureskipverify=true"
     networks:
       app_network:
