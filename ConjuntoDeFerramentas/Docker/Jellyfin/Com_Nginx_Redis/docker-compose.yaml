@@ -56,7 +56,7 @@ services:
     volumes:
       - /home/stream/jellyfin/config:/config:rw # Dados de configuração persistentes
       - /opt/stream/jellyfin/cache:/cache:rw # Cache temporário usado pela aplicação
-      - /home/stream/transmission/downloads/complete:/media:ro # Biblioteca de mídia
+      - /home/stream/transmission/downloads/complete:/media:rw # Biblioteca de mídia
       - type: tmpfs
         target: /cache
         tmpfs:
