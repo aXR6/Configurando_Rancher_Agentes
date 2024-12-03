@@ -20,13 +20,14 @@ services:
     container_name: traefik
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "traefik", "healthcheck"]
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/ping || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
     command:
       - "--log.level=INFO"
       - "--api.dashboard=true"
+      - "--api.insecure=false"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
@@ -34,7 +35,7 @@ services:
       - "--certificatesresolvers.cloudflare.acme.dnschallenge=true"
       - "--certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare"
       - "--certificatesresolvers.cloudflare.acme.storage=/acme.json"
-      - "--serverstransport.insecureskipverify=true"
+      - "--serverstransport.insecureskipverify=false" # Melhorar segurança
     networks:
       app_network:
         ipv4_address: 192.168.100.2
@@ -45,6 +46,15 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /home/stream/traefik/acme.json:/acme.json
     logging: *default-logging
+    labels:
+      - "traefik.http.middlewares.compress.compress=true"
+      - "traefik.http.middlewares.default-headers.headers.stsSeconds=31536000"
+      - "traefik.http.middlewares.default-headers.headers.stsIncludeSubdomains=true"
+      - "traefik.http.middlewares.default-headers.headers.forceSTSHeader=true"
+      - "traefik.http.middlewares.default-headers.headers.contentTypeNosniff=true"
+      - "traefik.http.middlewares.default-headers.headers.browserXssFilter=true"
+      - "traefik.http.middlewares.default-headers.headers.referrerPolicy=no-referrer"
+      - "traefik.http.middlewares.default-headers.headers.permissionsPolicy=accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
 
   jellyfin:
     image: jellyfin/jellyfin
@@ -83,7 +93,6 @@ services:
       - "traefik.http.middlewares.secure-headers.headers.browserXssFilter=true"
       - "traefik.http.middlewares.secure-headers.headers.referrerPolicy=no-referrer"
       - "traefik.http.middlewares.secure-headers.headers.permissionsPolicy=accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
-
   transmission:
     image: ghcr.io/linuxserver/transmission:latest
     container_name: transmission
@@ -96,15 +105,15 @@ services:
       - 51413:51413/udp    # Porta para conexões UDP do BitTorrent
     volumes:
       - /home/stream/transmission/config:/config:rw
-      - /home/stream/transmission/downloads:/downloads:rw,async,noatime,nodiratime
-      - /home/stream/transmission/downloads/incomplete:/incomplete:rw,async,noatime,nodiratime
+      - /home/stream/transmission/downloads:/downloads:rw
+      - /home/stream/transmission/downloads/incomplete:/incomplete:rw
       - /opt/stream/transmission/logs:/var/log/transmission:rw
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9091 || exit 1"]
+      test: ["CMD-SHELL", "curl -sf http://localhost:9091 || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -118,4 +127,4 @@ services:
       - "traefik.http.routers.transmission.rule=Host(`torrent.canela-stream.com.br`)"
       - "traefik.http.routers.transmission.entrypoints=websecure"
       - "traefik.http.routers.transmission.tls.certresolver=cloudflare"
-      - "traefik.http.services.transmission.loadbalancer.server.port=9091"
+      - "traefik.http.middlewares.compress.compress=true"
