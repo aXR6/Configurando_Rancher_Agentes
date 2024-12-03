@@ -93,38 +93,43 @@ services:
       - "traefik.http.middlewares.secure-headers.headers.browserXssFilter=true"
       - "traefik.http.middlewares.secure-headers.headers.referrerPolicy=no-referrer"
       - "traefik.http.middlewares.secure-headers.headers.permissionsPolicy=accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
+
   transmission:
-    image: ghcr.io/linuxserver/transmission:latest
-    container_name: transmission
-    restart: unless-stopped
-    networks:
-      app_network:
-        ipv4_address: 192.168.100.13
-    ports:
-      - 51413:51413/tcp    # Porta para conexões TCP do BitTorrent
-      - 51413:51413/udp    # Porta para conexões UDP do BitTorrent
-    volumes:
-      - /home/stream/transmission/config:/config:rw
-      - /home/stream/transmission/downloads:/downloads:rw
-      - /home/stream/transmission/downloads/incomplete:/incomplete:rw
-      - /opt/stream/transmission/logs:/var/log/transmission:rw
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:9091 || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "5"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.transmission.rule=Host(`torrent.canela-stream.com.br`)"
-      - "traefik.http.routers.transmission.entrypoints=websecure"
-      - "traefik.http.routers.transmission.tls.certresolver=cloudflare"
-      - "traefik.http.middlewares.compress.compress=true"
+        image: ghcr.io/linuxserver/transmission:latest
+        container_name: transmission
+        restart: unless-stopped
+        networks:
+          app_network:
+            ipv4_address: 192.168.100.13
+        ports:
+          - 51413:51413/tcp    # Porta para conexões TCP do BitTorrent
+          - 51413:51413/udp    # Porta para conexões UDP do BitTorrent
+        volumes:
+          - /home/stream/transmission/config:/config:rw
+          - /home/stream/transmission/downloads:/downloads:rw
+          - /home/stream/transmission/downloads/incomplete:/incomplete:rw
+          - /opt/stream/transmission/logs:/var/log/transmission:rw
+        environment:
+          - PUID=${PUID}
+          - PGID=${PGID}
+          - TZ=${TZ}
+          - TRANSMISSION_RPC_ENABLED=true           # Habilita o RPC
+          - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true # Requer autenticação
+          - TRANSMISSION_RPC_USERNAME=admin        # Substitua 'admin' pelo usuário desejado
+          - TRANSMISSION_RPC_PASSWORD=supersecure  # Substitua 'supersecure' pela senha desejada
+        healthcheck:
+          test: ["CMD-SHELL", "curl -sf http://localhost:9091 || exit 1"]
+          interval: 30s
+          timeout: 10s
+          retries: 5
+        logging:
+          driver: "json-file"
+          options:
+            max-size: "10m"
+            max-file: "5"
+        labels:
+          - "traefik.enable=true"
+          - "traefik.http.routers.transmission.rule=Host(`torrent.canela-stream.com.br`)"
+          - "traefik.http.routers.transmission.entrypoints=websecure"
+          - "traefik.http.routers.transmission.tls.certresolver=cloudflare"
+          - "traefik.http.middlewares.compress.compress=true"    
