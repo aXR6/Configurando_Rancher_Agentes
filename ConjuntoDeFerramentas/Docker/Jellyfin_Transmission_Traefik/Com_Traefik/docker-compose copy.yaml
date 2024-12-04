@@ -5,14 +5,14 @@ networks:
       config:
         - subnet: 192.168.100.0/24 # Define a faixa de IP da rede
     driver_opts:
-      com.docker.network.host_binding_ipv4: "0.0.0.0"
+      com.docker.network.host_binding_ipv4: "0.0.0.0" # Melhor desempenho na rede
 
 x-logging:
   &default-logging
   driver: "local"
   options:
-    max-size: "10m"
-    max-file: "5"
+    max-size: "5m"
+    max-file: "3"
 
 services:
   traefik:
@@ -35,7 +35,7 @@ services:
       - "--certificatesresolvers.cloudflare.acme.dnschallenge=true"
       - "--certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare"
       - "--certificatesresolvers.cloudflare.acme.storage=/acme.json"
-      - "--serverstransport.insecureskipverify=false"
+      - "--serverstransport.insecureskipverify=false" # Melhorar segurança
     networks:
       app_network:
         ipv4_address: 192.168.100.2
@@ -55,14 +55,6 @@ services:
       - "traefik.http.middlewares.default-headers.headers.browserXssFilter=true"
       - "traefik.http.middlewares.default-headers.headers.referrerPolicy=no-referrer"
       - "traefik.http.middlewares.default-headers.headers.permissionsPolicy=accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: "0.5"
-        reservations:
-          memory: 256M
-          cpus: "0.2"
 
   jellyfin:
     image: jellyfin/jellyfin
@@ -72,15 +64,15 @@ services:
       app_network:
         ipv4_address: 192.168.100.10
     volumes:
-      - /home/stream/jellyfin/config:/config:rw
-      - /opt/stream/jellyfin/cache:/cache:rw
-      - /home/stream/transmission/downloads/complete:/media:rw
+      - /home/stream/jellyfin/config:/config:rw # Dados de configuração persistentes
+      - /opt/stream/jellyfin/cache:/cache:rw # Cache temporário usado pela aplicação
+      - /home/stream/transmission/downloads/complete:/media:rw # Biblioteca de mídia
       - type: tmpfs
         target: /cache
         tmpfs:
-          size: 15G
+          size: 10G
     devices:
-      - /dev/dri:/dev/dri
+      - /dev/dri:/dev/dri # Intel Quick Sync para transcodificação
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -93,7 +85,7 @@ services:
       - "traefik.http.routers.jellyfin.entrypoints=websecure"
       - "traefik.http.routers.jellyfin.tls.certresolver=cloudflare"
       - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
-      - "traefik.http.middlewares.compress.compress=true"
+      - "traefik.http.middlewares.compress.compress=true" # Compressão HTTP
       - "traefik.http.middlewares.secure-headers.headers.stsSeconds=31536000"
       - "traefik.http.middlewares.secure-headers.headers.stsIncludeSubdomains=true"
       - "traefik.http.middlewares.secure-headers.headers.forceSTSHeader=true"
@@ -101,58 +93,43 @@ services:
       - "traefik.http.middlewares.secure-headers.headers.browserXssFilter=true"
       - "traefik.http.middlewares.secure-headers.headers.referrerPolicy=no-referrer"
       - "traefik.http.middlewares.secure-headers.headers.permissionsPolicy=accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
-    deploy:
-      resources:
-        limits:
-          memory: 4G
-          cpus: "2.0"
-        reservations:
-          memory: 2G
-          cpus: "1.0"
 
   transmission:
-    image: ghcr.io/linuxserver/transmission:latest
-    container_name: transmission
-    restart: unless-stopped
-    networks:
-      app_network:
-        ipv4_address: 192.168.100.13
-    ports:
-      - 51413:51413/tcp
-      - 51413:51413/udp
-    volumes:
-      - /home/stream/transmission/config:/config:rw
-      - /home/stream/transmission/downloads:/downloads:rw
-      - /home/stream/transmission/downloads/incomplete:/incomplete:rw
-      - /opt/stream/transmission/logs:/var/log/transmission:rw
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-      - TRANSMISSION_RPC_ENABLED=true
-      - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true
-      - TRANSMISSION_RPC_USERNAME=admin
-      - TRANSMISSION_RPC_PASSWORD=supersecure
-      - TRANSMISSION_PEER_ENCRYPTION=required
-      - TRANSMISSION_SPEED_LIMIT_UP=500
-      - TRANSMISSION_SPEED_LIMIT_DOWN=2000
-    healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:9091 || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-    logging: *default-logging
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.transmission.rule=Host(`torrent.canela-stream.com.br`)"
-      - "traefik.http.routers.transmission.entrypoints=websecure"
-      - "traefik.http.routers.transmission.tls.certresolver=cloudflare"
-      - "traefik.http.middlewares.compress.compress=true"
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-          cpus: "1.0"
-        reservations:
-          memory: 512M
-          cpus: "0.5"
+        image: ghcr.io/linuxserver/transmission:latest
+        container_name: transmission
+        restart: unless-stopped
+        networks:
+          app_network:
+            ipv4_address: 192.168.100.13
+        ports:
+          - 51413:51413/tcp    # Porta para conexões TCP do BitTorrent
+          - 51413:51413/udp    # Porta para conexões UDP do BitTorrent
+        volumes:
+          - /home/stream/transmission/config:/config:rw
+          - /home/stream/transmission/downloads:/downloads:rw
+          - /home/stream/transmission/downloads/incomplete:/incomplete:rw
+          - /opt/stream/transmission/logs:/var/log/transmission:rw
+        environment:
+          - PUID=${PUID}
+          - PGID=${PGID}
+          - TZ=${TZ}
+          - TRANSMISSION_RPC_ENABLED=true           # Habilita o RPC
+          - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true # Requer autenticação
+          - TRANSMISSION_RPC_USERNAME=admin        # Substitua 'admin' pelo usuário desejado
+          - TRANSMISSION_RPC_PASSWORD=supersecure  # Substitua 'supersecure' pela senha desejada
+        healthcheck:
+          test: ["CMD-SHELL", "curl -sf http://localhost:9091 || exit 1"]
+          interval: 30s
+          timeout: 10s
+          retries: 5
+        logging:
+          driver: "json-file"
+          options:
+            max-size: "10m"
+            max-file: "5"
+        labels:
+          - "traefik.enable=true"
+          - "traefik.http.routers.transmission.rule=Host(`torrent.canela-stream.com.br`)"
+          - "traefik.http.routers.transmission.entrypoints=websecure"
+          - "traefik.http.routers.transmission.tls.certresolver=cloudflare"
+          - "traefik.http.middlewares.compress.compress=true"    
