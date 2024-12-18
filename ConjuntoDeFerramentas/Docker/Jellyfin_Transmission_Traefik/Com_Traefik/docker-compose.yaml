@@ -72,7 +72,7 @@ services:
       app_network:
         ipv4_address: 192.168.100.10
     volumes:
-      - /home/stream/jellyfin/config:/config:rw
+      - /opt/stream/jellyfin/config:/config:rw
       - /opt/stream/jellyfin/cache:/cache:rw
       - /home/stream/transmission/downloads/complete:/media:rw
       - type: tmpfs
