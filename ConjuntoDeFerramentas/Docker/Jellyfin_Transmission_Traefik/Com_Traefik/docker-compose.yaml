@@ -121,7 +121,7 @@ services:
       - 51413:51413/tcp
       - 51413:51413/udp
     volumes:
-      - /home/stream/transmission/config:/config:rw
+      - /opt/stream/transmission/config:/config:rw
       - /home/stream/transmission/downloads:/downloads:rw
       - /home/stream/transmission/downloads/incomplete:/incomplete:rw
       - /opt/stream/transmission/logs:/var/log/transmission:rw
