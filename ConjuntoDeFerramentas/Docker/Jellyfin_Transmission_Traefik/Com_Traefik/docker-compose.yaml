@@ -65,7 +65,7 @@ services:
           cpus: "0.2"
 
   jellyfin:
-    image: jellyfin/jellyfin
+    image: jellyfin/jellyfin:latest
     container_name: jellyfin
     restart: unless-stopped
     networks:
