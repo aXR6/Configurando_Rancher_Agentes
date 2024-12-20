@@ -76,7 +76,7 @@ services:
       - /opt/stream/jellyfin/cache:/cache:rw
       - /home/stream/transmission/downloads/complete:/media:rw
       - type: tmpfs
-        target: /cache
+        target: /opt/stream/jellyfin/cache
         tmpfs:
           size: 15G
     devices:
