@@ -133,22 +133,18 @@ services:
     ports:
       - 51413:51413/tcp
       - 51413:51413/udp
+      - 9091:9091 # Porta padrão para interface web do Transmission
     volumes:
       - /opt/stream/transmission/config:/config:rw
       - /home/stream/transmission/downloads:/downloads:rw
       - /home/stream/transmission/downloads/incomplete:/incomplete:rw
-      - /opt/stream/transmission/logs:/var/log/transmission:rw
     environment:
       - PUID=${PUID} # User ID para permissões
       - PGID=${PGID} # Group ID para permissões
       - TZ=${TZ} # Timezone
-      - TRANSMISSION_RPC_ENABLED=true # Habilita o RPC
-      - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true # Requer autenticação para RPC
-      - TRANSMISSION_RPC_USERNAME=${USER} # Variável para o nome de usuário
-      - TRANSMISSION_RPC_PASSWORD=${PASS} # Variável para a senha
-      - TRANSMISSION_PEER_ENCRYPTION=required # Criptografia de pares obrigatória
-      - TRANSMISSION_SPEED_LIMIT_UP=500 # Limite de upload em KB/s
-      - TRANSMISSION_SPEED_LIMIT_DOWN=2000 # Limite de download em KB/s
+      - TRANSMISSION_WEB_UI=combustion # Interface web alternativa (opcional)
+      - USER=${USER} # Usuário para autenticação
+      - PASS=${PASS} # Senha para autenticação
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://localhost:9091 || exit 1"]
       interval: 30s
