@@ -90,7 +90,6 @@ O projeto foi configurado com práticas recomendadas para cache e streaming, gar
 
 Para aprimoramentos futuros, investir em monitoramento e cache distribuído trará ainda mais robustez à solução.
 ```
-
 Thalles Canela - TSC
 Canal no YouTube: https://www.youtube.com/c/aXR6CyberSecurity
 Perfil no Github: https://github.com/aXR6/
