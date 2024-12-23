@@ -133,22 +133,31 @@ services:
     ports:
       - 51413:51413/tcp
       - 51413:51413/udp
+      - 9091:9091 # Porta do RPC Web UI
     volumes:
-      - /opt/stream/transmission/config:/config:rw
-      - /home/stream/transmission/downloads:/downloads:rw
-      - /home/stream/transmission/downloads/incomplete:/incomplete:rw
-      - /opt/stream/transmission/logs:/var/log/transmission:rw
+      - /opt/stream/transmission/config:/config:rw # Configuração persistente
+      - /home/stream/transmission/downloads:/downloads:rw # Downloads completos
+      - /home/stream/transmission/downloads/incomplete:/incomplete:rw # Downloads incompletos
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-      - TRANSMISSION_RPC_ENABLED=true
-      - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true
-      - USER=${USER} # Usuário para autenticação
-      - PASS=${PASS} # Senha para autenticação
-      - TRANSMISSION_PEER_ENCRYPTION=required
-      - TRANSMISSION_SPEED_LIMIT_UP=500
-      - TRANSMISSION_SPEED_LIMIT_DOWN=2000
+      - PUID=${PUID} # ID do usuário para permissões
+      - PGID=${PGID} # ID do grupo para permissões
+      - TZ=${TZ} # Fuso horário
+      - TRANSMISSION_WEB_HOME=/combustion-release/ # Tema da interface web
+      - TRANSMISSION_RPC_ENABLED=true # Habilitar RPC
+      - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true # Habilitar autenticação no RPC
+      - TRANSMISSION_RPC_USERNAME=${USER} # Usuário para autenticação RPC
+      - TRANSMISSION_RPC_PASSWORD=${PASS} # Senha para autenticação RPC
+      - TRANSMISSION_PEER_PORT=51413 # Porta para peers
+      - TRANSMISSION_PEER_ENCRYPTION=required # Encriptação obrigatória
+      - TRANSMISSION_DOWNLOAD_DIR=/downloads # Diretório de downloads completos
+      - TRANSMISSION_INCOMPLETE_DIR=/incomplete # Diretório de downloads incompletos
+      - TRANSMISSION_INCOMPLETE_DIR_ENABLED=true # Habilitar diretório de downloads incompletos
+      - TRANSMISSION_SPEED_LIMIT_UP=500 # Limite de upload em KBps
+      - TRANSMISSION_SPEED_LIMIT_DOWN=2000 # Limite de download em KBps
+      - TRANSMISSION_SPEED_LIMIT_UP_ENABLED=true
+      - TRANSMISSION_SPEED_LIMIT_DOWN_ENABLED=true
+      - TRANSMISSION_RATIO_LIMIT_ENABLED=true # Ativar limite de ratio
+      - TRANSMISSION_RATIO_LIMIT=1.5 # Limite de ratio 1.5
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://localhost:9091 || exit 1"]
       interval: 30s
