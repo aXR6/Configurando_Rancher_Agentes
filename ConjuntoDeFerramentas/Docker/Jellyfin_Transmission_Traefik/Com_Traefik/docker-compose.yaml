@@ -55,17 +55,9 @@ services:
       - "traefik.http.middlewares.default-headers.headers.browserXssFilter=true"
       - "traefik.http.middlewares.default-headers.headers.referrerPolicy=no-referrer"
       - "traefik.http.middlewares.default-headers.headers.permissionsPolicy=accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
-      - "traefik.http.middlewares.cache-headers.headers.customResponseHeaders.Cache-Control=max-age=3600, public"
-      - "traefik.http.middlewares.cache-headers.headers.customResponseHeaders.Expires=$(date --date='+1 hour' -u +%a, %d %b %Y %T GMT)"
-      - "traefik.http.middlewares.cache-headers.headers.customResponseHeaders.Pragma=cache"
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: "0.5"
-        reservations:
-          memory: 256M
-          cpus: "0.2"
+      # Headers de Cache otimizados para streaming
+      - "traefik.http.middlewares.cache-headers.headers.customResponseHeaders.Cache-Control=no-store, must-revalidate"
+      - "traefik.http.middlewares.cache-headers.headers.customResponseHeaders.Pragma=no-cache"
 
   jellyfin:
     image: jellyfin/jellyfin:latest
@@ -81,7 +73,7 @@ services:
       - type: tmpfs
         target: /opt/stream/jellyfin/cache
         tmpfs:
-          size: 15G
+          size: 20G # Aumentado para lidar com maior carga de transcodificação
     devices:
       - /dev/dri:/dev/dri
     environment:
@@ -110,10 +102,9 @@ services:
       - "traefik.http.middlewares.secure-headers.headers.browserXssFilter=true"
       - "traefik.http.middlewares.secure-headers.headers.referrerPolicy=no-referrer"
       - "traefik.http.middlewares.secure-headers.headers.permissionsPolicy=accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
-      - "traefik.http.middlewares.jellyfin-cache.headers.customResponseHeaders.Cache-Control=max-age=3600, public, immutable"
-      - "traefik.http.middlewares.jellyfin-cache.headers.customResponseHeaders.ETag=always"
-      - "traefik.http.middlewares.jellyfin-cache.headers.customResponseHeaders.Expires=$(date --date='+1 hour' -u +%a, %d %b %Y %T GMT)"
-      - "traefik.http.middlewares.jellyfin-cache.headers.customResponseHeaders.Pragma=cache"
+      # Cache headers otimizados para mídia
+      - "traefik.http.middlewares.jellyfin-cache.headers.customResponseHeaders.Cache-Control=no-cache, must-revalidate, max-age=0"
+      - "traefik.http.middlewares.jellyfin-cache.headers.customResponseHeaders.Pragma=no-cache"
     deploy:
       resources:
         limits:
