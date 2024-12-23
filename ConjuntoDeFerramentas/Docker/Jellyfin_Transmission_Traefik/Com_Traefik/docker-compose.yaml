@@ -142,7 +142,6 @@ services:
       - PUID=${PUID} # ID do usuário para permissões
       - PGID=${PGID} # ID do grupo para permissões
       - TZ=${TZ} # Fuso horário
-      - TRANSMISSION_WEB_HOME=/combustion-release/ # Tema da interface web
       - TRANSMISSION_RPC_ENABLED=true # Habilitar RPC
       - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true # Habilitar autenticação no RPC
       - TRANSMISSION_RPC_USERNAME=${USER} # Usuário para autenticação RPC
