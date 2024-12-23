@@ -5,14 +5,14 @@ networks:
       config:
         - subnet: 192.168.100.0/24 # Define a faixa de IP da rede
     driver_opts:
-      com.docker.network.host_binding_ipv4: "0.0.0.0" # Melhor desempenho na rede
+      com.docker.network.host_binding_ipv4: "0.0.0.0"
 
 x-logging:
   &default-logging
   driver: "local"
   options:
-    max-size: "5m"
-    max-file: "3"
+    max-size: "10m"
+    max-file: "5"
 
 services:
   traefik:
@@ -35,7 +35,7 @@ services:
       - "--certificatesresolvers.cloudflare.acme.dnschallenge=true"
       - "--certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare"
       - "--certificatesresolvers.cloudflare.acme.storage=/acme.json"
-      - "--serverstransport.insecureskipverify=false" # Melhorar segurança
+      - "--serverstransport.insecureskipverify=false"
     networks:
       app_network:
         ipv4_address: 192.168.100.2
@@ -55,29 +55,38 @@ services:
       - "traefik.http.middlewares.default-headers.headers.browserXssFilter=true"
       - "traefik.http.middlewares.default-headers.headers.referrerPolicy=no-referrer"
       - "traefik.http.middlewares.default-headers.headers.permissionsPolicy=accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
+      # Headers de Cache otimizados para streaming
+      - "traefik.http.middlewares.cache-headers.headers.customResponseHeaders.Cache-Control=no-store, must-revalidate"
+      - "traefik.http.middlewares.cache-headers.headers.customResponseHeaders.Pragma=no-cache"
 
   jellyfin:
-    image: jellyfin/jellyfin
+    image: jellyfin/jellyfin:latest
     container_name: jellyfin
     restart: unless-stopped
     networks:
       app_network:
         ipv4_address: 192.168.100.10
     volumes:
-      - /home/stream/jellyfin/config:/config:rw # Dados de configuração persistentes
-      - /opt/stream/jellyfin/cache:/cache:rw # Cache temporário usado pela aplicação
-      - /home/stream/transmission/downloads/complete:/media:rw # Biblioteca de mídia
+      - /opt/stream/jellyfin/config:/config:rw
+      - /opt/stream/jellyfin/cache:/cache:rw
+      - /home/stream/transmission/downloads/complete:/media:rw
       - type: tmpfs
-        target: /cache
+        target: /opt/stream/jellyfin/cache
         tmpfs:
-          size: 10G
+          size: 20G # Aumentado para lidar com maior carga de transcodificação
     devices:
-      - /dev/dri:/dev/dri # Intel Quick Sync para transcodificação
+      - /dev/dri:/dev/dri
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
       - JELLYFIN_PublishedServerUrl=https://canela-stream.com.br
+      - JELLYFIN_HWACCEL="true"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8096 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     logging: *default-logging
     labels:
       - "traefik.enable=true"
@@ -85,7 +94,7 @@ services:
       - "traefik.http.routers.jellyfin.entrypoints=websecure"
       - "traefik.http.routers.jellyfin.tls.certresolver=cloudflare"
       - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
-      - "traefik.http.middlewares.compress.compress=true" # Compressão HTTP
+      - "traefik.http.middlewares.compress.compress=true"
       - "traefik.http.middlewares.secure-headers.headers.stsSeconds=31536000"
       - "traefik.http.middlewares.secure-headers.headers.stsIncludeSubdomains=true"
       - "traefik.http.middlewares.secure-headers.headers.forceSTSHeader=true"
@@ -93,43 +102,69 @@ services:
       - "traefik.http.middlewares.secure-headers.headers.browserXssFilter=true"
       - "traefik.http.middlewares.secure-headers.headers.referrerPolicy=no-referrer"
       - "traefik.http.middlewares.secure-headers.headers.permissionsPolicy=accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
+      # Cache headers otimizados para mídia
+      - "traefik.http.middlewares.jellyfin-cache.headers.customResponseHeaders.Cache-Control=no-cache, must-revalidate, max-age=0"
+      - "traefik.http.middlewares.jellyfin-cache.headers.customResponseHeaders.Pragma=no-cache"
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: "2.0"
+        reservations:
+          memory: 2G
+          cpus: "1.0"
 
   transmission:
-        image: ghcr.io/linuxserver/transmission:latest
-        container_name: transmission
-        restart: unless-stopped
-        networks:
-          app_network:
-            ipv4_address: 192.168.100.13
-        ports:
-          - 51413:51413/tcp    # Porta para conexões TCP do BitTorrent
-          - 51413:51413/udp    # Porta para conexões UDP do BitTorrent
-        volumes:
-          - /home/stream/transmission/config:/config:rw
-          - /home/stream/transmission/downloads:/downloads:rw
-          - /home/stream/transmission/downloads/incomplete:/incomplete:rw
-          - /opt/stream/transmission/logs:/var/log/transmission:rw
-        environment:
-          - PUID=${PUID}
-          - PGID=${PGID}
-          - TZ=${TZ}
-          - TRANSMISSION_RPC_ENABLED=true           # Habilita o RPC
-          - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true # Requer autenticação
-          - TRANSMISSION_RPC_USERNAME=admin        # Substitua 'admin' pelo usuário desejado
-          - TRANSMISSION_RPC_PASSWORD=supersecure  # Substitua 'supersecure' pela senha desejada
-        healthcheck:
-          test: ["CMD-SHELL", "curl -sf http://localhost:9091 || exit 1"]
-          interval: 30s
-          timeout: 10s
-          retries: 5
-        logging:
-          driver: "json-file"
-          options:
-            max-size: "10m"
-            max-file: "5"
-        labels:
-          - "traefik.enable=true"
-          - "traefik.http.routers.transmission.rule=Host(`torrent.canela-stream.com.br`)"
-          - "traefik.http.routers.transmission.entrypoints=websecure"
-          - "traefik.http.routers.transmission.tls.certresolver=cloudflare"
-          - "traefik.http.middlewares.compress.compress=true"    
+    image: ghcr.io/linuxserver/transmission:latest
+    container_name: transmission
+    restart: unless-stopped
+    networks:
+      app_network:
+        ipv4_address: 192.168.100.13
+    ports:
+      - 51413:51413/tcp
+      - 51413:51413/udp
+      - 9091:9091 # Porta do RPC Web UI
+    volumes:
+      - /opt/stream/transmission/config:/config:rw # Configuração persistente
+      - /home/stream/transmission/downloads:/downloads:rw # Downloads completos
+      - /home/stream/transmission/downloads/incomplete:/incomplete:rw # Downloads incompletos
+    environment:
+      - PUID=${PUID} # ID do usuário para permissões
+      - PGID=${PGID} # ID do grupo para permissões
+      - TZ=${TZ} # Fuso horário
+      - TRANSMISSION_RPC_ENABLED=true # Habilitar RPC
+      - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true # Habilitar autenticação no RPC
+      - TRANSMISSION_RPC_USERNAME=${USER} # Usuário para autenticação RPC
+      - TRANSMISSION_RPC_PASSWORD=${PASS} # Senha para autenticação RPC
+      - TRANSMISSION_PEER_PORT=51413 # Porta para peers
+      - TRANSMISSION_PEER_ENCRYPTION=required # Encriptação obrigatória
+      - TRANSMISSION_DOWNLOAD_DIR=/downloads # Diretório de downloads completos
+      - TRANSMISSION_INCOMPLETE_DIR=/incomplete # Diretório de downloads incompletos
+      - TRANSMISSION_INCOMPLETE_DIR_ENABLED=true # Habilitar diretório de downloads incompletos
+      - TRANSMISSION_SPEED_LIMIT_UP=500 # Limite de upload em KBps
+      - TRANSMISSION_SPEED_LIMIT_DOWN=2000 # Limite de download em KBps
+      - TRANSMISSION_SPEED_LIMIT_UP_ENABLED=true
+      - TRANSMISSION_SPEED_LIMIT_DOWN_ENABLED=true
+      - TRANSMISSION_RATIO_LIMIT_ENABLED=true # Ativar limite de ratio
+      - TRANSMISSION_RATIO_LIMIT=1.5 # Limite de ratio 1.5
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9091 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    logging: *default-logging
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.transmission.rule=Host(`torrent.canela-stream.com.br`)"
+      - "traefik.http.routers.transmission.entrypoints=websecure"
+      - "traefik.http.routers.transmission.tls.certresolver=cloudflare"
+      - "traefik.http.middlewares.compress.compress=true"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "1.0"
+        reservations:
+          memory: 512M
+          cpus: "0.5"
