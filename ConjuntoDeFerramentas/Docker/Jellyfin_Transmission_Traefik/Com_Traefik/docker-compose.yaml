@@ -133,7 +133,6 @@ services:
     ports:
       - 51413:51413/tcp
       - 51413:51413/udp
-      - 9091:9091 # Porta padrão para interface web do Transmission
     volumes:
       - /opt/stream/transmission/config:/config:rw
       - /home/stream/transmission/downloads:/downloads:rw
