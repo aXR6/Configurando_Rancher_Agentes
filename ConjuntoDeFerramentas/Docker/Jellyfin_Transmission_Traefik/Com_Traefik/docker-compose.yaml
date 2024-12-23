@@ -139,11 +139,16 @@ services:
       - /home/stream/transmission/downloads/incomplete:/incomplete:rw
       - /opt/stream/transmission/logs:/var/log/transmission:rw
     environment:
-      - PUID=${PUID} # User ID para permissões
-      - PGID=${PGID} # Group ID para permissões
-      - TZ=${TZ} # Timezone
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - TRANSMISSION_RPC_ENABLED=true
+      - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true
       - USER=${USER} # Usuário para autenticação
       - PASS=${PASS} # Senha para autenticação
+      - TRANSMISSION_PEER_ENCRYPTION=required
+      - TRANSMISSION_SPEED_LIMIT_UP=500
+      - TRANSMISSION_SPEED_LIMIT_DOWN=2000
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://localhost:9091 || exit 1"]
       interval: 30s
