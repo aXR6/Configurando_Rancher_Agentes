@@ -47,10 +47,7 @@ services:
       - /home/stream/traefik/acme.json:/acme.json
     logging: *default-logging
     labels:
-      # Middleware para compressão de resposta
       - "traefik.http.middlewares.compress.compress=true"
-
-      # Middleware para headers de segurança
       - "traefik.http.middlewares.default-headers.headers.stsSeconds=31536000"
       - "traefik.http.middlewares.default-headers.headers.stsIncludeSubdomains=true"
       - "traefik.http.middlewares.default-headers.headers.forceSTSHeader=true"
@@ -58,12 +55,9 @@ services:
       - "traefik.http.middlewares.default-headers.headers.browserXssFilter=true"
       - "traefik.http.middlewares.default-headers.headers.referrerPolicy=no-referrer"
       - "traefik.http.middlewares.default-headers.headers.permissionsPolicy=accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
-
-      # Middleware para controle de cache
       - "traefik.http.middlewares.cache-headers.headers.customResponseHeaders.Cache-Control=max-age=3600, public"
       - "traefik.http.middlewares.cache-headers.headers.customResponseHeaders.Expires=$(date --date='+1 hour' -u +%a, %d %b %Y %T GMT)"
       - "traefik.http.middlewares.cache-headers.headers.customResponseHeaders.Pragma=cache"
-
     deploy:
       resources:
         limits:
@@ -95,6 +89,12 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
       - JELLYFIN_PublishedServerUrl=https://canela-stream.com.br
+      - JELLYFIN_HWACCEL="true"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8096 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     logging: *default-logging
     labels:
       - "traefik.enable=true"
@@ -110,6 +110,10 @@ services:
       - "traefik.http.middlewares.secure-headers.headers.browserXssFilter=true"
       - "traefik.http.middlewares.secure-headers.headers.referrerPolicy=no-referrer"
       - "traefik.http.middlewares.secure-headers.headers.permissionsPolicy=accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
+      - "traefik.http.middlewares.jellyfin-cache.headers.customResponseHeaders.Cache-Control=max-age=3600, public, immutable"
+      - "traefik.http.middlewares.jellyfin-cache.headers.customResponseHeaders.ETag=always"
+      - "traefik.http.middlewares.jellyfin-cache.headers.customResponseHeaders.Expires=$(date --date='+1 hour' -u +%a, %d %b %Y %T GMT)"
+      - "traefik.http.middlewares.jellyfin-cache.headers.customResponseHeaders.Pragma=cache"
     deploy:
       resources:
         limits:
