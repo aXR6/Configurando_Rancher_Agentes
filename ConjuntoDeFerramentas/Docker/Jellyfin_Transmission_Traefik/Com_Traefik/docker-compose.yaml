@@ -102,6 +102,12 @@ services:
       - TZ=${TZ}
       - JELLYFIN_PublishedServerUrl=https://canela-stream.com.br
       - JELLYFIN_HWACCEL="true"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyfin.rule=Host(`canela-stream.com.br`)"
+      - "traefik.http.routers.jellyfin.entrypoints=websecure"
+      - "traefik.http.routers.jellyfin.service=nginx-cache"
+      - "traefik.http.services.nginx-cache.loadbalancer.server.port=80"
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://localhost:8096 || exit 1"]
       interval: 30s
