@@ -144,10 +144,19 @@ services:
       - TZ=${TZ} # Fuso horário
       - TRANSMISSION_RPC_ENABLED=true # Habilitar RPC
       - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true # Habilitar autenticação no RPC
-      - USER=${USER} # Usuário para autenticação RPC
-      - PASS=${PASS} # Senha para autenticação RPC
+      - TRANSMISSION_RPC_USERNAME=${USER} # Usuário para autenticação RPC
+      - TRANSMISSION_RPC_PASSWORD=${PASS} # Senha para autenticação RPC
       - TRANSMISSION_PEER_PORT=51413 # Porta para peers
       - TRANSMISSION_PEER_ENCRYPTION=required # Encriptação obrigatória
+      - TRANSMISSION_DOWNLOAD_DIR=/downloads # Diretório de downloads completos
+      - TRANSMISSION_INCOMPLETE_DIR=/incomplete # Diretório de downloads incompletos
+      - TRANSMISSION_INCOMPLETE_DIR_ENABLED=true # Habilitar diretório de downloads incompletos
+      - TRANSMISSION_SPEED_LIMIT_UP=500 # Limite de upload em KBps
+      - TRANSMISSION_SPEED_LIMIT_DOWN=2000 # Limite de download em KBps
+      - TRANSMISSION_SPEED_LIMIT_UP_ENABLED=true
+      - TRANSMISSION_SPEED_LIMIT_DOWN_ENABLED=true
+      - TRANSMISSION_RATIO_LIMIT_ENABLED=true # Ativar limite de ratio
+      - TRANSMISSION_RATIO_LIMIT=1.5 # Limite de ratio 1.5
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://localhost:9091 || exit 1"]
       interval: 30s
