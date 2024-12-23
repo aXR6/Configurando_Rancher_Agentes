@@ -60,6 +60,12 @@ services:
       - "traefik.http.middlewares.default-headers.headers.permissionsPolicy=accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
       - "traefik.http.middlewares.cache-headers.headers.customResponseHeaders.Cache-Control=private, no-store, must-revalidate"
       - "traefik.http.middlewares.jellyfin-stream.headers.customResponseHeaders.Accept-Ranges=bytes"
+    environment:
+      - CLOUDFLARE_EMAIL=axr6.forum@gmail.com
+      - CLOUDFLARE_API_KEY=9a0a8ada7e27a9f575d738d187df0d35f10f9
+      # ou, se estiver usando tokens de API personalizados:
+      # - CLOUDFLARE_DNS_API_TOKEN=suatokenpersonalizado
+      # - CLOUDFLARE_ZONE_API_TOKEN=suatokenpersonalizado
 
   jellyfin:
     image: jellyfin/jellyfin:latest
