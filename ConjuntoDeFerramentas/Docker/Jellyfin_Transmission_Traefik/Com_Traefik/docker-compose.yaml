@@ -3,7 +3,7 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 192.168.100.0/24
+        - subnet: 192.168.100.0/24 # Define a faixa de IP da rede
     driver_opts:
       com.docker.network.host_binding_ipv4: "0.0.0.0"
 
@@ -55,29 +55,9 @@ services:
       - "traefik.http.middlewares.default-headers.headers.browserXssFilter=true"
       - "traefik.http.middlewares.default-headers.headers.referrerPolicy=no-referrer"
       - "traefik.http.middlewares.default-headers.headers.permissionsPolicy=accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
-      - "traefik.http.routers.jellyfin.rule=Host(`canela-stream.com.br`)"
-      - "traefik.http.routers.jellyfin.entrypoints=websecure"
-      - "traefik.http.routers.jellyfin.service=nginx-cache"
-      - "traefik.http.services.nginx-cache.loadbalancer.server.port=80"
-
-  nginx-cache:
-    image: nginx:latest
-    container_name: nginx-cache
-    restart: unless-stopped
-    networks:
-      app_network:
-        ipv4_address: 192.168.100.20
-    ports:
-      - "8080:80"
-    volumes:
-      - /home/stream/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - /opt/nginx-cache:/var/cache/nginx
-    logging: *default-logging
-    healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      # Headers de Cache otimizados para streaming
+      - "traefik.http.middlewares.cache-headers.headers.customResponseHeaders.Cache-Control=no-store, must-revalidate"
+      - "traefik.http.middlewares.cache-headers.headers.customResponseHeaders.Pragma=no-cache"
 
   jellyfin:
     image: jellyfin/jellyfin:latest
@@ -93,7 +73,7 @@ services:
       - type: tmpfs
         target: /opt/stream/jellyfin/cache
         tmpfs:
-          size: 20G
+          size: 20G # Aumentado para lidar com maior carga de transcodificação
     devices:
       - /dev/dri:/dev/dri
     environment:
@@ -102,18 +82,37 @@ services:
       - TZ=${TZ}
       - JELLYFIN_PublishedServerUrl=https://canela-stream.com.br
       - JELLYFIN_HWACCEL="true"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.jellyfin.rule=Host(`canela-stream.com.br`)"
-      - "traefik.http.routers.jellyfin.entrypoints=websecure"
-      - "traefik.http.routers.jellyfin.service=nginx-cache"
-      - "traefik.http.services.nginx-cache.loadbalancer.server.port=80"
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://localhost:8096 || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
     logging: *default-logging
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyfin.rule=Host(`canela-stream.com.br`)"
+      - "traefik.http.routers.jellyfin.entrypoints=websecure"
+      - "traefik.http.routers.jellyfin.tls.certresolver=cloudflare"
+      - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
+      - "traefik.http.middlewares.compress.compress=true"
+      - "traefik.http.middlewares.secure-headers.headers.stsSeconds=31536000"
+      - "traefik.http.middlewares.secure-headers.headers.stsIncludeSubdomains=true"
+      - "traefik.http.middlewares.secure-headers.headers.forceSTSHeader=true"
+      - "traefik.http.middlewares.secure-headers.headers.contentTypeNosniff=true"
+      - "traefik.http.middlewares.secure-headers.headers.browserXssFilter=true"
+      - "traefik.http.middlewares.secure-headers.headers.referrerPolicy=no-referrer"
+      - "traefik.http.middlewares.secure-headers.headers.permissionsPolicy=accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'"
+      # Cache headers otimizados para mídia
+      - "traefik.http.middlewares.jellyfin-cache.headers.customResponseHeaders.Cache-Control=no-cache, must-revalidate, max-age=0"
+      - "traefik.http.middlewares.jellyfin-cache.headers.customResponseHeaders.Pragma=no-cache"
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: "2.0"
+        reservations:
+          memory: 2G
+          cpus: "1.0"
 
   transmission:
     image: ghcr.io/linuxserver/transmission:latest
