@@ -138,6 +138,7 @@ services:
       - /opt/stream/transmission/config:/config:rw
       - /home/stream/transmission/downloads:/downloads:rw
       - /home/stream/transmission/downloads/incomplete:/incomplete:rw
+      - /opt/stream/transmission/logs:/var/log/transmission:rw
     environment:
       - PUID=${PUID} # User ID para permissões
       - PGID=${PGID} # Group ID para permissões
