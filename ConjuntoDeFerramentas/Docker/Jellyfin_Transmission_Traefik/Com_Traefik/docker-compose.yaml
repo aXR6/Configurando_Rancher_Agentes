@@ -142,7 +142,6 @@ services:
       - PUID=${PUID} # User ID para permissões
       - PGID=${PGID} # Group ID para permissões
       - TZ=${TZ} # Timezone
-      - TRANSMISSION_WEB_UI=combustion # Interface web alternativa (opcional)
       - USER=${USER} # Usuário para autenticação
       - PASS=${PASS} # Senha para autenticação
     healthcheck:
