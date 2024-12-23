@@ -139,18 +139,16 @@ services:
       - /home/stream/transmission/downloads/incomplete:/incomplete:rw
       - /opt/stream/transmission/logs:/var/log/transmission:rw
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-      - TRANSMISSION_RPC_ENABLED=true
-      - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true
-      - TRANSMISSION_RPC_USERNAME=${USER}
-      - TRANSMISSION_RPC_PASSWORD=${PASS}
-      - TRANSMISSION_PEER_ENCRYPTION=required
-      - TRANSMISSION_RPC_WHITELIST_ENABLED=false
-      - TRANSMISSION_RPC_HOST_WHITELIST_ENABLED=false
-      - TRANSMISSION_SPEED_LIMIT_UP=500
-      - TRANSMISSION_SPEED_LIMIT_DOWN=2000
+      - PUID=${PUID} # User ID para permissões
+      - PGID=${PGID} # Group ID para permissões
+      - TZ=${TZ} # Timezone
+      - TRANSMISSION_RPC_ENABLED=true # Habilita o RPC
+      - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true # Requer autenticação para RPC
+      - TRANSMISSION_RPC_USERNAME=${USER} # Variável para o nome de usuário
+      - TRANSMISSION_RPC_PASSWORD=${PASS} # Variável para a senha
+      - TRANSMISSION_PEER_ENCRYPTION=required # Criptografia de pares obrigatória
+      - TRANSMISSION_SPEED_LIMIT_UP=500 # Limite de upload em KB/s
+      - TRANSMISSION_SPEED_LIMIT_DOWN=2000 # Limite de download em KB/s
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://localhost:9091 || exit 1"]
       interval: 30s
