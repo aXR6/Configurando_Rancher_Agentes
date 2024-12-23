@@ -144,8 +144,8 @@ services:
       - TZ=${TZ} # Fuso horário
       - TRANSMISSION_RPC_ENABLED=true # Habilitar RPC
       - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true # Habilitar autenticação no RPC
-      - TRANSMISSION_RPC_USERNAME=${USER} # Usuário para autenticação RPC
-      - TRANSMISSION_RPC_PASSWORD=${PASS} # Senha para autenticação RPC
+      - USER=${USER} # Usuário para autenticação RPC
+      - PASS=${PASS} # Senha para autenticação RPC
       - TRANSMISSION_PEER_PORT=51413 # Porta para peers
       - TRANSMISSION_PEER_ENCRYPTION=required # Encriptação obrigatória
       - TRANSMISSION_DOWNLOAD_DIR=/downloads # Diretório de downloads completos
