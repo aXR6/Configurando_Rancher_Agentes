@@ -119,14 +119,14 @@ services:
       - "traefik.http.middlewares.jellyfin-cache.headers.customResponseHeaders.Cache-Control=public, max-age=3600, stale-while-revalidate=600"
       - "traefik.http.middlewares.jellyfin-cache.headers.customResponseHeaders.Pragma=no-cache"
       - "traefik.http.middlewares.jellyfin-stream.headers.customResponseHeaders.Accept-Ranges=bytes"
-    deploy:
-      resources:
-        limits:
-          memory: 3G
-          cpus: "2.5"
-        reservations:
-          memory: 2G
-          cpus: "2.0"
+    #deploy:
+      #resources:
+        #limits:
+          #memory: 3G
+          #cpus: "2.5"
+        #reservations:
+          #memory: 2G
+          #cpus: "2.0"
 
   transmission:
     image: ghcr.io/linuxserver/transmission:latest
@@ -174,11 +174,11 @@ services:
       - "traefik.http.routers.transmission.entrypoints=websecure"
       - "traefik.http.routers.transmission.tls.certresolver=cloudflare"
       - "traefik.http.middlewares.compress.compress=true"
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-          cpus: "1.0"
-        reservations:
-          memory: 512M
-          cpus: "0.5"
+    #deploy:
+      #resources:
+        #limits:
+          #memory: 1G
+          #cpus: "1.0"
+        #reservations:
+          #memory: 512M
+          #cpus: "0.5"
