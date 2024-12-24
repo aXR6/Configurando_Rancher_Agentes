@@ -83,7 +83,7 @@ services:
         tmpfs:
           size: 20G
     devices:
-      - /dev/dri:/dev/dri
+      - /dev/dri:/dev/dri # Diretório de dispositivos para aceleração por hardware
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -95,6 +95,7 @@ services:
       - JELLYFIN_STREAMSEGMENTSIZE=6
       - JELLYFIN_AUDIOMIXDOWN=stereo
       - JELLYFIN_SKIPMETADATAREFRESH=true
+      - JELLYFIN_FFMPEG_THREADS=4
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://localhost:8096 || exit 1"]
       interval: 30s
