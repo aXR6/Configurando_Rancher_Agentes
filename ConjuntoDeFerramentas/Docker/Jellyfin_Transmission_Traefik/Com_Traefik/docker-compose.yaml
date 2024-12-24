@@ -82,6 +82,11 @@ services:
         target: /opt/stream/jellyfin/cache
         tmpfs:
           size: 20G
+      - type: tmpfs
+        target: /opt/stream/jellyfin/cache/transcodes
+        tmpfs:
+          size: 20G
+      - /opt/stream/jellyfin/fonts:/fonts:rw
     devices:
       - /dev/dri:/dev/dri # Diretório de dispositivos para aceleração por hardware
     environment:
@@ -96,6 +101,7 @@ services:
       - JELLYFIN_AUDIOMIXDOWN=stereo
       - JELLYFIN_SKIPMETADATAREFRESH=true
       - JELLYFIN_FFMPEG_THREADS=4
+      - JELLYFIN_FONTDIR=/fonts
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://localhost:8096 || exit 1"]
       interval: 30s
